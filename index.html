@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -51,17 +51,17 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
   background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px)}
 
-.app{max-width:430px;margin:0 auto;height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.app{max-width:430px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden}
 
 /* ── LOADING ── */
-#loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;gap:16px}
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;gap:16px;padding-top:env(safe-area-inset-top)}
 .load-logo{font-size:48px;animation:breathe 2s ease-in-out infinite}
 @keyframes breathe{0%,100%{transform:scale(1);filter:drop-shadow(0 0 10px rgba(61,255,122,0.3))}50%{transform:scale(1.1);filter:drop-shadow(0 0 25px rgba(61,255,122,0.7))}}
 .load-text{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* ── LOGIN ── */
-#login-screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:500;padding:32px;gap:24px}
+#login-screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:500;padding:calc(env(safe-area-inset-top) + 32px) 32px calc(env(safe-area-inset-bottom) + 32px);gap:24px}
 .login-logo{text-align:center}
 .login-logo span{font-size:52px;display:block;margin-bottom:12px;filter:drop-shadow(0 0 20px rgba(61,255,122,0.5))}
 .login-logo h1{font-size:34px;font-weight:800;letter-spacing:-1px}
@@ -76,11 +76,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
 .login-sub{font-size:12px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:6px}
 
 /* ── CONTENT AREA ── */
-.content{flex:1;overflow-y:auto;padding:18px 16px 95px;position:relative;z-index:1}
+.content{flex:1;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 95px);position:relative;z-index:1}
 .content::-webkit-scrollbar{width:0}
 
 /* ── BOTTOM NAV ── */
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(11,16,19,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;padding:10px 0 22px;z-index:100}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(11,16,19,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;padding:10px 0 calc(env(safe-area-inset-bottom) + 12px);z-index:100}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;color:var(--muted);font-size:8px;font-family:'DM Mono',monospace;letter-spacing:.5px;text-transform:uppercase;background:none;border:none;outline:none;position:relative;transition:color .2s;padding:4px 0}
 .nav-btn.active{color:var(--green)}
 .nav-btn.active svg{filter:drop-shadow(0 0 6px var(--green))}
@@ -91,7 +91,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
 
 /* ── PAGES ── */
 .page{display:none;animation:fadeIn .2s ease}
+#page-chat{display:none;flex-direction:column;height:100%}
 .page.active{display:block}
+#page-chat.active{display:flex}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── TYPOGRAPHY ── */
@@ -181,8 +183,8 @@ textarea{resize:none}
 .plant-note{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic;line-height:1.4}
 
 /* ── CHAT ── */
-.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 155px)}
-.chat-messages{flex:1;overflow-y:auto;padding:4px 0;display:flex;flex-direction:column;gap:10px}
+.chat-wrap{display:flex;flex-direction:column;flex:1;min-height:0}
+.chat-messages{flex:1;overflow-y:auto;padding:4px 0;display:flex;flex-direction:column;gap:10px;min-height:0}
 .chat-messages::-webkit-scrollbar{width:0}
 .msg{max-width:80%;display:flex;flex-direction:column;gap:3px}
 .msg.mine{align-self:flex-end;align-items:flex-end}
@@ -193,7 +195,7 @@ textarea{resize:none}
 .msg-meta{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);padding:0 4px}
 .msg-sender-live{color:var(--green)}
 .msg-sender-lil{color:var(--purple)}
-.chat-bar{display:flex;gap:9px;align-items:flex-end;padding-top:10px;border-top:1px solid var(--border);margin-top:8px}
+.chat-bar{display:flex;gap:9px;align-items:flex-end;padding-top:10px;border-top:1px solid var(--border);margin-top:8px;flex-shrink:0}
 .chat-bar textarea{flex:1;max-height:90px;padding:10px 13px;font-size:14px}
 .chat-empty{text-align:center;padding:30px;color:var(--muted);font-size:14px}
 
@@ -329,7 +331,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
 
     <!-- HOME -->
     <div class="page active" id="page-home">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;padding-top:4px">
         <div>
           <div class="page-eyebrow">Growing Project</div>
           <div class="page-title" id="home-greeting">Ciao 🌿</div>
@@ -482,7 +484,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
 
     <!-- CHAT -->
     <div class="page" id="page-chat">
-      <div class="chat-header">
+      <div class="chat-header" style="flex-shrink:0">
         <div>
           <div class="page-eyebrow">Comunicazione</div>
           <div class="page-title" style="margin-bottom:0">Chat Live</div>
@@ -492,7 +494,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
         </div>
       </div>
       <div class="chat-wrap">
-        <div class="chat-messages" id="chat-messages">
+        <div class="chat-messages" id="chat-messages" style="flex:1;min-height:0;overflow-y:auto">
           <div class="chat-empty">Inizia la conversazione! 💬</div>
         </div>
         <div class="chat-bar">
@@ -809,7 +811,11 @@ function startListeners() {
 
 // ── NAV ──
 window.switchTab = (tab) => {
+  const contentEl = document.getElementById('content');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  contentEl.style.display = tab === 'chat' ? 'flex' : '';
+  contentEl.style.flexDirection = tab === 'chat' ? 'column' : '';
+  contentEl.style.padding = tab === 'chat' ? 'calc(env(safe-area-inset-top) + 18px) 16px 0' : '';
   document.getElementById('page-'+tab).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('nav-'+tab).classList.add('active');
