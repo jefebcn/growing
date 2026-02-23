@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>GrowManager 🌿</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #080b0d;
@@ -28,7 +28,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg)}
-body{font-family:'Syne',sans-serif;color:var(--text);overscroll-behavior:none}
+body{font-family:'Outfit',sans-serif;color:var(--text);overscroll-behavior:none}
 
 /* NOISE OVERLAY */
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
@@ -45,7 +45,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
 #loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;gap:16px}
 .load-logo{font-size:48px;animation:breathe 2s ease-in-out infinite}
 @keyframes breathe{0%,100%{transform:scale(1);filter:drop-shadow(0 0 10px rgba(61,255,122,0.3))}50%{transform:scale(1.1);filter:drop-shadow(0 0 25px rgba(61,255,122,0.7))}}
-.load-text{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;animation:blink 1.5s infinite}
+.load-text{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* ── LOGIN ── */
@@ -53,7 +53,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
 .login-logo{text-align:center}
 .login-logo span{font-size:52px;display:block;margin-bottom:12px;filter:drop-shadow(0 0 20px rgba(61,255,122,0.5))}
 .login-logo h1{font-size:34px;font-weight:800;letter-spacing:-1px}
-.login-logo p{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--muted);margin-top:4px}
+.login-logo p{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--muted);margin-top:4px}
 .login-cards{display:grid;gap:14px;width:100%}
 .login-card{padding:22px;border-radius:18px;cursor:pointer;text-align:center;border:1px solid;transition:all .2s;font-weight:800;font-size:20px}
 .login-card:active{transform:scale(0.97)}
@@ -61,7 +61,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
 .login-card.live:hover{box-shadow:0 0 30px var(--green-glow);border-color:rgba(61,255,122,0.6)}
 .login-card.lil{background:var(--purple-dim);border-color:rgba(176,96,255,0.3);color:var(--purple)}
 .login-card.lil:hover{box-shadow:0 0 30px rgba(176,96,255,0.25);border-color:rgba(176,96,255,0.6)}
-.login-sub{font-size:12px;font-family:'Space Mono',monospace;color:var(--muted);margin-top:6px}
+.login-sub{font-size:12px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:6px}
 
 /* ── CONTENT AREA ── */
 .content{flex:1;overflow-y:auto;padding:18px 16px 95px;position:relative;z-index:1}
@@ -69,7 +69,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
 
 /* ── BOTTOM NAV ── */
 .nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(11,16,19,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;padding:10px 0 22px;z-index:100}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;color:var(--muted);font-size:8px;font-family:'Space Mono',monospace;letter-spacing:.5px;text-transform:uppercase;background:none;border:none;outline:none;position:relative;transition:color .2s;padding:4px 0}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;color:var(--muted);font-size:8px;font-family:'DM Mono',monospace;letter-spacing:.5px;text-transform:uppercase;background:none;border:none;outline:none;position:relative;transition:color .2s;padding:4px 0}
 .nav-btn.active{color:var(--green)}
 .nav-btn.active svg{filter:drop-shadow(0 0 6px var(--green))}
 .nav-btn svg{width:22px;height:22px;transition:transform .15s}
@@ -83,9 +83,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── TYPOGRAPHY ── */
-.page-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.page-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
 .page-title{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:18px;line-height:1.1}
-.section-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
+.section-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
 
 /* ── CARDS ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;transition:border-color .2s}
@@ -102,26 +102,26 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
 .split-side.lil{background:linear-gradient(145deg,rgba(176,96,255,.13),rgba(176,96,255,.04));border:1px solid rgba(176,96,255,.3)}
 .split-side.lil::before{background:radial-gradient(circle at 30% 20%, var(--purple), transparent 60%)}
 .split-side:active{transform:scale(.97)}
-.split-name{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;margin-bottom:5px;opacity:.6}
+.split-name{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;margin-bottom:5px;opacity:.6}
 .split-amount{font-size:28px;font-weight:800;line-height:1;letter-spacing:-1px}
 .split-amount.live{color:var(--green);text-shadow:0 0 20px rgba(61,255,122,.4)}
 .split-amount.lil{color:var(--purple);text-shadow:0 0 20px rgba(176,96,255,.4)}
-.split-pct{font-family:'Space Mono',monospace;font-size:10px;margin-top:4px;opacity:.5}
-.split-footer{text-align:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);padding-top:10px;border-top:1px solid var(--border);margin-top:10px}
+.split-pct{font-family:'DM Mono',monospace;font-size:10px;margin-top:4px;opacity:.5}
+.split-footer{text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);padding-top:10px;border-top:1px solid var(--border);margin-top:10px}
 .split-footer span{color:var(--green)}
 
 /* ── STAT TILES ── */
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .tile{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:13px;text-align:center}
 .tile-val{font-size:22px;font-weight:800;line-height:1}
-.tile-label{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);margin-top:4px}
+.tile-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);margin-top:4px}
 .tile-val.g{color:var(--green);text-shadow:0 0 12px rgba(61,255,122,.3)}
 .tile-val.a{color:var(--amber);text-shadow:0 0 12px rgba(255,184,48,.3)}
 .tile-val.r{color:var(--red)}
 .tile-val.p{color:var(--purple);text-shadow:0 0 12px rgba(176,96,255,.3)}
 
 /* ── BADGES ── */
-.badge{display:inline-flex;align-items:center;gap:4px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.5px;padding:3px 9px;border-radius:20px;font-weight:700;text-transform:uppercase}
+.badge{display:inline-flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;padding:3px 9px;border-radius:20px;font-weight:700;text-transform:uppercase}
 .badge-g{background:var(--green-dim);color:var(--green);border:1px solid rgba(61,255,122,.3)}
 .badge-p{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(176,96,255,.3)}
 .badge-a{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,184,48,.3)}
@@ -129,7 +129,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
 .badge-m{background:rgba(74,102,85,.1);color:var(--muted);border:1px solid var(--border)}
 
 /* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:12px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;padding:11px 18px;transition:all .2s;outline:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:12px;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;padding:11px 18px;transition:all .2s;outline:none}
 .btn:active{transform:scale(.97)}
 .btn-primary{background:var(--green);color:#060c09}
 .btn-primary:hover{background:#50ff8a;box-shadow:0 0 25px var(--green-glow)}
@@ -142,8 +142,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
 
 /* ── FORMS ── */
 .field{margin-bottom:13px}
-.field label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:7px}
-input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:11px 13px;font-family:'Syne',sans-serif;font-size:14px;width:100%;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.field label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:7px}
+input,textarea,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:11px 13px;font-family:'Outfit',sans-serif;font-size:14px;width:100%;outline:none;transition:border-color .2s;-webkit-appearance:none}
 input:focus,textarea:focus,select:focus{border-color:var(--green)}
 input::placeholder,textarea::placeholder{color:var(--muted2)}
 select option{background:var(--bg3)}
@@ -159,13 +159,13 @@ textarea{resize:none}
 .plant-card:active{transform:scale(.99);border-color:rgba(61,255,122,.25)}
 .plant-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 .plant-name{font-weight:700;font-size:17px;letter-spacing:-.3px}
-.plant-gen{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
-.plant-dates{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px}
+.plant-gen{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+.plant-dates{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px}
 .plant-actions{display:flex;gap:6px;align-items:flex-start}
 .plant-stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
 .p-stat{background:var(--bg3);border-radius:9px;padding:8px 6px;text-align:center}
 .p-stat-v{font-size:14px;font-weight:700}
-.p-stat-l{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;letter-spacing:.5px}
+.p-stat-l{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;letter-spacing:.5px}
 .plant-note{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic;line-height:1.4}
 
 /* ── CHAT ── */
@@ -178,7 +178,7 @@ textarea{resize:none}
 .msg-bubble{padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.45;word-break:break-word;position:relative}
 .msg.mine .msg-bubble{background:linear-gradient(135deg,rgba(61,255,122,.18),rgba(61,255,122,.08));border:1px solid rgba(61,255,122,.22);border-bottom-right-radius:4px}
 .msg.theirs .msg-bubble{background:var(--bg3);border:1px solid var(--border);border-bottom-left-radius:4px}
-.msg-meta{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);padding:0 4px}
+.msg-meta{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);padding:0 4px}
 .msg-sender-live{color:var(--green)}
 .msg-sender-lil{color:var(--purple)}
 .chat-bar{display:flex;gap:9px;align-items:flex-end;padding-top:10px;border-top:1px solid var(--border);margin-top:8px}
@@ -192,14 +192,14 @@ textarea{resize:none}
 .ci-box{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;background:transparent}
 .ci-box.checked{background:var(--green);border-color:var(--green)}
 .ci-label{flex:1;font-size:14px}
-.ci-cost{font-family:'Space Mono',monospace;font-size:11px;color:var(--amber);flex-shrink:0}
+.ci-cost{font-family:'DM Mono',monospace;font-size:11px;color:var(--amber);flex-shrink:0}
 
 /* ── BAR CHART ── */
 .bar-chart{display:flex;align-items:flex-end;gap:6px;height:110px;padding:4px 0}
 .bc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
 .bc-bar{width:100%;border-radius:6px 6px 0 0;min-height:4px;background:linear-gradient(180deg,var(--green),rgba(61,255,122,.25));transition:height .6s ease}
-.bc-val{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted)}
-.bc-name{font-family:'Space Mono',monospace;font-size:7px;color:var(--muted);text-align:center;max-width:38px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bc-val{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted)}
+.bc-name{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);text-align:center;max-width:38px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ── STAT BARS ── */
 .stat-bar{margin-bottom:11px}
@@ -209,19 +209,19 @@ textarea{resize:none}
 
 /* ── ENV LOG ── */
 .env-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:10px;margin-bottom:7px}
-.env-date{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);flex-shrink:0;width:52px}
-.env-val{font-family:'Space Mono',monospace;font-size:12px;font-weight:700}
+.env-date{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);flex-shrink:0;width:52px}
+.env-val{font-family:'DM Mono',monospace;font-size:12px;font-weight:700}
 .env-note{font-size:12px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* ── CAL ── */
 .cal-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:11px;margin-bottom:7px;border:1px solid;cursor:pointer;transition:all .2s}
-.cal-date{font-family:'Space Mono',monospace;font-size:9px;flex-shrink:0;width:46px;text-align:center}
+.cal-date{font-family:'DM Mono',monospace;font-size:9px;flex-shrink:0;width:46px;text-align:center}
 .cal-label{flex:1;font-size:13px;font-weight:600}
-.cal-type{font-family:'Space Mono',monospace;font-size:9px;flex-shrink:0}
+.cal-type{font-family:'DM Mono',monospace;font-size:9px;flex-shrink:0}
 
 /* ── CHIP FILTER ── */
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.chip{padding:5px 13px;border-radius:20px;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;letter-spacing:.5px}
+.chip{padding:5px 13px;border-radius:20px;font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;letter-spacing:.5px}
 .chip.on{border-color:var(--green);color:var(--green);background:var(--green-dim)}
 
 /* ── MODAL ── */
@@ -259,11 +259,11 @@ textarea{resize:none}
 .empty-text{font-size:14px;line-height:1.5}
 
 /* ── TOAST ── */
-#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--card);border:1px solid var(--green);color:var(--green);font-family:'Space Mono',monospace;font-size:12px;padding:10px 20px;border-radius:30px;z-index:1000;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 20px rgba(61,255,122,.2);white-space:nowrap}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--card);border:1px solid var(--green);color:var(--green);font-family:'DM Mono',monospace;font-size:12px;padding:10px 20px;border-radius:30px;z-index:1000;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 20px rgba(61,255,122,.2);white-space:nowrap}
 #toast.show{transform:translateX(-50%) translateY(0)}
 
 /* ── FIREBASE STATUS ── */
-.fb-status{display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);padding:6px 12px;background:var(--bg3);border-radius:20px;border:1px solid var(--border)}
+.fb-status{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);padding:6px 12px;background:var(--bg3);border-radius:20px;border:1px solid var(--border)}
 .fb-dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
 .fb-dot.live{background:var(--green);box-shadow:0 0 6px var(--green)}
 
@@ -271,7 +271,7 @@ textarea{resize:none}
 .range-wrap{display:flex;gap:10px;align-items:center}
 input[type=range]{padding:0;height:6px;-webkit-appearance:none;background:var(--border);border-radius:3px;border:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:var(--green);border-radius:50%;cursor:pointer;box-shadow:0 0 10px var(--green-glow)}
-.range-pct{font-family:'Space Mono',monospace;font-size:13px;color:var(--green);min-width:40px;text-align:right}
+.range-pct{font-family:'DM Mono',monospace;font-size:13px;color:var(--green);min-width:40px;text-align:right}
 
 /* ── PHOTO GRID ── */
 .photo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px}
@@ -302,11 +302,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
   <div class="login-cards">
     <div class="login-card live" onclick="selectUser('LIVE')">
       🌱 LIVE
-      <div class="login-sub">60% default</div>
     </div>
     <div class="login-card lil" onclick="selectUser('LIL')">
       💜 LIL
-      <div class="login-sub">40% default</div>
     </div>
   </div>
 </div>
@@ -356,7 +354,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
           </button>
         </div>
         <div class="split-edit" id="split-edit-wrap" style="display:none">
-          <label style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:8px">% LIVE</label>
+          <label style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:8px">% LIVE</label>
           <div class="range-wrap">
             <input type="range" min="0" max="100" value="60" id="split-range" oninput="onSplitChange(this.value)" style="flex:1">
             <span class="range-pct" id="split-range-label">60%</span>
@@ -384,7 +382,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
           <span style="font-size:28px">📅</span>
           <div>
             <div style="font-weight:700" id="next-event-title"></div>
-            <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)" id="next-event-meta"></div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)" id="next-event-meta"></div>
           </div>
         </div>
       </div>
@@ -442,7 +440,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
       <div class="card card-green" id="best-plant-card" style="display:none;margin-bottom:12px">
         <div class="section-label">Miglior Ciclo 🏆</div>
         <div style="font-weight:700;font-size:18px" id="bp-name"></div>
-        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)" id="bp-meta"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)" id="bp-meta"></div>
       </div>
       <div class="card">
         <div class="section-label">Profitti per Ciclo (€)</div>
@@ -477,7 +475,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
           <div class="page-eyebrow">Comunicazione</div>
           <div class="page-title" style="margin-bottom:0">Chat Live</div>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">
+        <div style="display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">
           <div class="online-dot"></div>LIVE · LIL
         </div>
       </div>
@@ -509,7 +507,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
       <div class="card card-amber" id="expenses-card" style="display:none;margin-bottom:12px">
         <div style="display:flex;justify-content:space-between">
           <span style="color:var(--muted);font-size:13px">Spese registrate</span>
-          <span style="color:var(--red);font-family:'Space Mono',monospace;font-weight:700" id="total-expenses-label"></span>
+          <span style="color:var(--red);font-family:'DM Mono',monospace;font-weight:700" id="total-expenses-label"></span>
         </div>
       </div>
       <div id="shop-todo-label" class="section-label" style="display:none"></div>
@@ -574,8 +572,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
     </div>
     <div class="card" id="plant-calc-preview" style="display:none;background:var(--bg3);margin-bottom:14px">
       <div style="display:flex;justify-content:space-around;text-align:center">
-        <div><div style="font-weight:700;color:var(--green)" id="pc-live">€0</div><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">LIVE</div></div>
-        <div><div style="font-weight:700;color:var(--purple)" id="pc-lil">€0</div><div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">LIL</div></div>
+        <div><div style="font-weight:700;color:var(--green)" id="pc-live">€0</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">LIVE</div></div>
+        <div><div style="font-weight:700;color:var(--purple)" id="pc-lil">€0</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">LIL</div></div>
       </div>
     </div>
     <div class="field"><label>Stato</label>
@@ -914,7 +912,7 @@ window.renderPlants = () => {
         </div>
         <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
           <span class="badge ${badge}">${label}</span>
-          ${days > 0 ? `<span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">${days}gg</span>` : ''}
+          ${days > 0 ? `<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">${days}gg</span>` : ''}
         </div>
       </div>
       ${(p.yield || p.sale) ? `<div class="plant-stats-row">
@@ -1271,7 +1269,7 @@ window.renderAnalytics = () => {
     yb.innerHTML = withYield.map(p => {
       const pct = maxY ? (parseFloat(p.yield)||0)/maxY*100 : 0;
       return `<div class="stat-bar">
-        <div class="sb-head"><span>${p.name}</span><span style="font-family:'Space Mono',monospace;font-size:11px">${p.yield}g</span></div>
+        <div class="sb-head"><span>${p.name}</span><span style="font-family:'DM Mono',monospace;font-size:11px">${p.yield}g</span></div>
         <div class="sb-track"><div class="sb-fill" style="width:${pct}%"></div></div>
       </div>`;
     }).join('');
