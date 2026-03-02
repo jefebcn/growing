@@ -1363,13 +1363,14 @@ window.quickSaveEnv = async () => {
   const t = document.getElementById('quick-temp').value.trim();
   const h = document.getElementById('quick-hum').value.trim();
   if (!t && !h) { showToast('⚠️ Inserisci temp o umidità', true); return; }
-  await addDoc(collection(db,'env'), { temp:t, hum:h, date:today(), note:'', ts:serverTimestamp() });
+  const {addDoc:_a,collection:_c,serverTimestamp:_s}=window.fsLib;
+  await _a(_c(db,'env'), { temp:t, hum:h, date:today(), note:'', ts:_s() });
   document.getElementById('quick-temp').value = '';
   document.getElementById('quick-hum').value = '';
   document.getElementById('quick-env-preview').style.display = 'none';
   showToast('🌡 Parametri salvati!');
 };
-const { addDoc, collection, serverTimestamp } = window.fsLib;
+// fsLib accessed via window.fsLib throughout
 window.renderHomeEnv = () => {
   const logs = [...S.envLogs].reverse().slice(0,3);
   const el = document.getElementById('home-env-list');
@@ -1756,7 +1757,39 @@ document.querySelectorAll('.overlay').forEach(o=>{
   o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});
 });
 
+// ══ GLOBAL ERROR HANDLER - hide loading on any error ══
+window.addEventListener('error', (e) => {
+  console.error('App error:', e);
+  const ld = document.getElementById('loading');
+  if (ld && ld.style.display !== 'none') {
+    ld.style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+});
+
 // ══ INIT ══
+// Hard fallback - always hide loading after 2.5s
+const hideLoading = () => {
+  const ld = document.getElementById('loading');
+  if (ld) ld.style.display = 'none';
+};
+setTimeout(() => {
+  hideLoading();
+  if (!window.S?.user) {
+    const ls = document.getElementById('login-screen');
+    if (ls && ls.style.display === 'none') ls.style.display = 'flex';
+  }
+}, 2500);
+
+window.addEventListener('DOMContentLoaded',()=>{
+  // Pre-hide loading faster on dom ready
+  const saved = localStorage.getItem('gm_user');
+  if (!saved) {
+    document.getElementById('loading').style.display='none';
+    document.getElementById('login-screen').style.display='flex';
+  }
+});
+
 window.addEventListener('load',()=>{
   const saved=localStorage.getItem('gm_user');
   document.getElementById('loading').style.display='none';
