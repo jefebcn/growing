@@ -1280,7 +1280,8 @@ window.S = {
   user: null, plants: [], messages: [], shopping: [],
   envLogs: [], calEvents: [], splitLive: 60,
   activeTab: 'home', filterPhase: 'tutte',
-  editPlantId: null, unread: 0, unsubs: []
+  editPlantId: null, unread: 0, unsubs: [],
+  selectedProblems: []
 };
 
 // ══ UTILS ══
@@ -1359,7 +1360,7 @@ window.updateTitleBadge = () => {
 // ══════════════════════════════════════════════
 const PROBLEMS_DB = {
   overwater: {
-    emoji: '💧', label: 'Eccesso d'acqua',
+    emoji: '💧', label: 'Eccesso d\'acqua',
     severity: 'MEDIO', sevClass: 'med',
     color: 'var(--blue)',
     symptoms: [
@@ -1370,20 +1371,20 @@ const PROBLEMS_DB = {
       'Possibile comparsa di muffe alle radici'
     ],
     fixes: [
-      'Sospendi l'irrigazione per 3–5 giorni e lascia asciugare il substrato',
+      'Sospendi l\'irrigazione per 3–5 giorni e lascia asciugare il substrato',
       'Verifica il drenaggio: fai fori aggiuntivi nel fondo del vaso se necessario',
-      'Riduci le dosi d'acqua del 30–40% e irrigua solo quando il vaso è leggero',
-      'Solleva i vasi su pietrisco per favorire l'aerazione sotto il fondo',
+      'Riduci le dosi d\'acqua del 30–40% e irrigua solo quando il vaso e leggero',
+      'Solleva i vasi su pietrisco per favorire l\'aerazione sotto il fondo',
       'Se le radici sono marce (root rot), tratta con H2O2 3% diluito 1:5'
     ],
-    prevention: '💡 Regola aurea: solleva il vaso. Se è leggero, irrigua. Usa substrati con perlite 20–30% per drenaggio ottimale. Irrigua al mattino per cicli luce/buio.'
+    prevention: '💡 Regola aurea: solleva il vaso. Se e leggero, irrigua. Usa substrati con perlite 20–30% per drenaggio ottimale. Irrigua al mattino per cicli luce/buio.'
   },
   underwater: {
-    emoji: '🏜️', label: 'Carenza d'acqua',
+    emoji: '🏜️', label: 'Carenza d\'acqua',
     severity: 'MEDIO', sevClass: 'med',
     color: 'var(--amber)',
     symptoms: [
-      'Foglie che si arricciano verso l'alto o avvizzite',
+      'Foglie arricciate verso alto o avvizzite',
       'Vaso molto leggero, substrato si stacca dai bordi',
       'Foglie opache, perdita di turgore',
       'Caduta prematura di foglie nelle ore calde',
@@ -1392,11 +1393,11 @@ const PROBLEMS_DB = {
     fixes: [
       'Irrigua subito con acqua a pH 6.0–6.5 in abbondanza finché non fuoriesce dal basso',
       'Considera una doppia irrigazione a distanza di 30 min per reidratare substrati molto secchi',
-      'Aumenta la frequenza d'irrigazione, soprattutto in fase di fioritura avanzata',
-      'In estate valuta l'installazione di un sistema di irrigazione automatica a goccia',
+      'Aumenta la frequenza irrigazione, soprattutto in fioritura avanzata',
+      'In estate valuta irrigazione automatica a goccia',
       'Controlla che le radici non abbiano colonizzato tutto il vaso (radici che escono sotto)'
     ],
-    prevention: '💡 Monitora il peso del vaso quotidianamente. In fioritura le piante assorbono fino al doppio dell'acqua rispetto alla fase vegetativa.'
+    prevention: "💡 Monitora il peso del vaso ogni giorno. In fioritura le piante assorbono il doppio dell'acqua rispetto alla fase vegetativa."
   },
   nutrients: {
     emoji: '🧪', label: 'Carenza nutrienti',
@@ -1434,9 +1435,9 @@ const PROBLEMS_DB = {
       'Acari: tratta con Neem oil diluito (5ml/L) + sapone potassico, spray ogni 3 giorni x3',
       'Fungus gnat: lascia asciugare bene il substrato, usa trappole gialle appiccicose, tratta con Bacillus thuringiensis israelensis',
       'Afidi/trips: usa sapone potassico o Spinosad come insetticida biologico',
-      'Controlla la parte inferiore delle foglie a ogni ispezione, usa lente d'ingrandimento'
+      'Controlla la parte inferiore delle foglie a ogni ispezione, usa lente d\'ingrandimento'
     ],
-    prevention: '💡 Mantieni T < 26°C e umidità < 50% in fioritura. Usa zanzariere alle prese d'aria. Ispeziona le foglie 2x a settimana.'
+    prevention: '💡 Mantieni T < 26°C e umidità < 50% in fioritura. Usa zanzariere alle prese d\'aria. Ispeziona le foglie 2x a settimana.'
   },
   mold: {
     emoji: '🍄', label: 'Muffa / Botrytis',
@@ -1445,18 +1446,18 @@ const PROBLEMS_DB = {
     symptoms: [
       'Macchie grigie o biancastre sui boccioli o foglie',
       'Odore di muffa o umidità stantia',
-      'Boccioli che diventano marroni dall'interno',
+      'Boccioli marroni dall interno',
       'Polvere grigia che si disperde al tocco (Botrytis)',
       'Foglie bianche con aspetto polveroso (oidio)'
     ],
     fixes: [
       'Rimuovi SUBITO le parti colpite con cesoie disinfettate, metti in sacchetto chiuso',
       'Aumenta la ventilazione: punta un ventilatore direttamente sui boccioli',
-      'Abbassa l'umidità sotto il 45% con deumidificatore in fioritura avanzata',
+      'Abbassa umidita sotto 45% con deumidificatore in fioritura avanzata',
       'Per oidio: tratta con bicarbonato di sodio (5g/L) + sapone potassico spray',
       'In casi gravi di botrytis valuta raccolta anticipata per salvare il resto'
     ],
-    prevention: '💡 In fioritura mantieni RH < 50%, ideale 40–45%. Rimuovi foglie grandi che toccano i boccioli. Buona circolazione d'aria è la migliore difesa.'
+    prevention: '💡 In fioritura mantieni RH < 50%, ideale 40–45%. Rimuovi foglie grandi che toccano i boccioli. Buona circolazione d\'aria è la migliore difesa.'
   },
   light: {
     emoji: '💡', label: 'Stress da luce',
@@ -1476,7 +1477,7 @@ const PROBLEMS_DB = {
       'Usa un PAR meter o app per misurare PPFD: ideale 400–600 veg, 600–1000+ fioritura',
       'Se hai troppa poca luce: avvicina o aggiungi lampade laterali per i boccioli bassi'
     ],
-    prevention: '💡 Regola l'intensità gradualmente (+10% ogni 3 giorni). Le piante si adattano lentamente. Usa dimmer se disponibile.'
+    prevention: '💡 Regola l\'intensità gradualmente (+10% ogni 3 giorni). Le piante si adattano lentamente. Usa dimmer se disponibile.'
   },
   rootbound: {
     emoji: '🪴', label: 'Radici strette',
@@ -1494,16 +1495,16 @@ const PROBLEMS_DB = {
       'Usa vasi airpot o fabric pot per prevenire root bound e favorire air pruning',
       'Al rinvaso: aggiungi substrato fresco con perlite 20%, non disturbare il root ball',
       'Irriga abbondantemente dopo il rinvaso e mantieni in zona ombrosa 24–48h',
-      'Se in fioritura avanzata: evita il rinvaso, ottimizza l'irrigazione più frequente'
+      'Se in fioritura avanzata: evita il rinvaso, ottimizza l\'irrigazione più frequente'
     ],
-    prevention: '💡 Pianifica il rinvaso prima che le radici saturino il vaso. Un vaso troppo grande non è meglio: rallenta l'asciugatura e favorisce overwatering.'
+    prevention: "💡 Pianifica il rinvaso in anticipo. Un vaso troppo grande rallenta l'asciugatura e favorisce overwatering."
   },
   heat: {
     emoji: '🔥', label: 'Stress da calore',
     severity: 'ALTO', sevClass: 'high',
     color: '#ff5a32',
     symptoms: [
-      'Foglie che si arricciano verso l'alto a "ciotola" (taco leaf)',
+      'Foglie arricciate verso alto a "ciotola" (taco leaf)',
       'Margini delle foglie bruciati e secchi',
       'Boccioli che si aprono in modo anomalo (foxtailing)',
       'Fiori sterili o con pochi terpeni in cima alla pianta',
@@ -1512,15 +1513,14 @@ const PROBLEMS_DB = {
     fixes: [
       'Abbassa la temperatura sotto i 28°C durante il giorno, ideale 22–26°C',
       'Inverte il ciclo luce: accendi le lampade di notte quando fa più fresco',
-      'Aumenta la ventilazione: estrai aria calda dall'alto, immetti aria fresca dal basso',
+      'Aumenta la ventilazione: estrai aria calda dall alto, immetti aria fresca dal basso',
       'Usa ventole oscillanti per creare brezza costante sulle piante',
-      'Considera l'uso di AC portatile o deumidificatori in estate'
+      'Considera l\'uso di AC portatile o deumidificatori in estate'
     ],
     prevention: '💡 Temperatura ideale: 22–26°C giorno, 18–22°C notte. VPD ottimale 0.8–1.2 kPa. Monitora con termometro/igrometro digitale 24/7.'
   }
 };
 
-window.S.selectedProblems = [];
 
 window.toggleProb = (btn, key) => {
   const idx = S.selectedProblems.indexOf(key);
@@ -1567,6 +1567,7 @@ window.renderDiagnosis = () => {
 // ══════════════════════════════════════════════
 // GAUGE AMBIENTE — aggiorna gauge T/U con i dati
 // ══════════════════════════════════════════════
+
 window.updateEnvGauges = () => {
   if (!S.envLogs.length) return;
   const logs = [...S.envLogs].reverse();
@@ -1660,8 +1661,8 @@ window.updateEnvGauges = () => {
   }
   if (!isNaN(h)) {
     if (h > 75) alerts.push({type:'danger', icon:'🍄', title:'Umidità critica: '+h+'%', msg:'Rischio botrytis/muffa molto alto. Attiva deumidificatore subito e aumenta circolazione aria.'});
-    else if (h < 30) alerts.push({type:'danger', icon:'🏜️', title:'Umidità troppo bassa: '+h+'%', msg:'Le piante soffrono la disidratazione. Usa umidificatore o vaschette d'acqua.'});
-    else if (h > 65) alerts.push({type:'warn', icon:'💦', title:'Umidità alta: '+h+'%', msg:'In fioritura mantieni sotto il 50%. Apri le prese d'aria e controlla la ventilazione.'});
+    else if (h < 30) alerts.push({type:'danger', icon:'🏜️', title:'Umidità troppo bassa: '+h+'%', msg:"Le piante soffrono disidratazione. Usa umidificatore o vaschette d'acqua."});
+    else if (h > 65) alerts.push({type:'warn', icon:'💦', title:'Umidità alta: '+h+'%', msg:"In fioritura mantieni sotto il 50%. Apri le prese d'aria e controlla la ventilazione."});
   }
   // VPD alert
   if (!isNaN(t) && !isNaN(h)) {
