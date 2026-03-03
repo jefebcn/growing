@@ -672,6 +672,105 @@ textarea { resize: none; }
 .phase-today { color: var(--green); font-weight: 800; }
 .phase-tomorrow { color: var(--amber); }
 .phase-late { color: var(--red); }
+
+/* ── GAUGE TEMPERATURA / UMIDITÀ ── */
+.gauge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.gauge-card{
+  border-radius:var(--r-md);padding:14px 12px;text-align:center;
+  border:1px solid var(--border);background:var(--bg3);
+  position:relative;overflow:hidden;transition:border-color .3s,box-shadow .3s;
+}
+.gauge-card.ok{border-color:rgba(45,255,110,.3);background:linear-gradient(160deg,rgba(45,255,110,.07),var(--bg3));box-shadow:0 0 24px rgba(45,255,110,.06)}
+.gauge-card.warn{border-color:rgba(255,176,32,.4);background:linear-gradient(160deg,rgba(255,176,32,.09),var(--bg3));box-shadow:0 0 24px rgba(255,176,32,.08)}
+.gauge-card.danger{border-color:rgba(255,61,90,.5);background:linear-gradient(160deg,rgba(255,61,90,.1),var(--bg3));box-shadow:0 0 28px rgba(255,61,90,.12);animation:dangerPulse 2s infinite}
+@keyframes dangerPulse{0%,100%{box-shadow:0 0 20px rgba(255,61,90,.1)}50%{box-shadow:0 0 40px rgba(255,61,90,.25)}}
+.gauge-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;text-transform:uppercase}
+.gauge-val{font-size:36px;font-weight:900;line-height:1;letter-spacing:-2px}
+.gauge-val.ok{color:var(--green);text-shadow:0 0 20px rgba(45,255,110,.4)}
+.gauge-val.warn{color:var(--amber);text-shadow:0 0 20px rgba(255,176,32,.4)}
+.gauge-val.danger{color:var(--red);text-shadow:0 0 24px rgba(255,61,90,.5)}
+.gauge-unit{font-size:13px;font-weight:500;opacity:.55;margin-left:1px}
+.gauge-track{margin:10px 4px 0;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.gauge-fill{height:100%;border-radius:3px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.gauge-status{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;margin-top:6px}
+.gauge-status.ok{color:var(--green)}
+.gauge-status.warn{color:var(--amber)}
+.gauge-status.danger{color:var(--red)}
+.gauge-ideal{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);margin-top:3px;opacity:.7}
+.sparkline{display:flex;align-items:flex-end;gap:2px;height:24px;margin-top:8px}
+.spark-bar{flex:1;border-radius:2px 2px 0 0;min-height:2px;transition:height .4s ease}
+
+/* Alert ambientale */
+.env-alert{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:11px 13px;border-radius:var(--r-sm);margin-bottom:8px;border:1px solid;
+  animation:slideIn .25s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.env-alert.warn{background:rgba(255,176,32,.06);border-color:rgba(255,176,32,.3)}
+.env-alert.danger{background:rgba(255,61,90,.06);border-color:rgba(255,61,90,.3)}
+.env-alert-icon{font-size:20px;flex-shrink:0}
+.env-alert-body{flex:1}
+.env-alert-title{font-weight:700;font-size:13px;margin-bottom:3px}
+.env-alert.warn .env-alert-title{color:var(--amber)}
+.env-alert.danger .env-alert-title{color:var(--red)}
+.env-alert-msg{font-size:12px;color:var(--text2);line-height:1.45}
+
+/* ── PROBLEMI PIANTA ── */
+.prob-grid{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 12px}
+.prob-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:6px 11px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1.5px solid;transition:all .18s;background:transparent;
+  user-select:none;
+}
+.prob-chip:active{transform:scale(.95)}
+.prob-chip.over    {border-color:rgba(48,208,255,.5);color:var(--blue)}
+.prob-chip.under   {border-color:rgba(255,176,32,.5);color:var(--amber)}
+.prob-chip.nutr    {border-color:rgba(255,61,90,.5);color:var(--red)}
+.prob-chip.pest    {border-color:rgba(192,96,255,.5);color:var(--purple)}
+.prob-chip.mold    {border-color:rgba(45,255,110,.4);color:var(--green)}
+.prob-chip.light   {border-color:rgba(255,220,50,.5);color:#ffe033}
+.prob-chip.root    {border-color:rgba(196,135,74,.5);color:#c4874a}
+.prob-chip.heat    {border-color:rgba(255,90,50,.5);color:#ff5a32}
+
+.prob-chip.sel{color:#060a08!important}
+.prob-chip.over.sel   {background:var(--blue);border-color:var(--blue)}
+.prob-chip.under.sel  {background:var(--amber);border-color:var(--amber)}
+.prob-chip.nutr.sel   {background:var(--red);border-color:var(--red)}
+.prob-chip.pest.sel   {background:var(--purple);border-color:var(--purple)}
+.prob-chip.mold.sel   {background:var(--green);border-color:var(--green)}
+.prob-chip.light.sel  {background:#ffe033;border-color:#ffe033}
+.prob-chip.root.sel   {background:#c4874a;border-color:#c4874a}
+.prob-chip.heat.sel   {background:#ff5a32;border-color:#ff5a32}
+
+/* Diagnosi card */
+.diag-card{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:var(--r-md);padding:15px;margin-top:10px;
+  animation:pgIn .2s ease;
+}
+.diag-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.diag-emoji{font-size:30px;line-height:1}
+.diag-title{font-weight:800;font-size:16px;letter-spacing:-.3px}
+.diag-sev{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;margin-top:3px;text-transform:uppercase}
+.diag-sev.med{color:var(--amber)} .diag-sev.high{color:var(--red)}
+.diag-sep{height:1px;background:var(--border);margin:10px 0}
+.diag-sec-title{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.diag-sym{display:flex;gap:7px;font-size:12px;color:var(--text2);margin-bottom:5px;line-height:1.4;align-items:flex-start}
+.diag-sym::before{content:'◦';color:var(--muted);flex-shrink:0;margin-top:1px}
+.diag-fix{display:flex;gap:8px;font-size:13px;margin-bottom:7px;line-height:1.4;align-items:flex-start}
+.diag-num{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:#060a08;background:var(--green);padding:2px 6px;border-radius:5px;flex-shrink:0;margin-top:2px;line-height:1.3}
+.diag-prevent{font-size:11px;color:var(--muted);padding:9px 11px;background:var(--bg3);border-radius:8px;margin-top:10px;line-height:1.55;border-left:2px solid var(--border2)}
+.diag-prevent strong{color:var(--text2)}
+
+/* Badge problema su plant card */
+.plant-prob-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.plant-prob-badge{
+  font-family:'DM Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.5px;
+  padding:3px 8px;border-radius:10px;
+}
+
 </style>
 </head>
 <body>
@@ -793,29 +892,54 @@ textarea { resize: none; }
       </div>
 
       <!-- Parametri Ambientali HOME -->
-      <div class="card card-a">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="card card-a" id="env-home-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <div>
-            <div class="sec-label" style="margin:0">Parametri Ambientali</div>
-            <div id="home-env-last" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:3px">Nessun dato</div>
+            <div class="sec-label" style="margin:0">🌡 Microclima Serra</div>
+            <div id="home-env-last" style="font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:3px">Nessuna rilevazione</div>
           </div>
           <button class="btn btn-ghost btn-icon btn-sm" onclick="openEnvModal()" style="width:34px;height:34px;border-color:rgba(255,176,32,.3)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M12 5v14M5 12h14"/></svg>
           </button>
         </div>
-        <div class="quick-env">
-          <div class="quick-env-field">
-            <span>🌡</span>
-            <input type="number" id="quick-temp" placeholder="Temp °C" oninput="quickEnvPreview()">
+
+        <!-- GAUGE GRID -->
+        <div class="gauge-grid">
+          <div class="gauge-card" id="gauge-temp-card">
+            <div class="gauge-label">Temperatura</div>
+            <div class="gauge-val" id="gauge-temp-val">—<span class="gauge-unit">°C</span></div>
+            <div class="gauge-track"><div class="gauge-fill" id="gauge-temp-fill" style="width:0%;background:var(--amber)"></div></div>
+            <div class="gauge-status" id="gauge-temp-status">Nessun dato</div>
+            <div class="gauge-ideal">Ideale: 20–28°C</div>
+            <div class="sparkline" id="spark-temp"></div>
           </div>
-          <div class="quick-env-field">
-            <span>💧</span>
-            <input type="number" id="quick-hum" placeholder="Umid %" oninput="quickEnvPreview()">
+          <div class="gauge-card" id="gauge-hum-card">
+            <div class="gauge-label">Umidità</div>
+            <div class="gauge-val" id="gauge-hum-val">—<span class="gauge-unit">%</span></div>
+            <div class="gauge-track"><div class="gauge-fill" id="gauge-hum-fill" style="width:0%;background:var(--blue)"></div></div>
+            <div class="gauge-status" id="gauge-hum-status">Nessun dato</div>
+            <div class="gauge-ideal">Ideale: 40–65%</div>
+            <div class="sparkline" id="spark-hum"></div>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="quickSaveEnv()" style="padding:10px 16px">✓</button>
         </div>
-        <div id="quick-env-preview" style="display:none;margin-top:9px;padding:7px 11px;background:var(--bg3);border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--amber)"></div>
-        <div id="home-env-list" style="margin-top:10px"></div>
+
+        <!-- ALERT ZONE -->
+        <div id="env-alerts"></div>
+
+        <!-- QUICK ENTRY -->
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <div class="quick-env-field" style="flex:1;position:relative">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none">🌡</span>
+            <input type="number" id="quick-temp" placeholder="Temp °C" oninput="quickEnvPreview()" style="padding-left:30px">
+          </div>
+          <div class="quick-env-field" style="flex:1;position:relative">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none">💧</span>
+            <input type="number" id="quick-hum" placeholder="Umid %" oninput="quickEnvPreview()" style="padding-left:30px">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="quickSaveEnv()" style="padding:10px 16px;flex-shrink:0">✓</button>
+        </div>
+        <div id="quick-env-preview" style="display:none;margin-bottom:8px;padding:7px 11px;background:var(--bg3);border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--amber)"></div>
+        <div id="home-env-list"></div>
       </div>
 
       <!-- Calendario HOME -->
@@ -995,21 +1119,37 @@ textarea { resize: none; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
+
     <div class="field"><label>Nome Pianta *</label><input id="p-name" placeholder="es. Northern Lights #3"></div>
-    <div class="field"><label>Genetica</label><input id="p-gen" placeholder="es. Indica 70% · Sativa 30%"></div>
+    <div class="field"><label>Genetica / Strain</label><input id="p-gen" placeholder="es. Indica 70% · Sativa 30%"></div>
+
     <div class="field-row">
       <div class="field"><label>Data Inizio</label><input type="date" id="p-start"></div>
       <div class="field"><label>Data Raccolto</label><input type="date" id="p-end"></div>
     </div>
+
+    <div class="field"><label>Fase di crescita</label>
+      <select id="p-phase">
+        <option value="">— Seleziona —</option>
+        <option value="seedling">🌿 Seedling (0–2 sett.)</option>
+        <option value="veg">🌱 Vegetativa (2–8 sett.)</option>
+        <option value="flower">🌸 Fioritura (8–16 sett.)</option>
+        <option value="flush">💧 Flush finale</option>
+        <option value="harvest">✂️ Raccolta</option>
+      </select>
+    </div>
+
     <div class="field-row">
       <div class="field"><label>Resa (g)</label><input type="number" id="p-yield" placeholder="0" oninput="updatePlantCalc()"></div>
       <div class="field"><label>Vendita (€)</label><input type="number" id="p-sale" placeholder="0" oninput="updatePlantCalc()"></div>
     </div>
+
     <div class="calc-preview" id="plant-calc-preview" style="display:none">
       <div><div class="cp-val" style="color:var(--green)" id="pc-live">€0</div><div class="cp-lbl">LIVE</div></div>
       <div style="width:1px;background:var(--border)"></div>
       <div><div class="cp-val" style="color:var(--purple)" id="pc-lil">€0</div><div class="cp-lbl">LIL</div></div>
     </div>
+
     <div class="field"><label>Stato</label>
       <select id="p-status">
         <option value="growing">🌱 In crescita</option>
@@ -1017,9 +1157,28 @@ textarea { resize: none; }
         <option value="done">✅ Completata</option>
       </select>
     </div>
-    <div class="field"><label>Note</label><textarea id="p-notes" rows="3" placeholder="Osservazioni, problemi, parametri..."></textarea></div>
+
+    <!-- ── SEZIONE PROBLEMI ── -->
+    <div style="margin-bottom:6px">
+      <div class="sec-label" style="margin-bottom:8px">⚠️ Problemi rilevati</div>
+      <div class="prob-grid">
+        <button class="prob-chip over" onclick="toggleProb(this,'overwater')">💧 Eccesso acqua</button>
+        <button class="prob-chip under" onclick="toggleProb(this,'underwater')">🏜️ Carenza acqua</button>
+        <button class="prob-chip nutr" onclick="toggleProb(this,'nutrients')">🧪 Carenza nutrienti</button>
+        <button class="prob-chip pest" onclick="toggleProb(this,'pests')">🐛 Parassiti</button>
+        <button class="prob-chip mold" onclick="toggleProb(this,'mold')">🍄 Muffa / Botrytis</button>
+        <button class="prob-chip light" onclick="toggleProb(this,'light')">💡 Stress luce</button>
+        <button class="prob-chip root" onclick="toggleProb(this,'rootbound')">🪴 Radici strette</button>
+        <button class="prob-chip heat" onclick="toggleProb(this,'heat')">🔥 Stress calore</button>
+      </div>
+      <div id="prob-diag"></div>
+    </div>
+
+    <div class="field"><label>Note / Osservazioni</label><textarea id="p-notes" rows="3" placeholder="Parametri, osservazioni, dosi nutrienti..."></textarea></div>
     <input type="hidden" id="p-editing-id">
-    <div style="display:flex;gap:10px">
+    <input type="hidden" id="p-problems" value="">
+
+    <div style="display:flex;gap:10px;margin-top:4px">
       <button class="btn btn-danger" id="plant-del-btn" style="display:none" onclick="deletePlant()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>Elimina
       </button>
@@ -1193,6 +1352,343 @@ window.showWebNotification = (msg) => {
 };
 window.updateTitleBadge = () => {
   document.title = S.unread > 0 ? `(${S.unread}) Growing Project` : 'Growing Project';
+};
+
+// ══════════════════════════════════════════════
+// DIAGNOSI PROBLEMI PIANTA
+// ══════════════════════════════════════════════
+const PROBLEMS_DB = {
+  overwater: {
+    emoji: '💧', label: 'Eccesso d'acqua',
+    severity: 'MEDIO', sevClass: 'med',
+    color: 'var(--blue)',
+    symptoms: [
+      'Foglie che si curvano verso il basso (claw)',
+      'Terreno sempre umido, pesante',
+      'Ingiallimento delle foglie basse',
+      'Crescita rallentata o blocco vegetativo',
+      'Possibile comparsa di muffe alle radici'
+    ],
+    fixes: [
+      'Sospendi l'irrigazione per 3–5 giorni e lascia asciugare il substrato',
+      'Verifica il drenaggio: fai fori aggiuntivi nel fondo del vaso se necessario',
+      'Riduci le dosi d'acqua del 30–40% e irrigua solo quando il vaso è leggero',
+      'Solleva i vasi su pietrisco per favorire l'aerazione sotto il fondo',
+      'Se le radici sono marce (root rot), tratta con H2O2 3% diluito 1:5'
+    ],
+    prevention: '💡 Regola aurea: solleva il vaso. Se è leggero, irrigua. Usa substrati con perlite 20–30% per drenaggio ottimale. Irrigua al mattino per cicli luce/buio.'
+  },
+  underwater: {
+    emoji: '🏜️', label: 'Carenza d'acqua',
+    severity: 'MEDIO', sevClass: 'med',
+    color: 'var(--amber)',
+    symptoms: [
+      'Foglie che si arricciano verso l'alto o avvizzite',
+      'Vaso molto leggero, substrato si stacca dai bordi',
+      'Foglie opache, perdita di turgore',
+      'Caduta prematura di foglie nelle ore calde',
+      'Rallentamento crescita e stress visibile'
+    ],
+    fixes: [
+      'Irrigua subito con acqua a pH 6.0–6.5 in abbondanza finché non fuoriesce dal basso',
+      'Considera una doppia irrigazione a distanza di 30 min per reidratare substrati molto secchi',
+      'Aumenta la frequenza d'irrigazione, soprattutto in fase di fioritura avanzata',
+      'In estate valuta l'installazione di un sistema di irrigazione automatica a goccia',
+      'Controlla che le radici non abbiano colonizzato tutto il vaso (radici che escono sotto)'
+    ],
+    prevention: '💡 Monitora il peso del vaso quotidianamente. In fioritura le piante assorbono fino al doppio dell'acqua rispetto alla fase vegetativa.'
+  },
+  nutrients: {
+    emoji: '🧪', label: 'Carenza nutrienti',
+    severity: 'ALTO', sevClass: 'high',
+    color: 'var(--red)',
+    symptoms: [
+      'Ingiallimento tra le nervature (carenza ferro/manganese → foglie nuove)',
+      'Ingiallimento partendo dalle foglie basse (carenza azoto → foglie vecchie)',
+      'Margini e punte delle foglie bruciati (eccesso sali / lockout)',
+      'Macchie necrotiche marroni o rugginose (carenza calcio/magnesio)',
+      'Colorazione viola/rossa dei gambi (carenza fosforo in cold stress)'
+    ],
+    fixes: [
+      'Misura subito il pH della soluzione nutritiva: range ideale terra 6.2–6.8, coco/idro 5.5–6.2',
+      'Se pH fuori range, correggilo prima di aggiungere nutrienti',
+      'Effettua un flush con acqua pulita (3x volume vaso) per rimuovere accumuli salini',
+      'Reintroduci i nutrienti partendo dal 50% della dose consigliata',
+      'Identifica la carenza specifica: azoto (N) → foglie gialle basse; calcio → foglie nuove con macchie; magnesio → verde tra nervature'
+    ],
+    prevention: '💡 Controlla pH e EC ad ogni irrigazione. Mantieni EC 0.8–1.2 in veg, 1.4–2.0 in fioritura. Usa acqua osmotizzata per maggior controllo.'
+  },
+  pests: {
+    emoji: '🐛', label: 'Parassiti',
+    severity: 'ALTO', sevClass: 'high',
+    color: 'var(--purple)',
+    symptoms: [
+      'Puntini gialli/bianchi sulle foglie (acari ragnetto rosso)',
+      'Ragnatele fini sotto le foglie (acari)',
+      'Insetti piccoli che volano intorno al substrato (fungus gnat)',
+      'Foglie arricciate o deformate (afidi, trips)',
+      'Escrementi neri sulle foglie (afidi)'
+    ],
+    fixes: [
+      'Isola subito la pianta colpita dalle altre per evitare diffusione',
+      'Acari: tratta con Neem oil diluito (5ml/L) + sapone potassico, spray ogni 3 giorni x3',
+      'Fungus gnat: lascia asciugare bene il substrato, usa trappole gialle appiccicose, tratta con Bacillus thuringiensis israelensis',
+      'Afidi/trips: usa sapone potassico o Spinosad come insetticida biologico',
+      'Controlla la parte inferiore delle foglie a ogni ispezione, usa lente d'ingrandimento'
+    ],
+    prevention: '💡 Mantieni T < 26°C e umidità < 50% in fioritura. Usa zanzariere alle prese d'aria. Ispeziona le foglie 2x a settimana.'
+  },
+  mold: {
+    emoji: '🍄', label: 'Muffa / Botrytis',
+    severity: 'ALTO', sevClass: 'high',
+    color: 'var(--green)',
+    symptoms: [
+      'Macchie grigie o biancastre sui boccioli o foglie',
+      'Odore di muffa o umidità stantia',
+      'Boccioli che diventano marroni dall'interno',
+      'Polvere grigia che si disperde al tocco (Botrytis)',
+      'Foglie bianche con aspetto polveroso (oidio)'
+    ],
+    fixes: [
+      'Rimuovi SUBITO le parti colpite con cesoie disinfettate, metti in sacchetto chiuso',
+      'Aumenta la ventilazione: punta un ventilatore direttamente sui boccioli',
+      'Abbassa l'umidità sotto il 45% con deumidificatore in fioritura avanzata',
+      'Per oidio: tratta con bicarbonato di sodio (5g/L) + sapone potassico spray',
+      'In casi gravi di botrytis valuta raccolta anticipata per salvare il resto'
+    ],
+    prevention: '💡 In fioritura mantieni RH < 50%, ideale 40–45%. Rimuovi foglie grandi che toccano i boccioli. Buona circolazione d'aria è la migliore difesa.'
+  },
+  light: {
+    emoji: '💡', label: 'Stress da luce',
+    severity: 'MEDIO', sevClass: 'med',
+    color: '#ffe033',
+    symptoms: [
+      'Foglie che si orientano e arricciano verso la luce (light burn)',
+      'Sbiancamento o decolorazione delle foglie in cima (bleaching)',
+      'Foglie curvate a ombrello verso il basso (troppa luce intensa)',
+      'Margini bruciati sui coli/boccioli vicini alla lampada',
+      'In carenza: etiolazione, allungamento eccessivo degli internodi'
+    ],
+    fixes: [
+      'Light burn: aumenta la distanza dalla lampada di 10–15cm, consulta PPFD ideale per la fase',
+      'LED: mantieni almeno 40–60cm in veg, 30–50cm in fioritura',
+      'HPS/CMH: almeno 50–70cm in fioritura per evitare heat+light stress',
+      'Usa un PAR meter o app per misurare PPFD: ideale 400–600 veg, 600–1000+ fioritura',
+      'Se hai troppa poca luce: avvicina o aggiungi lampade laterali per i boccioli bassi'
+    ],
+    prevention: '💡 Regola l'intensità gradualmente (+10% ogni 3 giorni). Le piante si adattano lentamente. Usa dimmer se disponibile.'
+  },
+  rootbound: {
+    emoji: '🪴', label: 'Radici strette',
+    severity: 'MEDIO', sevClass: 'med',
+    color: '#c4874a',
+    symptoms: [
+      'Radici che escono dai fori di drenaggio',
+      'Substrato che si asciuga molto rapidamente',
+      'Crescita rallentata nonostante buona cura',
+      'Foglie che ingialliscono anche con nutrienti corretti',
+      'Vaso che si deforma per pressione delle radici'
+    ],
+    fixes: [
+      'Rinvasa in un contenitore almeno 2x più grande (es. da 6L a 11L, o 11L a 20L)',
+      'Usa vasi airpot o fabric pot per prevenire root bound e favorire air pruning',
+      'Al rinvaso: aggiungi substrato fresco con perlite 20%, non disturbare il root ball',
+      'Irriga abbondantemente dopo il rinvaso e mantieni in zona ombrosa 24–48h',
+      'Se in fioritura avanzata: evita il rinvaso, ottimizza l'irrigazione più frequente'
+    ],
+    prevention: '💡 Pianifica il rinvaso prima che le radici saturino il vaso. Un vaso troppo grande non è meglio: rallenta l'asciugatura e favorisce overwatering.'
+  },
+  heat: {
+    emoji: '🔥', label: 'Stress da calore',
+    severity: 'ALTO', sevClass: 'high',
+    color: '#ff5a32',
+    symptoms: [
+      'Foglie che si arricciano verso l'alto a "ciotola" (taco leaf)',
+      'Margini delle foglie bruciati e secchi',
+      'Boccioli che si aprono in modo anomalo (foxtailing)',
+      'Fiori sterili o con pochi terpeni in cima alla pianta',
+      'Crescita diurna bloccata, ripresa solo di notte'
+    ],
+    fixes: [
+      'Abbassa la temperatura sotto i 28°C durante il giorno, ideale 22–26°C',
+      'Inverte il ciclo luce: accendi le lampade di notte quando fa più fresco',
+      'Aumenta la ventilazione: estrai aria calda dall'alto, immetti aria fresca dal basso',
+      'Usa ventole oscillanti per creare brezza costante sulle piante',
+      'Considera l'uso di AC portatile o deumidificatori in estate'
+    ],
+    prevention: '💡 Temperatura ideale: 22–26°C giorno, 18–22°C notte. VPD ottimale 0.8–1.2 kPa. Monitora con termometro/igrometro digitale 24/7.'
+  }
+};
+
+window.S.selectedProblems = [];
+
+window.toggleProb = (btn, key) => {
+  const idx = S.selectedProblems.indexOf(key);
+  if (idx >= 0) {
+    S.selectedProblems.splice(idx, 1);
+    btn.classList.remove('sel');
+  } else {
+    S.selectedProblems.push(key);
+    btn.classList.add('sel');
+  }
+  document.getElementById('p-problems').value = S.selectedProblems.join(',');
+  renderDiagnosis();
+};
+
+window.renderDiagnosis = () => {
+  const el = document.getElementById('prob-diag');
+  if (!el) return;
+  const probs = S.selectedProblems;
+  if (!probs.length) { el.innerHTML = ''; return; }
+  el.innerHTML = probs.map(key => {
+    const d = PROBLEMS_DB[key];
+    if (!d) return '';
+    const syms = d.symptoms.map(s => `<div class="diag-sym">${s}</div>`).join('');
+    const fixes = d.fixes.map((f,i) => `<div class="diag-fix"><span class="diag-num">${i+1}</span>${f}</div>`).join('');
+    return `<div class="diag-card">
+      <div class="diag-head">
+        <div class="diag-emoji">${d.emoji}</div>
+        <div>
+          <div class="diag-title">${d.label}</div>
+          <div class="diag-sev ${d.sevClass}">⚡ PRIORITÀ ${d.severity}</div>
+        </div>
+      </div>
+      <div class="diag-sep"></div>
+      <div class="diag-sec-title">Sintomi da controllare</div>
+      ${syms}
+      <div class="diag-sep"></div>
+      <div class="diag-sec-title">Come risolvere</div>
+      ${fixes}
+      <div class="diag-prevent">${d.prevention}</div>
+    </div>`;
+  }).join('');
+};
+
+// ══════════════════════════════════════════════
+// GAUGE AMBIENTE — aggiorna gauge T/U con i dati
+// ══════════════════════════════════════════════
+window.updateEnvGauges = () => {
+  if (!S.envLogs.length) return;
+  const logs = [...S.envLogs].reverse();
+  const last = logs[0];
+  const temp = parseFloat(last.temp);
+  const hum  = parseFloat(last.hum);
+
+  // ── TEMPERATURA ──
+  if (!isNaN(temp)) {
+    const tEl   = document.getElementById('gauge-temp-val');
+    const tCard = document.getElementById('gauge-temp-card');
+    const tFill = document.getElementById('gauge-temp-fill');
+    const tStat = document.getElementById('gauge-temp-status');
+    if (!tEl) return;
+
+    // Stato
+    let tState, tLabel, tFillColor;
+    if (temp < 16)       { tState='danger'; tLabel='❄️ TROPPO FREDDA'; tFillColor='var(--blue)'; }
+    else if (temp < 20)  { tState='warn';   tLabel='🌡 UN PO' FREDDA'; tFillColor='var(--blue)'; }
+    else if (temp <= 28) { tState='ok';     tLabel='✓ OTTIMALE'; tFillColor='var(--green)'; }
+    else if (temp <= 32) { tState='warn';   tLabel='🌡 UN PO' CALDA'; tFillColor='var(--amber)'; }
+    else                 { tState='danger'; tLabel='🔥 TROPPO CALDA'; tFillColor='var(--red)'; }
+
+    tEl.innerHTML = temp + '<span class="gauge-unit">°C</span>';
+    tEl.className = 'gauge-val ' + tState;
+    tCard.className = 'gauge-card ' + tState;
+    tFill.style.width = Math.min(100, (temp/45)*100) + '%';
+    tFill.style.background = tFillColor;
+    tStat.textContent = tLabel;
+    tStat.className = 'gauge-status ' + tState;
+
+    // Sparkline temp (ultimi 7)
+    const temps = logs.slice(0,7).reverse().map(l=>parseFloat(l.temp)||0).filter(v=>v>0);
+    const maxT = Math.max(...temps, 1);
+    const sp = document.getElementById('spark-temp');
+    if (sp && temps.length > 1) {
+      sp.innerHTML = temps.map(v => {
+        const h = Math.max(3, (v/maxT)*24);
+        const col = v<=28?'var(--green)':v<=32?'var(--amber)':'var(--red)';
+        return `<div class="spark-bar" style="height:${h}px;background:${col};opacity:.7"></div>`;
+      }).join('');
+    }
+  }
+
+  // ── UMIDITÀ ──
+  if (!isNaN(hum)) {
+    const hEl   = document.getElementById('gauge-hum-val');
+    const hCard = document.getElementById('gauge-hum-card');
+    const hFill = document.getElementById('gauge-hum-fill');
+    const hStat = document.getElementById('gauge-hum-status');
+    if (!hEl) return;
+
+    let hState, hLabel, hFillColor;
+    if (hum < 30)       { hState='danger'; hLabel='🏜️ TROPPO SECCA'; hFillColor='var(--amber)'; }
+    else if (hum < 40)  { hState='warn';   hLabel='📉 UN PO' BASSA'; hFillColor='var(--amber)'; }
+    else if (hum <= 65) { hState='ok';     hLabel='✓ OTTIMALE'; hFillColor='var(--blue)'; }
+    else if (hum <= 75) { hState='warn';   hLabel='📈 UN PO' ALTA'; hFillColor='var(--amber)'; }
+    else                { hState='danger'; hLabel='💦 RISCHIO MUFFA'; hFillColor='var(--red)'; }
+
+    hEl.innerHTML = hum + '<span class="gauge-unit">%</span>';
+    hEl.className = 'gauge-val ' + hState;
+    hCard.className = 'gauge-card ' + hState;
+    hFill.style.width = Math.min(100, hum) + '%';
+    hFill.style.background = hFillColor;
+    hStat.textContent = hLabel;
+    hStat.className = 'gauge-status ' + hState;
+
+    // Sparkline umidità
+    const hums = logs.slice(0,7).reverse().map(l=>parseFloat(l.hum)||0).filter(v=>v>0);
+    const maxH = Math.max(...hums, 1);
+    const sph = document.getElementById('spark-hum');
+    if (sph && hums.length > 1) {
+      sph.innerHTML = hums.map(v => {
+        const h = Math.max(3, (v/maxH)*24);
+        const col = v<=65?'var(--blue)':v<=75?'var(--amber)':'var(--red)';
+        return `<div class="spark-bar" style="height:${h}px;background:${col};opacity:.7"></div>`;
+      }).join('');
+    }
+  }
+
+  // ── ALERTS ──
+  const alertsEl = document.getElementById('env-alerts');
+  if (!alertsEl) return;
+  const alerts = [];
+  const t = parseFloat(last.temp), h = parseFloat(last.hum);
+
+  if (!isNaN(t)) {
+    if (t > 32) alerts.push({type:'danger', icon:'🔥', title:'Temperatura critica: '+t+'°C', msg:'Rischio heat stress. Attiva ventilazione, abbassa la lampada o considera il raffreddamento attivo.'});
+    else if (t < 16) alerts.push({type:'danger', icon:'❄️', title:'Temperatura troppo bassa: '+t+'°C', msg:'Le radici si bloccano sotto i 16°C. Aggiungi riscaldamento o sposta le piante.'});
+    else if (t > 28) alerts.push({type:'warn', icon:'🌡', title:'Temperatura elevata: '+t+'°C', msg:'Aumenta ventilazione e monitora. Ideale non superare 26°C in fioritura.'});
+  }
+  if (!isNaN(h)) {
+    if (h > 75) alerts.push({type:'danger', icon:'🍄', title:'Umidità critica: '+h+'%', msg:'Rischio botrytis/muffa molto alto. Attiva deumidificatore subito e aumenta circolazione aria.'});
+    else if (h < 30) alerts.push({type:'danger', icon:'🏜️', title:'Umidità troppo bassa: '+h+'%', msg:'Le piante soffrono la disidratazione. Usa umidificatore o vaschette d'acqua.'});
+    else if (h > 65) alerts.push({type:'warn', icon:'💦', title:'Umidità alta: '+h+'%', msg:'In fioritura mantieni sotto il 50%. Apri le prese d'aria e controlla la ventilazione.'});
+  }
+  // VPD alert
+  if (!isNaN(t) && !isNaN(h)) {
+    const svp = 0.6108 * Math.exp(17.27*t/(t+237.3));
+    const vpd = svp * (1 - h/100);
+    const vpdRound = vpd.toFixed(2);
+    if (vpd < 0.4) alerts.push({type:'warn', icon:'💨', title:`VPD basso: ${vpdRound} kPa`, msg:'Vapour Pressure Deficit troppo basso → rischio muffa e assorbimento lento. Abbassa umidità o alza T.'});
+    else if (vpd > 1.6) alerts.push({type:'warn', icon:'💨', title:`VPD alto: ${vpdRound} kPa`, msg:'VPD troppo alto → traspirazione eccessiva, stress. Alza umidità o abbassa T. Ideale 0.8–1.2 kPa.'});
+  }
+
+  alertsEl.innerHTML = alerts.map(a =>
+    `<div class="env-alert ${a.type}">
+      <div class="env-alert-icon">${a.icon}</div>
+      <div class="env-alert-body">
+        <div class="env-alert-title">${a.title}</div>
+        <div class="env-alert-msg">${a.msg}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  // Aggiorna subtitle
+  const lastEl = document.getElementById('home-env-last');
+  if (lastEl) {
+    const parts = [!isNaN(t)?`🌡 ${t}°C`:'', !isNaN(h)?`💧 ${h}%`:''].filter(Boolean);
+    const d = last.date?.toDate ? last.date.toDate() : new Date(last.date);
+    lastEl.textContent = parts.join(' · ') + ' · ' + d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+  }
 };
 
 // ══ AUTH ══
@@ -1392,6 +1888,8 @@ window.renderHomeEnv = () => {
       ${l.note?`<span style="font-size:11px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.note}</span>`:''}
     </div>`;
   }).join('');
+  // Aggiorna i gauge dopo aver renderizzato la lista
+  window.updateEnvGauges && window.updateEnvGauges();
 };
 
 // ══ HOME CAL ══
@@ -1468,6 +1966,15 @@ window.renderPlants = () => {
         <div class="pc-stat"><div class="pc-sv" style="color:var(--purple)">€${lilAmt}</div><div class="pc-sl">LIL</div></div>
       </div>`:''}
       ${p.notes?`<div class="pc-note">${p.notes}</div>`:''}
+      ${(()=>{
+        if(!p.problems) return '';
+        const probs = p.problems.split(',').filter(Boolean);
+        if(!probs.length) return '';
+        const probColors = {overwater:'var(--blue)',underwater:'var(--amber)',nutrients:'var(--red)',pests:'var(--purple)',mold:'var(--green)',light:'#ffe033',rootbound:'#c4874a',heat:'#ff5a32'};
+        const probEmoji = {overwater:'💧',underwater:'🏜️',nutrients:'🧪',pests:'🐛',mold:'🍄',light:'💡',rootbound:'🪴',heat:'🔥'};
+        const probLabel = {overwater:'Eccesso H₂O',underwater:'Carenza H₂O',nutrients:'Nutrienti',pests:'Parassiti',mold:'Muffa',light:'Stress luce',rootbound:'Radici',heat:'Calore'};
+        return '<div class="plant-prob-row">' + probs.map(k=>`<span class="plant-prob-badge" style="background:${probColors[k]}22;color:${probColors[k]};border:1px solid ${probColors[k]}44">${probEmoji[k]} ${probLabel[k]||k}</span>`).join('') + '</div>';
+      })()}
     </div>`;
   }).join('');
 };
@@ -1498,8 +2005,17 @@ window.openPlantModal = (id) => {
       document.getElementById('p-yield').value=p.yield||'';
       document.getElementById('p-sale').value=p.sale||'';
       document.getElementById('p-status').value=p.status||'growing';
+      document.getElementById('p-phase').value=p.phase||'';
       document.getElementById('p-notes').value=p.notes||'';
       document.getElementById('p-editing-id').value=id;
+      // Ripristina problemi
+      S.selectedProblems = p.problems ? p.problems.split(',').filter(Boolean) : [];
+      document.getElementById('p-problems').value = p.problems||'';
+      document.querySelectorAll('.prob-chip').forEach(btn => {
+        const key = btn.getAttribute('onclick').match(/'([^']+)'\)/)?.[1];
+        btn.classList.toggle('sel', S.selectedProblems.includes(key));
+      });
+      renderDiagnosis();
       updatePlantCalc();
     }
   } else {
@@ -1508,8 +2024,13 @@ window.openPlantModal = (id) => {
     document.getElementById('plant-del-btn').style.display='none';
     ['p-name','p-gen','p-end','p-yield','p-sale','p-notes'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('p-status').value='growing';
+    document.getElementById('p-phase').value='';
     document.getElementById('p-editing-id').value='';
+    document.getElementById('p-problems').value='';
     document.getElementById('plant-calc-preview').style.display='none';
+    S.selectedProblems = [];
+    document.querySelectorAll('.prob-chip').forEach(b=>b.classList.remove('sel'));
+    document.getElementById('prob-diag').innerHTML='';
   }
 };
 window.closePlantModal = () => document.getElementById('plant-modal').classList.remove('open');
@@ -1531,6 +2052,8 @@ window.savePlant = async () => {
     yield:document.getElementById('p-yield').value,
     sale:document.getElementById('p-sale').value,
     status:document.getElementById('p-status').value,
+    phase:document.getElementById('p-phase').value,
+    problems:document.getElementById('p-problems').value,
     notes:document.getElementById('p-notes').value,
     updatedAt:serverTimestamp()};
   const editId=document.getElementById('p-editing-id').value;
@@ -1643,10 +2166,19 @@ window.renderEnv=()=>{
   if(!logs.length){el.innerHTML='<div style="color:var(--muted);font-size:13px">Nessun dato.</div>';renderHomeEnv();return;}
   el.innerHTML=logs.map(l=>{
     const d=l.date?.toDate?l.date.toDate():new Date(l.date);
+    const t=parseFloat(l.temp), h=parseFloat(l.hum);
+    let vpd='';
+    if(!isNaN(t)&&!isNaN(h)){
+      const svp=0.6108*Math.exp(17.27*t/(t+237.3));
+      const v=(svp*(1-h/100)).toFixed(2);
+      const vCol=v<0.4?'var(--blue)':v>1.6?'var(--red)':'var(--green)';
+      vpd=`<span class="env-val" style="color:${vCol};font-size:10px">VPD ${v}</span>`;
+    }
     return `<div class="env-row">
       <span class="env-date">${d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'})}</span>
       ${l.temp?`<span class="env-val" style="color:var(--amber)">🌡 ${l.temp}°C</span>`:''}
       ${l.hum?`<span class="env-val" style="color:var(--blue)">💧 ${l.hum}%</span>`:''}
+      ${vpd}
       ${l.note?`<span class="env-note">${l.note}</span>`:''}
     </div>`;
   }).join('');
