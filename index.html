@@ -1255,6 +1255,20 @@ textarea { resize: none; }
 </div>
 
 <!-- ══════════════ FIREBASE ══════════════ -->
+<script>
+// FALLBACK IMMEDIATO — si esegue subito, prima del modulo
+(function(){
+  // Nascondi loading dopo 3s se il modulo JS non risponde
+  setTimeout(function(){
+    var ld = document.getElementById('loading');
+    var login = document.getElementById('login-screen');
+    if(ld && ld.style.display !== 'none'){
+      ld.style.display = 'none';
+      if(login) login.style.display = 'flex';
+    }
+  }, 3000);
+})();
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
@@ -1262,6 +1276,11 @@ import {
   addDoc, setDoc, updateDoc, deleteDoc,
   query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// Cattura errori nel modulo e mostra login invece di bloccarsi
+window.addEventListener('unhandledrejection', e => {
+  console.error('Unhandled promise:', e.reason);
+});
 
 const app = initializeApp({
   apiKey: "AIzaSyAq4qISQeQCeqUH2PbGdvTEuOvLhISMfyc",
@@ -2290,53 +2309,35 @@ document.querySelectorAll('.overlay').forEach(o=>{
   o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});
 });
 
-// ══ GLOBAL ERROR HANDLER - hide loading on any error ══
-window.addEventListener('error', (e) => {
-  console.error('App error:', e);
+// ══ BOOT: eseguito alla fine del modulo (i moduli sono già deferred) ══
+(function boot() {
   const ld = document.getElementById('loading');
-  if (ld && ld.style.display !== 'none') {
-    ld.style.display = 'none';
-    document.getElementById('login-screen').style.display = 'flex';
-  }
-});
+  const login = document.getElementById('login-screen');
+  const app = document.getElementById('main-app');
 
-// ══ INIT ══
-// Hard fallback - always hide loading after 2.5s
-const hideLoading = () => {
-  const ld = document.getElementById('loading');
-  if (ld) ld.style.display = 'none';
-};
-setTimeout(() => {
-  hideLoading();
-  if (!window.S?.user) {
-    const ls = document.getElementById('login-screen');
-    if (ls && ls.style.display === 'none') ls.style.display = 'flex';
-  }
-}, 2500);
+  const hide = () => { if(ld) ld.style.display = 'none'; };
 
-window.addEventListener('DOMContentLoaded',()=>{
-  // Pre-hide loading faster on dom ready
-  const saved = localStorage.getItem('gm_user');
-  if (!saved) {
-    document.getElementById('loading').style.display='none';
-    document.getElementById('login-screen').style.display='flex';
+  try {
+    const saved = localStorage.getItem('gm_user');
+    if (saved) {
+      window.S.user = saved;
+      window.S.unread = 0;
+      hide();
+      app.style.display = 'flex';
+      document.getElementById('home-greeting').textContent = 'Ciao, ' + saved + ' 🌿';
+      startListeners();
+      updateNotifStatusUI();
+      setTimeout(() => requestNotifPermission().then(() => updateNotifStatusUI()), 2500);
+    } else {
+      hide();
+      login.style.display = 'flex';
+    }
+  } catch(e) {
+    console.error('Boot error:', e);
+    hide();
+    if(login) login.style.display = 'flex';
   }
-});
-
-window.addEventListener('load',()=>{
-  const saved=localStorage.getItem('gm_user');
-  document.getElementById('loading').style.display='none';
-  if(saved){
-    S.user=saved; S.unread=0;
-    document.getElementById('main-app').style.display='flex';
-    document.getElementById('home-greeting').textContent=`Ciao, ${saved} 🌿`;
-    startListeners();
-    updateNotifStatusUI();
-    setTimeout(()=>requestNotifPermission().then(()=>updateNotifStatusUI()),2000);
-  } else {
-    document.getElementById('login-screen').style.display='flex';
-  }
-});
+})();
 </script>
 </body>
 </html>
