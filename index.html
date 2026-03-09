@@ -20,15 +20,16 @@
 <!-- ═══════════════════════════════════════════════════ -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 /* ══════════════════════════════════════════
    GROWMANAGER v3 — Advanced Modules
    Phase · Nutrients · Calendar · Envs · Pests
 ══════════════════════════════════════════ */
 :root{
-  --ff-d:'Fraunces',Georgia,serif;
-  --ff-b:'DM Sans',system-ui,sans-serif;
+  --ff-d:'Syne',sans-serif;
+  --ff-b:'Space Grotesk',sans-serif;
   --ff-m:'Fira Code','Cascadia Code',monospace;
 
   --g50:#F0F7EE;--g100:#D6EDD1;--g200:#AADBA0;--g300:#7DC470;
@@ -103,19 +104,36 @@ a,button,input,select,textarea,label,[onclick],[role="button"]{
 /* ── TOPBAR ── */
 .topbar{
   display:flex;align-items:center;justify-content:space-between;
-  /* padding-top include la safe area per notch/Dynamic Island iOS */
   padding:calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
   position:sticky;top:0;
-  /* z-index sopra TUTTO tranne i modali — non può essere coperto */
   z-index:1600;
-  background:var(--bg);border-bottom:1px solid var(--bd);
+  background:var(--bg);
+  border-bottom:1px solid var(--bd);
+  box-shadow:0 1px 0 0 var(--bd);
   transition:background .3s,border-color .3s;
 }
-.topbar__brand{display:flex;align-items:center;gap:9px}
-.brand-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--g400),var(--g700));display:flex;align-items:center;justify-content:center;font-size:16px}
-.brand-name{font-family:var(--ff-d);font-size:16px;font-weight:700;letter-spacing:-.03em}
-.brand-tag{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--pr-l);color:var(--pr-d);padding:2px 7px;border-radius:99px}
-[data-theme="dark"] .brand-tag{color:var(--g200)}
+.topbar__brand{display:flex;align-items:center;gap:10px}
+.brand-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:#0A150B;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 0 0 1px rgba(86,174,71,.3), 0 2px 8px rgba(0,0,0,.2);
+}
+.brand-name{
+  font-family:var(--ff-d);font-size:17px;font-weight:800;
+  letter-spacing:-.02em;color:var(--t1);
+  line-height:1;
+}
+.brand-tag{
+  font-family:var(--ff-m);
+  font-size:8px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  background:var(--g800);color:var(--g300);
+  padding:3px 8px;border-radius:4px;
+  border:1px solid rgba(86,174,71,.25);
+}
+[data-theme="dark"] .brand-icon{box-shadow:0 0 0 1px rgba(122,212,87,.35), 0 0 12px rgba(86,174,71,.15)}
+[data-theme="dark"] .brand-tag{background:rgba(86,174,71,.12);color:var(--g300);border-color:rgba(86,174,71,.3)}
 .hbtn{width:34px;height:34px;border-radius:var(--r-m);border:1px solid var(--bd);background:var(--sf);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t3);font-size:14px;-webkit-tap-highlight-color:transparent;transition:background .15s,transform .12s}
 .hbtn:active{transform:scale(.88)}
 
@@ -303,6 +321,126 @@ a,button,input,select,textarea,label,[onclick],[role="button"]{
 .modal-handle{width:38px;height:4px;background:var(--bd);border-radius:99px;margin:11px auto 18px}
 .modal-title{font-family:var(--ff-d);font-size:20px;font-weight:700;color:var(--t1);margin-bottom:18px;letter-spacing:-.02em}
 
+
+/* ══════════════════════════════════════════
+   PHASE HERO CARD — Home Screen
+══════════════════════════════════════════ */
+.phase-hero{
+  margin:0 -16px;
+  padding:22px 20px 20px;
+  background:linear-gradient(155deg,#0A150B 0%,#152A18 55%,#0D1F0E 100%);
+  position:relative;overflow:hidden;
+  border-bottom:1px solid rgba(86,174,71,.2);
+}
+.phase-hero::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  opacity:.5;pointer-events:none;
+}
+.phase-hero::after{
+  content:'';position:absolute;top:-40px;right:-30px;
+  width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(86,174,71,.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.phase-hero__top{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;position:relative;z-index:1;
+}
+.phase-hero__eyebrow{
+  font-family:var(--ff-m);font-size:9px;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(122,212,87,.65);
+}
+.phase-hero__badge{
+  font-family:var(--ff-d);font-size:10px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 10px;border-radius:4px;
+  background:rgba(86,174,71,.18);
+  border:1px solid rgba(86,174,71,.35);
+  color:#7AD457;
+}
+.phase-hero__badge.bloom{ background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.35);color:#FCD34D; }
+.phase-hero__badge.flush{ background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.35);color:#93C5FD; }
+.phase-hero__badge.harvest{ background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.35);color:#C4B5FD; }
+
+.phase-hero__main{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:18px;position:relative;z-index:1;
+}
+.phase-hero__plant-name{
+  font-family:var(--ff-d);font-size:28px;font-weight:800;
+  color:#E8F5E4;line-height:1.05;letter-spacing:-.03em;
+  text-shadow:0 2px 20px rgba(86,174,71,.3);
+}
+.phase-hero__day-block{text-align:right}
+.phase-hero__day-num{
+  font-family:var(--ff-d);font-size:42px;font-weight:800;
+  line-height:1;color:#4ADE80;
+  text-shadow:0 0 20px rgba(74,222,128,.4);
+  letter-spacing:-.04em;
+}
+.phase-hero__day-lbl{
+  font-family:var(--ff-m);font-size:9px;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(122,212,87,.55);text-align:right;
+  margin-top:2px;
+}
+.phase-hero__progress{
+  position:relative;z-index:1;margin-bottom:12px;
+}
+.phase-hero__prog-track{
+  height:3px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;
+}
+.phase-hero__prog-fill{
+  height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#3D9130,#4ADE80);
+  box-shadow:0 0 8px rgba(74,222,128,.5);
+  transition:width .8s cubic-bezier(.16,1,.3,1);
+}
+.phase-hero__prog-fill.bloom-fill{ background:linear-gradient(90deg,#D97706,#FCD34D); box-shadow:0 0 8px rgba(252,211,77,.4);}
+.phase-hero__dates{
+  display:flex;justify-content:space-between;
+  font-family:var(--ff-m);font-size:9px;color:rgba(255,255,255,.3);
+  letter-spacing:.04em;margin-top:5px;position:relative;z-index:1;
+}
+
+/* ══ SEC-TITLE upgrade ══ */
+.sec-title{
+  font-family:var(--ff-d);font-size:22px;font-weight:800;
+  letter-spacing:-.04em;color:var(--t1);margin-bottom:4px;
+}
+.sec-sub{font-size:13px;color:var(--t3);margin-bottom:18px;line-height:1.5}
+
+/* ══ DAY STATS upgrade ══ */
+.days-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.day-stat{
+  background:var(--sf);border:1px solid var(--bd);
+  border-radius:var(--r-l);padding:14px 10px 12px;
+  text-align:center;position:relative;overflow:hidden;
+  transition:background .3s,border-color .3s;
+}
+.day-stat::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--stat-accent, var(--pr));opacity:.6;
+}
+.day-stat__val{
+  font-family:var(--ff-d);font-size:26px;font-weight:800;
+  line-height:1.05;letter-spacing:-.03em;
+}
+.day-stat__lbl{
+  font-family:var(--ff-m);font-size:8px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--t4);margin-top:4px;
+}
+
+/* ══ PLANT SELECTOR upgrade ══ */
+.plant-selector-label{
+  font-family:var(--ff-m);font-size:9px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:var(--t4);margin-bottom:7px;display:block;
+}
+
 /* ══════════════════════════════════════════
    1. PHASE TRANSITION
 ══════════════════════════════════════════ */
@@ -342,6 +480,156 @@ a,button,input,select,textarea,label,[onclick],[role="button"]{
 .fase-confirm__title{font-family:var(--ff-d);font-size:17px;font-weight:700;color:var(--t1);margin-bottom:8px}
 .fase-confirm__info{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:14px}
 .fase-confirm__fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+
+/* ══════════════════════════════════════════
+   HOME TABS
+══════════════════════════════════════════ */
+.home-tabs{
+  display:flex;gap:0;
+  background:var(--bg2);border-radius:var(--r-l);
+  padding:3px;margin-bottom:16px;
+}
+.home-tab{
+  flex:1;padding:9px 6px;
+  border:none;background:none;border-radius:var(--r-m);
+  font-family:var(--ff-m);font-size:10px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;
+  color:var(--t3);cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:all .22s cubic-bezier(.16,1,.3,1);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.home-tab.on{
+  background:var(--sf);color:var(--t1);
+  box-shadow:0 1px 4px rgba(0,0,0,.08),0 0 0 .5px var(--bd);
+}
+.home-tab svg{width:13px;height:13px;flex-shrink:0}
+.home-tab-panel{display:none}
+.home-tab-panel.on{display:block}
+
+/* ══════════════════════════════════════════
+   FINANCIAL RECAP
+══════════════════════════════════════════ */
+.fin-total-card{
+  background:linear-gradient(135deg,#0A150B 0%,#0D2A18 55%,#0A1F12 100%);
+  border-radius:var(--r-xl);padding:20px;margin-bottom:12px;
+  position:relative;overflow:hidden;
+  border:1px solid rgba(86,174,71,.2);
+}
+.fin-total-card::after{
+  content:'';position:absolute;bottom:-30px;right:-20px;
+  width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,222,128,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.fin-total-card__ey{
+  font-family:var(--ff-m);font-size:9px;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(122,212,87,.55);margin-bottom:6px;
+}
+.fin-total-card__amount{
+  font-family:var(--ff-d);font-size:38px;font-weight:800;
+  color:#4ADE80;line-height:1;letter-spacing:-.04em;
+  text-shadow:0 0 24px rgba(74,222,128,.35);
+}
+.fin-total-card__currency{font-size:20px;font-weight:700;opacity:.7}
+.fin-total-card__sub{
+  font-family:var(--ff-m);font-size:10px;color:rgba(255,255,255,.3);
+  letter-spacing:.06em;margin-top:6px;
+}
+.fin-total-card__row{
+  display:flex;gap:10px;margin-top:14px;
+  position:relative;z-index:1;
+}
+.fin-mini-stat{
+  flex:1;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--r-m);padding:10px 8px;text-align:center;
+}
+.fin-mini-stat__val{
+  font-family:var(--ff-d);font-size:18px;font-weight:800;
+  color:#E8F5E4;line-height:1;
+}
+.fin-mini-stat__lbl{
+  font-family:var(--ff-m);font-size:8px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-top:4px;
+}
+
+.fin-inputs{
+  background:var(--sf);border:1px solid var(--bd);
+  border-radius:var(--r-xl);padding:16px;margin-bottom:12px;
+}
+.fin-inputs__title{
+  font-family:var(--ff-d);font-size:14px;font-weight:800;
+  color:var(--t1);margin-bottom:12px;letter-spacing:-.02em;
+}
+.fin-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.fin-field{}
+.fin-field label{
+  display:block;font-family:var(--ff-m);font-size:9px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--t4);margin-bottom:5px;
+}
+.fin-inp{
+  width:100%;padding:10px 12px;
+  background:var(--bg);border:1.5px solid var(--bd);
+  border-radius:var(--r-m);
+  font-family:var(--ff-d);font-size:18px;font-weight:800;
+  color:var(--t1);letter-spacing:-.02em;
+  transition:border-color .18s,background .18s;
+  -webkit-appearance:none;appearance:none;
+}
+.fin-inp:focus{outline:none;border-color:var(--pr);background:var(--sf)}
+.fin-inp::placeholder{color:var(--t4);font-size:16px}
+
+.fin-breakdown{
+  background:var(--sf2);border:1px solid var(--bd);
+  border-radius:var(--r-xl);padding:14px 16px;margin-bottom:12px;
+}
+.fin-breakdown-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 0;border-bottom:1px solid var(--bd);
+}
+.fin-breakdown-row:last-child{border-bottom:none;padding-bottom:0}
+.fin-breakdown-row:first-child{padding-top:0}
+.fin-breakdown-row__lbl{
+  font-size:12px;color:var(--t2);
+  display:flex;align-items:center;gap:7px;
+}
+.fin-breakdown-row__dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.fin-breakdown-row__val{
+  font-family:var(--ff-d);font-size:14px;font-weight:800;
+  color:var(--t1);letter-spacing:-.02em;
+}
+.fin-breakdown-row__val.green{color:var(--g500)}
+.fin-breakdown-row__val.amber{color:var(--am500)}
+.fin-breakdown-row__val.violet{color:var(--vi400)}
+
+.fin-profit-bar{
+  background:var(--sf);border:1px solid var(--bd);
+  border-radius:var(--r-xl);padding:14px 16px;margin-bottom:12px;
+}
+.fin-profit-bar__head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.fin-profit-bar__title{font-size:12px;font-weight:700;color:var(--t2)}
+.fin-profit-bar__pct{
+  font-family:var(--ff-d);font-size:14px;font-weight:800;
+  color:var(--g500);letter-spacing:-.02em;
+}
+.fin-stack{display:flex;height:8px;border-radius:99px;overflow:hidden;gap:2px;margin-bottom:8px}
+.fin-stack-seg{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.16,1,.3,1)}
+.fin-stack-legend{display:flex;gap:12px;flex-wrap:wrap}
+.fin-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t3)}
+.fin-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+.fin-empty{
+  text-align:center;padding:28px 16px;
+}
+.fin-empty__icon{font-size:36px;margin-bottom:10px}
+.fin-empty__title{font-family:var(--ff-d);font-size:15px;font-weight:800;color:var(--t2);margin-bottom:4px}
+.fin-empty__sub{font-size:12px;color:var(--t4);line-height:1.5}
 
 /* ══════════════════════════════════════════
    2. NUTRIENT SCHEDULER
@@ -1047,6 +1335,171 @@ body.stealth-mode .stealth-badge{display:block}
 #pwa-install-trigger:active{ transform:scale(.93) }
 [data-theme="dark"] #pwa-install-trigger{ color:var(--g200) }
 
+/* ══════════════════════════════════════════
+   SPLASH SCREEN
+══════════════════════════════════════════ */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:#0A150B;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;
+  transition:opacity .5s ease, transform .5s ease;
+}
+#splash.out{opacity:0;pointer-events:none}
+.splash__logo{
+  width:64px;height:64px;border-radius:18px;
+  background:rgba(86,174,71,.12);
+  border:1.5px solid rgba(86,174,71,.25);
+  display:flex;align-items:center;justify-content:center;
+  animation:splashPop .6s cubic-bezier(.34,1.56,.64,1) both .1s;
+}
+.splash__name{
+  font-family:var(--ff-d);font-size:26px;font-weight:800;
+  color:#E8F5E4;letter-spacing:-.03em;
+  animation:splashFade .5s ease both .3s;
+}
+.splash__sub{
+  font-family:var(--ff-m);font-size:10px;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(122,212,87,.45);
+  animation:splashFade .5s ease both .5s;
+}
+.splash__bar{
+  width:48px;height:2px;border-radius:99px;
+  background:rgba(255,255,255,.07);overflow:hidden;
+  animation:splashFade .5s ease both .6s;
+}
+.splash__bar-fill{
+  height:100%;background:var(--g400);border-radius:99px;
+  animation:splashLoad 1.1s cubic-bezier(.4,0,.2,1) both .7s;
+}
+@keyframes splashPop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+@keyframes splashFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes splashLoad{from{width:0}to{width:100%}}
+
+/* ══════════════════════════════════════════
+   LANGUAGE BUTTON
+══════════════════════════════════════════ */
+#lang-btn{
+  height:28px;padding:0 9px;border-radius:6px;
+  border:1px solid var(--bd);background:var(--sf);
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--ff-m);font-size:10px;font-weight:700;
+  letter-spacing:.08em;color:var(--t2);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:background .15s,border-color .15s,transform .1s;
+}
+#lang-btn:active{transform:scale(.90)}
+#lang-btn:hover{border-color:var(--pr);color:var(--pr-d)}
+
+/* ══════════════════════════════════════════
+   SECTION TITLE DECORATION
+══════════════════════════════════════════ */
+.sec-header{
+  margin-bottom:18px;
+}
+.sec-header .sec-title{margin-bottom:3px}
+.sec-header .sec-sub{margin-bottom:0}
+.sec-title-accent{
+  display:inline-flex;align-items:center;gap:8px;
+}
+.sec-title-accent::before{
+  content:'';display:inline-block;
+  width:4px;height:1.1em;border-radius:2px;
+  background:var(--pr);flex-shrink:0;
+  transform:translateY(.05em);
+}
+
+/* ══════════════════════════════════════════
+   FAB — AGGIUNGI PIANTA
+══════════════════════════════════════════ */
+#fab-add-plant{
+  position:fixed;
+  bottom:calc(var(--nav-h) + var(--safe-b) + 14px);
+  right:16px;
+  z-index:1200;
+  width:52px;height:52px;border-radius:16px;
+  background:linear-gradient(135deg,var(--g500),var(--g400));
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(86,174,71,.45), 0 1px 3px rgba(0,0,0,.15);
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  animation:fabIn .5s cubic-bezier(.34,1.56,.64,1) both 1.2s;
+}
+#fab-add-plant:active{transform:scale(.88);box-shadow:0 2px 8px rgba(86,174,71,.3)}
+@keyframes fabIn{from{opacity:0;transform:scale(0)translateY(20px)}to{opacity:1;transform:scale(1)translateY(0)}}
+
+/* ══════════════════════════════════════════
+   ADD PLANT MODAL
+══════════════════════════════════════════ */
+.ap-form{display:flex;flex-direction:column;gap:14px}
+.ap-field label{
+  display:block;
+  font-family:var(--ff-m);font-size:9px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--t4);margin-bottom:6px;
+}
+.ap-strain-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ap-strain-btn{
+  padding:10px 8px;border-radius:var(--r-m);
+  border:1.5px solid var(--bd);background:var(--sf2);
+  font-size:12px;font-weight:700;color:var(--t2);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:all .18s;text-align:center;
+}
+.ap-strain-btn.on{
+  border-color:var(--pr);background:var(--pr-l);color:var(--pr-d);
+}
+[data-theme="dark"] .ap-strain-btn.on{color:var(--g200)}
+.ap-strain-btn:active{transform:scale(.95)}
+.ap-cycle-slider{
+  width:100%;
+  -webkit-appearance:none;appearance:none;
+  height:4px;border-radius:99px;
+  background:var(--bd2);outline:none;
+  accent-color:var(--g400);
+}
+.ap-cycle-display{
+  display:flex;justify-content:space-between;
+  align-items:center;margin-top:6px;
+}
+.ap-cycle-val{
+  font-family:var(--ff-d);font-size:22px;font-weight:800;
+  color:var(--g500);letter-spacing:-.03em;
+}
+.ap-cycle-lbl{
+  font-family:var(--ff-m);font-size:9px;color:var(--t4);
+  letter-spacing:.1em;text-transform:uppercase;
+}
+
+/* ══════════════════════════════════════════
+   PROFILE — Language row
+══════════════════════════════════════════ */
+.lang-pills{
+  display:flex;gap:5px;
+}
+.lang-pill{
+  padding:4px 10px;border-radius:6px;
+  border:1.5px solid var(--bd);background:var(--sf2);
+  font-family:var(--ff-m);font-size:10px;font-weight:700;
+  letter-spacing:.08em;color:var(--t3);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:all .18s;
+}
+.lang-pill.on{
+  border-color:var(--pr);background:var(--pr-l);color:var(--pr-d);
+}
+[data-theme="dark"] .lang-pill.on{color:var(--g200)}
+
+/* ══════════════════════════════════════════
+   SECTION TITLE — improved font size
+══════════════════════════════════════════ */
+.sec-title{
+  font-family:var(--ff-d);font-size:23px;font-weight:800;
+  letter-spacing:-.04em;color:var(--t1);margin-bottom:4px;
+}
+
 </style>
 </head>
 <!-- ════════════════════════════════════
@@ -1161,12 +1614,43 @@ try {
 <!-- Stealth badge (shown when stealth mode active) -->
 <div class="stealth-badge" id="stealth-badge">🕵️ Modalità Discreta</div>
 
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="splash__logo">
+    <svg width="36" height="36" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="9.5" y="13" width="3" height="7" rx="1.5" fill="#56AE47"/>
+      <circle cx="11" cy="20" r="1.2" fill="#4ADE80"/>
+      <path d="M11 13C11 13 4.5 11.5 4 5C4 5 10.5 3.5 11 13Z" fill="#56AE47"/>
+      <path d="M11 16C11 16 17 14.5 18 8C18 8 11.5 6 11 16Z" fill="#3D9130"/>
+      <circle cx="7" cy="7" r="1" fill="#4ADE80" opacity=".6"/>
+      <circle cx="16" cy="10" r=".8" fill="#4ADE80" opacity=".5"/>
+    </svg>
+  </div>
+  <div class="splash__name">GrowManager</div>
+  <div class="splash__sub">Advanced Modules v3</div>
+  <div class="splash__bar"><div class="splash__bar-fill"></div></div>
+</div>
+
+<!-- FAB ADD PLANT -->
+<button id="fab-add-plant" onclick="openModal('modal-add-plant')" aria-label="Aggiungi pianta">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
+
 <div class="shell">
 
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar__brand">
-    <div class="brand-icon">🌱</div>
+    <div class="brand-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="9.5" y="13" width="3" height="7" rx="1.5" fill="#56AE47"/>
+        <circle cx="11" cy="20" r="1.2" fill="#4ADE80"/>
+        <path d="M11 13C11 13 4.5 11.5 4 5C4 5 10.5 3.5 11 13Z" fill="#56AE47"/>
+        <path d="M11 16C11 16 17 14.5 18 8C18 8 11.5 6 11 16Z" fill="#3D9130"/>
+        <circle cx="7" cy="7" r="1" fill="#4ADE80" opacity=".6"/>
+        <circle cx="16" cy="10" r=".8" fill="#4ADE80" opacity=".5"/>
+      </svg>
+    </div>
     <div>
       <div class="brand-name">GrowManager</div>
     </div>
@@ -1178,6 +1662,7 @@ try {
       Installa
     </button>
     <button class="topbar-stealth" id="stealth-btn" onclick="stealthToggle()" title="Modalità Discreta">👁</button>
+    <button id="lang-btn" onclick="toggleLang()" aria-label="Cambia lingua">🌐 IT</button>
     <button class="hbtn" id="theme-btn" style="position:relative;">☀️
       <span id="pwa-update-dot"></span>
     </button>
@@ -1189,15 +1674,38 @@ try {
      SCREEN 1 — FASE & FIORITURA
 ══════════════════════════════════════════ -->
 <div class="screen on" id="sc-phase">
+
+  <!-- ══ HERO CARD ══ -->
+  <div class="phase-hero s1" id="phase-hero">
+    <div class="phase-hero__top">
+      <span class="phase-hero__eyebrow">GROW SESSION ATTIVA</span>
+      <span class="phase-hero__badge" id="hero-phase-badge">VEG</span>
+    </div>
+    <div class="phase-hero__main">
+      <div class="phase-hero__plant-name" id="hero-plant-name">OG Kush #3</div>
+      <div class="phase-hero__day-block">
+        <div class="phase-hero__day-num" id="hero-days">42</div>
+        <div class="phase-hero__day-lbl">GIORNI</div>
+      </div>
+    </div>
+    <div class="phase-hero__progress">
+      <div class="phase-hero__prog-track">
+        <div class="phase-hero__prog-fill" id="hero-prog-fill" style="width:60%"></div>
+      </div>
+      <div class="phase-hero__dates">
+        <span id="hero-date-start">12 Gen 2025</span>
+        <span id="hero-pct">60%</span>
+        <span id="hero-date-end">23 Mar 2025</span>
+      </div>
+    </div>
+  </div>
+
 <div class="pad" style="padding-top:16px;">
 
-  <div class="sec-title s1">Ciclo Vitale</div>
-  <div class="sec-sub s1">Gestisci le fasi e la transizione alla fioritura</div>
-
   <!-- Plant selector -->
-  <div class="s1">
+  <div class="s2">
     <div class="fg">
-      <div class="fl">Pianta selezionata</div>
+      <span class="plant-selector-label">Pianta selezionata</span>
       <select class="fsel" id="plant-select" onchange="loadPlantData()">
         <option value="ogkush">OG Kush #3 — Giorno 42 (Veg)</option>
         <option value="ww">White Widow — Giorno 18 (Veg)</option>
@@ -1207,114 +1715,238 @@ try {
   </div>
 
   <!-- Phase Timeline -->
-  <div class="s2">
+  <div class="s3">
     <div class="label">Timeline Ciclo</div>
     <div class="phase-timeline" id="phase-timeline"></div>
   </div>
 
-  <!-- Day stats -->
-  <div class="days-grid s3">
-    <div class="day-stat">
-      <div class="day-stat__val" id="ds-total" style="color:var(--pr)">42</div>
-      <div class="day-stat__lbl">Giorni Totali</div>
-    </div>
-    <div class="day-stat">
-      <div class="day-stat__val" id="ds-fase" style="color:var(--am400)">0</div>
-      <div class="day-stat__lbl">Gg Fioritura</div>
-    </div>
-    <div class="day-stat">
-      <div class="day-stat__val" id="ds-rem" style="color:var(--vi400)">—</div>
-      <div class="day-stat__lbl">Gg Rimanenti</div>
-    </div>
+  <!-- Progress bar (hidden — shown in hero) -->
+  <div style="display:none">
+    <span id="prog-label"></span><span id="prog-badge"></span>
+    <div id="prog-bar"></div>
+    <span id="prog-start"></span><span id="prog-end"></span>
   </div>
 
-  <!-- Progress bar -->
-  <div class="card s3" style="padding:14px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-      <div style="font-size:13px;font-weight:700;color:var(--t1)" id="prog-label">Progresso Ciclo</div>
-      <div class="badge badge-am" id="prog-badge">60%</div>
-    </div>
-    <div class="pbar-wrap">
-      <div class="pbar"><div class="pbar-fill pbar-fill-am" id="prog-bar" style="width:60%"></div></div>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t4);margin-top:6px;font-family:var(--ff-m);">
-      <span>Inizio: <span id="prog-start">12 Gen 2025</span></span>
-      <span>Fine stimata: <span id="prog-end">23 Mar 2025</span></span>
-    </div>
-  </div>
-
-  <!-- BLOOM TRANSITION CARD -->
-  <div class="bloom-card s4" id="bloom-cta-card">
-    <div class="bloom-card__ey">🌸 Prossimo Step</div>
-    <div class="bloom-card__title" id="bloom-cta-title">Pronto per la Fioritura?</div>
-    <div class="bloom-card__row" id="bloom-cta-stats">
-      <div class="bloom-card__stat">
-        <div class="bloom-card__stat-val" id="bloom-est-days">56</div>
-        <div class="bloom-card__stat-lbl">Gg Stimati Bloom</div>
-      </div>
-      <div class="bloom-card__div"></div>
-      <div class="bloom-card__stat">
-        <div class="bloom-card__stat-val" id="bloom-harvest-date">15 Mag</div>
-        <div class="bloom-card__stat-lbl">Raccolto Previsto</div>
-      </div>
-      <div class="bloom-card__div"></div>
-      <div class="bloom-card__stat">
-        <div class="bloom-card__stat-val" id="bloom-total">98</div>
-        <div class="bloom-card__stat-lbl">Gg Ciclo Totale</div>
-      </div>
-    </div>
-    <button class="bloom-card__cta" id="bloom-btn" onclick="showBloomConfirm()">
-      🌸 Passa a Fioritura → Salva su Firestore
+  <!-- ══ HOME TABS ══ -->
+  <div class="home-tabs s3">
+    <button class="home-tab on" id="htab-ciclo" onclick="homeTabSwitch('ciclo')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+      Ciclo
+    </button>
+    <button class="home-tab" id="htab-finanze" onclick="homeTabSwitch('finanze')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Finanze
     </button>
   </div>
 
-  <!-- Bloom days input -->
-  <div class="fase-confirm s4" id="bloom-confirm" style="display:none;">
-    <div class="fase-confirm__title">⚙️ Configura la Fase di Fioritura</div>
-    <div class="fase-confirm__info">Imposta la durata stimata della fioritura. GrowManager calcolerà automaticamente il progresso e la data di raccolta. Il campo <strong>data_inizio_fioritura</strong> verrà salvato con <code style="font-size:11px;">serverTimestamp()</code>.</div>
-    <div class="fase-confirm__fields">
-      <div class="fg" style="margin-bottom:0;">
-        <div class="fl">Gg fioritura stimati</div>
-        <div class="stepper">
-          <button class="step-btn" onclick="adjBloomDays(-1)" type="button">−</button>
-          <input class="step-inp" id="bloom-days-inp" type="number" value="56" min="30" max="90"/>
-          <button class="step-btn" onclick="adjBloomDays(1)" type="button">+</button>
+  <!-- ══ TAB: CICLO ══ -->
+  <div class="home-tab-panel on" id="htpanel-ciclo">
+
+    <!-- Day stats -->
+    <div class="days-grid">
+      <div class="day-stat" style="--stat-accent:var(--g400)">
+        <div class="day-stat__val" id="ds-total" style="color:var(--pr)">42</div>
+        <div class="day-stat__lbl">Totali</div>
+      </div>
+      <div class="day-stat" style="--stat-accent:var(--am400)">
+        <div class="day-stat__val" id="ds-fase" style="color:var(--am400)">0</div>
+        <div class="day-stat__lbl">Fioritura</div>
+      </div>
+      <div class="day-stat" style="--stat-accent:var(--vi400)">
+        <div class="day-stat__val" id="ds-rem" style="color:var(--vi400)">—</div>
+        <div class="day-stat__lbl">Rimanenti</div>
+      </div>
+    </div>
+
+    <!-- BLOOM TRANSITION CARD -->
+    <div class="bloom-card s4" id="bloom-cta-card">
+      <div class="bloom-card__ey">🌸 Prossimo Step</div>
+      <div class="bloom-card__title" id="bloom-cta-title">Pronto per la Fioritura?</div>
+      <div class="bloom-card__row" id="bloom-cta-stats">
+        <div class="bloom-card__stat">
+          <div class="bloom-card__stat-val" id="bloom-est-days">56</div>
+          <div class="bloom-card__stat-lbl">Gg Stimati Bloom</div>
+        </div>
+        <div class="bloom-card__div"></div>
+        <div class="bloom-card__stat">
+          <div class="bloom-card__stat-val" id="bloom-harvest-date">15 Mag</div>
+          <div class="bloom-card__stat-lbl">Raccolto Previsto</div>
+        </div>
+        <div class="bloom-card__div"></div>
+        <div class="bloom-card__stat">
+          <div class="bloom-card__stat-val" id="bloom-total">98</div>
+          <div class="bloom-card__stat-lbl">Gg Ciclo Totale</div>
         </div>
       </div>
-      <div class="fg" style="margin-bottom:0;">
-        <div class="fl">Strain (medio Indica/Sativa)</div>
-        <select class="fsel" id="bloom-strain-type" onchange="recalcBloom()">
-          <option value="indica">🌿 Indica (50–60 gg)</option>
-          <option value="hybrid">🌀 Hybrid (55–65 gg)</option>
-          <option value="sativa">☀️ Sativa (65–90 gg)</option>
-          <option value="auto">⏱️ Autoflower (45–55 gg)</option>
-        </select>
-      </div>
-    </div>
-    <div class="callout callout-tip" style="margin-bottom:12px;">
-      <div class="callout-icon">🧮</div>
-      <div class="callout-body">
-        <strong>Calcolo automatico</strong>
-        Raccolto previsto: <strong id="bc-harvest">—</strong> · Gg ciclo totale: <strong id="bc-total">—</strong>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-gh btn-sm" onclick="document.getElementById('bloom-confirm').style.display='none'">Annulla</button>
-      <button class="btn btn-amb btn-full" onclick="executeBloomTransition()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
-        Conferma & Salva Firestore
+      <button class="bloom-card__cta" id="bloom-btn" onclick="showBloomConfirm()">
+        🌸 Passa a Fioritura → Salva su Firestore
       </button>
     </div>
-  </div>
 
-  <!-- Firestore output preview -->
-  <div class="card s5" id="bloom-result" style="display:none;">
-    <div class="label">✅ Documento aggiornato su Firestore</div>
-    <div class="schema-block" id="bloom-result-json" style="font-size:11.5px;"></div>
-    <div style="display:flex;gap:8px;margin-top:12px;">
-      <button class="btn btn-ton btn-sm" onclick="document.getElementById('bloom-result').style.display='none'">Chiudi</button>
+    <!-- Bloom days input -->
+    <div class="fase-confirm s4" id="bloom-confirm" style="display:none;">
+      <div class="fase-confirm__title">⚙️ Configura la Fase di Fioritura</div>
+      <div class="fase-confirm__info">Imposta la durata stimata della fioritura. GrowManager calcolerà automaticamente il progresso e la data di raccolta. Il campo <strong>data_inizio_fioritura</strong> verrà salvato con <code style="font-size:11px;">serverTimestamp()</code>.</div>
+      <div class="fase-confirm__fields">
+        <div class="fg" style="margin-bottom:0;">
+          <div class="fl">Gg fioritura stimati</div>
+          <div class="stepper">
+            <button class="step-btn" onclick="adjBloomDays(-1)" type="button">−</button>
+            <input class="step-inp" id="bloom-days-inp" type="number" value="56" min="30" max="90"/>
+            <button class="step-btn" onclick="adjBloomDays(1)" type="button">+</button>
+          </div>
+        </div>
+        <div class="fg" style="margin-bottom:0;">
+          <div class="fl">Strain (medio Indica/Sativa)</div>
+          <select class="fsel" id="bloom-strain-type" onchange="recalcBloom()">
+            <option value="indica">🌿 Indica (50–60 gg)</option>
+            <option value="hybrid">🌀 Hybrid (55–65 gg)</option>
+            <option value="sativa">☀️ Sativa (65–90 gg)</option>
+            <option value="auto">⏱️ Autoflower (45–55 gg)</option>
+          </select>
+        </div>
+      </div>
+      <div class="callout callout-tip" style="margin-bottom:12px;">
+        <div class="callout-icon">🧮</div>
+        <div class="callout-body">
+          <strong>Calcolo automatico</strong>
+          Raccolto previsto: <strong id="bc-harvest">—</strong> · Gg ciclo totale: <strong id="bc-total">—</strong>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-gh btn-sm" onclick="document.getElementById('bloom-confirm').style.display='none'">Annulla</button>
+        <button class="btn btn-amb btn-full" onclick="executeBloomTransition()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
+          Conferma & Salva Firestore
+        </button>
+      </div>
     </div>
-  </div>
+
+    <!-- Firestore output preview -->
+    <div class="card s5" id="bloom-result" style="display:none;">
+      <div class="label">✅ Documento aggiornato su Firestore</div>
+      <div class="schema-block" id="bloom-result-json" style="font-size:11.5px;"></div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn btn-ton btn-sm" onclick="document.getElementById('bloom-result').style.display='none'">Chiudi</button>
+      </div>
+    </div>
+
+  </div><!-- /htpanel-ciclo -->
+
+  <!-- ══ TAB: FINANZE ══ -->
+  <div class="home-tab-panel" id="htpanel-finanze">
+
+    <!-- TOTAL REVENUE CARD -->
+    <div class="fin-total-card" id="fin-total-card">
+      <div class="fin-total-card__ey">RICAVO TOTALE CICLO</div>
+      <div style="display:flex;align-items:baseline;gap:4px;position:relative;z-index:1">
+        <span class="fin-total-card__currency">€</span>
+        <div class="fin-total-card__amount" id="fin-ricavo-display">0</div>
+      </div>
+      <div class="fin-total-card__sub" id="fin-ricavo-sub">Inserisci i grammi e il prezzo per calcolare</div>
+      <div class="fin-total-card__row">
+        <div class="fin-mini-stat">
+          <div class="fin-mini-stat__val" id="fin-gram-venduti-display">—</div>
+          <div class="fin-mini-stat__lbl">g Venduti</div>
+        </div>
+        <div class="fin-mini-stat">
+          <div class="fin-mini-stat__val" id="fin-gram-personali-display">—</div>
+          <div class="fin-mini-stat__lbl">g Personali</div>
+        </div>
+        <div class="fin-mini-stat">
+          <div class="fin-mini-stat__val" id="fin-prezzo-medio-display">—</div>
+          <div class="fin-mini-stat__lbl">€/g</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INPUT FIELDS -->
+    <div class="fin-inputs">
+      <div class="fin-inputs__title">Dati Raccolto</div>
+      <div class="fin-row">
+        <div class="fin-field">
+          <label>Grammi Totali</label>
+          <input class="fin-inp" id="fin-inp-totali" type="number" placeholder="0" min="0" oninput="finCalc()"/>
+        </div>
+        <div class="fin-field">
+          <label>Grammi Venduti</label>
+          <input class="fin-inp" id="fin-inp-venduti" type="number" placeholder="0" min="0" oninput="finCalc()"/>
+        </div>
+      </div>
+      <div class="fin-row">
+        <div class="fin-field">
+          <label>Prezzo €/g</label>
+          <input class="fin-inp" id="fin-inp-prezzo" type="number" placeholder="8" min="0" step="0.5" oninput="finCalc()"/>
+        </div>
+        <div class="fin-field">
+          <label>Costi Sostenuti €</label>
+          <input class="fin-inp" id="fin-inp-costi" type="number" placeholder="0" min="0" oninput="finCalc()"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- BREAKDOWN -->
+    <div class="fin-breakdown" id="fin-breakdown" style="display:none">
+      <div class="fin-breakdown-row">
+        <span class="fin-breakdown-row__lbl">
+          <span class="fin-breakdown-row__dot" style="background:var(--g400)"></span>
+          Ricavo lordo vendite
+        </span>
+        <span class="fin-breakdown-row__val green" id="fin-bd-lordo">€0</span>
+      </div>
+      <div class="fin-breakdown-row">
+        <span class="fin-breakdown-row__lbl">
+          <span class="fin-breakdown-row__dot" style="background:var(--re400)"></span>
+          Costi totali
+        </span>
+        <span class="fin-breakdown-row__val" style="color:var(--re400)" id="fin-bd-costi">−€0</span>
+      </div>
+      <div class="fin-breakdown-row">
+        <span class="fin-breakdown-row__lbl">
+          <span class="fin-breakdown-row__dot" style="background:var(--am400)"></span>
+          Valore uso personale
+        </span>
+        <span class="fin-breakdown-row__val amber" id="fin-bd-personale">€0</span>
+      </div>
+      <div class="fin-breakdown-row" style="border-top:1.5px solid var(--bd);margin-top:4px;padding-top:10px!important">
+        <span class="fin-breakdown-row__lbl" style="font-weight:700;color:var(--t1)">
+          <span class="fin-breakdown-row__dot" style="background:var(--vi400)"></span>
+          <strong>Profitto netto</strong>
+        </span>
+        <span class="fin-breakdown-row__val violet" id="fin-bd-netto">€0</span>
+      </div>
+    </div>
+
+    <!-- DISTRIBUTION BAR -->
+    <div class="fin-profit-bar" id="fin-distrib-bar" style="display:none">
+      <div class="fin-profit-bar__head">
+        <span class="fin-profit-bar__title">Distribuzione grammi</span>
+        <span class="fin-profit-bar__pct" id="fin-pct-venduti">0% venduto</span>
+      </div>
+      <div class="fin-stack">
+        <div class="fin-stack-seg" id="fin-seg-venduti" style="background:var(--g400);width:0%"></div>
+        <div class="fin-stack-seg" id="fin-seg-personali" style="background:var(--am400);width:0%"></div>
+      </div>
+      <div class="fin-stack-legend">
+        <div class="fin-legend-item">
+          <div class="fin-legend-dot" style="background:var(--g400)"></div>
+          <span id="fin-leg-venduti">0g venduti</span>
+        </div>
+        <div class="fin-legend-item">
+          <div class="fin-legend-dot" style="background:var(--am400)"></div>
+          <span id="fin-leg-personali">0g personali</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state when no data -->
+    <div class="fin-empty" id="fin-empty">
+      <div class="fin-empty__icon">📊</div>
+      <div class="fin-empty__title">Nessun dato ancora</div>
+      <div class="fin-empty__sub">Inserisci i grammi raccolti, quelli venduti e il prezzo al grammo per vedere il recap finanziario del ciclo.</div>
+    </div>
+
+  </div><!-- /htpanel-finanze -->
 
 </div>
 </div>
@@ -2186,13 +2818,13 @@ try {
     </div>
 
     <!-- Impostazioni disponibili anche da ospite -->
-    <div class="label s3">Impostazioni</div>
+    <div class="label s3" data-i18n="prof_settings">Impostazioni</div>
     <div class="profile-section s3">
       <div class="profile-row" onclick="stealthToggle()">
         <div class="profile-row__icon" style="background:var(--vi100);">👁</div>
         <div style="flex:1">
-          <div class="profile-row__label">Modalità Discreta</div>
-          <div class="profile-row__sub">Sfoca nomi piante e foto in pubblico</div>
+          <div class="profile-row__label" data-i18n="prof_discrete">Modalità Discreta</div>
+          <div class="profile-row__sub" data-i18n="prof_discrete_s">Sfoca nomi piante e foto in pubblico</div>
         </div>
         <label class="toggle-sw" onclick="event.stopPropagation()">
           <input type="checkbox" id="stealth-toggle-check" onchange="stealthToggle()">
@@ -2202,10 +2834,21 @@ try {
       <div class="profile-row" onclick="document.getElementById('theme-btn').click()">
         <div class="profile-row__icon" style="background:var(--bl50);">🌙</div>
         <div style="flex:1">
-          <div class="profile-row__label">Tema Scuro</div>
-          <div class="profile-row__sub">Cambia aspetto dell'app</div>
+          <div class="profile-row__label" data-i18n="prof_dark">Tema Scuro</div>
+          <div class="profile-row__sub" data-i18n="prof_dark_s">Cambia aspetto dell'app</div>
         </div>
         <span class="profile-row__badge" id="profile-theme-badge">Light</span>
+      </div>
+      <div class="profile-row">
+        <div class="profile-row__icon" style="background:var(--g50);">🌐</div>
+        <div style="flex:1">
+          <div class="profile-row__label" data-i18n="prof_lang">Lingua</div>
+          <div class="profile-row__sub" data-i18n="prof_lang_s">Cambia lingua dell'app</div>
+        </div>
+        <div class="lang-pills">
+          <button class="lang-pill on" id="lp-guest-it" onclick="setLang('it')">IT</button>
+          <button class="lang-pill" id="lp-guest-en" onclick="setLang('en')">EN</button>
+        </div>
       </div>
     </div>
 
@@ -2252,13 +2895,13 @@ try {
     </div>
 
     <!-- Impostazioni -->
-    <div class="label s3">Impostazioni</div>
+    <div class="label s3" data-i18n="prof_settings">Impostazioni</div>
     <div class="profile-section s3">
       <div class="profile-row" onclick="stealthToggle()">
         <div class="profile-row__icon" style="background:var(--vi100);">👁</div>
         <div style="flex:1">
-          <div class="profile-row__label">Modalità Discreta</div>
-          <div class="profile-row__sub">Sfoca nomi piante e foto in pubblico</div>
+          <div class="profile-row__label" data-i18n="prof_discrete">Modalità Discreta</div>
+          <div class="profile-row__sub" data-i18n="prof_discrete_s">Sfoca nomi piante e foto in pubblico</div>
         </div>
         <label class="toggle-sw" onclick="event.stopPropagation()">
           <input type="checkbox" id="stealth-toggle-check-user" onchange="stealthToggle()">
@@ -2268,16 +2911,27 @@ try {
       <div class="profile-row" onclick="document.getElementById('theme-btn').click()">
         <div class="profile-row__icon" style="background:var(--bl50);">🌙</div>
         <div style="flex:1">
-          <div class="profile-row__label">Tema Scuro</div>
-          <div class="profile-row__sub">Cambia aspetto dell'app</div>
+          <div class="profile-row__label" data-i18n="prof_dark">Tema Scuro</div>
+          <div class="profile-row__sub" data-i18n="prof_dark_s">Cambia aspetto dell'app</div>
         </div>
         <span class="profile-row__badge" id="profile-theme-badge-user">Light</span>
       </div>
       <div class="profile-row">
+        <div class="profile-row__icon" style="background:var(--g50);">🌐</div>
+        <div style="flex:1">
+          <div class="profile-row__label" data-i18n="prof_lang">Lingua</div>
+          <div class="profile-row__sub" data-i18n="prof_lang_s">Cambia lingua dell'app</div>
+        </div>
+        <div class="lang-pills">
+          <button class="lang-pill on" id="lp-user-it" onclick="setLang('it')">IT</button>
+          <button class="lang-pill" id="lp-user-en" onclick="setLang('en')">EN</button>
+        </div>
+      </div>
+      <div class="profile-row">
         <div class="profile-row__icon" style="background:var(--am100);">🔔</div>
         <div style="flex:1">
-          <div class="profile-row__label">Notifiche</div>
-          <div class="profile-row__sub">Promemoria irrigazione e fasi</div>
+          <div class="profile-row__label" data-i18n="prof_notif">Notifiche</div>
+          <div class="profile-row__sub" data-i18n="prof_notif_s">Promemoria irrigazione e fasi</div>
         </div>
         <label class="toggle-sw" onclick="event.stopPropagation()">
           <input type="checkbox" id="notif-toggle">
@@ -2394,36 +3048,36 @@ try {
 <!-- More drawer -->
 <div class="nav-more-ov" id="nav-more-ov">
   <div class="nav-more-handle"></div>
-  <div class="nav-more-title">Sezioni</div>
+  <div class="nav-more-title" data-i18n="nm_sezioni">Sezioni</div>
   <div class="nav-more-grid">
     <div class="nav-more-tile" id="nmt-sc-profile" onclick="navMoreTo('sc-profile');profileInit()">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span class="nav-more-tile__lbl">Profilo</span>
+      <span class="nav-more-tile__lbl" data-i18n="nm_profilo">Profilo</span>
     </div>
     <div class="nav-more-tile" id="nmt-sc-envs" onclick="navMoreTo('sc-envs')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
-      <span class="nav-more-tile__lbl">Ambienti</span>
+      <span class="nav-more-tile__lbl" data-i18n="nm_ambienti">Ambienti</span>
     </div>
     <div class="nav-more-tile" id="nmt-sc-pests" onclick="navMoreTo('sc-pests')">
       <div class="nav-more-dot"></div>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="3" ry="2"/><path d="M12 7v4"/><path d="M8 8c-2 1-3 3-3 5s1 4 3 5"/><path d="M16 8c2 1 3 3 3 5s-1 4-3 5"/><path d="M9 17c1 2 2 3 3 3s2-1 3-3"/><line x1="5" y1="10" x2="2" y2="8"/><line x1="19" y1="10" x2="22" y2="8"/><line x1="5" y1="15" x2="2" y2="17"/><line x1="19" y1="15" x2="22" y2="17"/></svg>
-      <span class="nav-more-tile__lbl">Pest</span>
+      <span class="nav-more-tile__lbl" data-i18n="nm_pest">Parassiti</span>
     </div>
     <div class="nav-more-tile" id="nmt-sc-harvest" onclick="navMoreTo('sc-harvest')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="22" x2="9" y2="12"/><line x1="15" y1="22" x2="15" y2="12"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
-      <span class="nav-more-tile__lbl">Raccolta</span>
+      <span class="nav-more-tile__lbl" data-i18n="nm_raccolta">Raccolta</span>
     </div>
     <div class="nav-more-tile" id="nmt-sc-gallery" onclick="navMoreTo('sc-gallery')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-      <span class="nav-more-tile__lbl">Galleria</span>
+      <span class="nav-more-tile__lbl" data-i18n="nm_galleria">Galleria</span>
     </div>
     <div class="nav-more-tile" id="nmt-sc-diseases" onclick="navMoreTo('sc-diseases')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-      <span class="nav-more-tile__lbl">Malattie</span>
+      <span class="nav-more-tile__lbl" data-i18n="nm_malattie">Malattie</span>
     </div>
     <div class="nav-more-tile" id="nmt-sc-export" onclick="navMoreTo('sc-export');exportInit()">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span class="nav-more-tile__lbl">Esporta</span>
+      <span class="nav-more-tile__lbl" data-i18n="nm_esporta">Esporta</span>
     </div>
   </div>
 </div>
@@ -2431,25 +3085,78 @@ try {
 <nav class="bnav">
   <button class="ni on" data-sc="sc-phase" onclick="navTo(this,'sc-phase')">
     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
-    <span class="ni-lbl">Fase</span>
+    <span class="ni-lbl" data-i18n="n_fase">Fase</span>
   </button>
   <button class="ni" data-sc="sc-nutrients" onclick="navTo(this,'sc-nutrients')">
     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2C6.5 2 2 6.5 2 12c0 3 1.3 5.7 3.4 7.6"/><circle cx="12" cy="12" r="3"/></svg>
-    <span class="ni-lbl">Nutrienti</span>
+    <span class="ni-lbl" data-i18n="n_nutrienti">Nutrienti</span>
   </button>
   <button class="ni" data-sc="sc-calendar" onclick="navTo(this,'sc-calendar')">
     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    <span class="ni-lbl">Calendario</span>
+    <span class="ni-lbl" data-i18n="n_calendario">Calendario</span>
   </button>
   <button class="ni" data-sc="sc-diseases" onclick="navTo(this,'sc-diseases')">
     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-    <span class="ni-lbl">Malattie</span>
+    <span class="ni-lbl" data-i18n="n_malattie">Malattie</span>
   </button>
   <button class="ni" id="nav-more-btn" onclick="navMoreToggle()">
     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
-    <span class="ni-lbl">Altro</span>
+    <span class="ni-lbl" data-i18n="n_altro">Altro</span>
   </button>
 </nav>
+
+<!-- MODAL: Add Plant -->
+<div class="modal-ov" id="modal-add-plant">
+  <div class="modal-sh">
+    <div class="modal-handle"></div>
+    <div class="modal-title" data-i18n="modal_new_plant">Aggiungi Pianta</div>
+    <div class="ap-form" id="ap-form">
+
+      <div class="ap-field">
+        <label data-i18n="ap_name">Nome pianta</label>
+        <input class="fi" id="ap-inp-name" placeholder="Es. OG Kush #1, AK-47..." maxlength="40"/>
+      </div>
+
+      <div class="ap-field">
+        <label data-i18n="ap_strain">Tipo di strain</label>
+        <div class="ap-strain-grid">
+          <button class="ap-strain-btn on" data-strain="indica" onclick="apSelectStrain(this)">🌿 Indica</button>
+          <button class="ap-strain-btn" data-strain="hybrid" onclick="apSelectStrain(this)">🌀 Hybrid</button>
+          <button class="ap-strain-btn" data-strain="sativa" onclick="apSelectStrain(this)">☀️ Sativa</button>
+          <button class="ap-strain-btn" data-strain="auto" onclick="apSelectStrain(this)">⏱️ Autoflower</button>
+        </div>
+      </div>
+
+      <div class="ap-field">
+        <label data-i18n="ap_cycle">Ciclo stimato (gg) — <span id="ap-cycle-num">98</span></label>
+        <input class="ap-cycle-slider" id="ap-cycle-slider" type="range" min="60" max="140" value="98" oninput="document.getElementById('ap-cycle-num').textContent=this.value"/>
+        <div class="ap-cycle-display">
+          <div>
+            <div class="ap-cycle-val" id="ap-cycle-display">98</div>
+            <div class="ap-cycle-lbl">giorni</div>
+          </div>
+          <div style="text-align:right;font-size:11px;color:var(--t4);font-family:var(--ff-m);">
+            <div>~<span id="ap-bloom-est">56</span>gg bloom</div>
+            <div>~<span id="ap-harvest-est">Mar 2025</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ap-field">
+        <label data-i18n="ap_start">Data inizio</label>
+        <input class="fi" id="ap-inp-start" type="date"/>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:6px;">
+        <button class="btn btn-gh btn-sm" onclick="closeModal('modal-add-plant')" data-i18n="btn_annulla">Annulla</button>
+        <button class="btn btn-pr btn-full" onclick="apCreatePlant()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 8v4l2 2"/></svg>
+          <span data-i18n="btn_create_plant">Crea Pianta</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL: New Environment -->
 <div class="modal-ov" id="modal-new-env">
@@ -2522,6 +3229,342 @@ try {
 <script>
 'use strict';
 /* ═══════════════════════════════════════════════════════
+   I18N — INTERNAZIONALIZZAZIONE IT / EN
+═══════════════════════════════════════════════════════ */
+const LANG_DATA={
+  it:{
+    n_fase:'Fase',n_nutrienti:'Nutrienti',n_calendario:'Calendario',n_malattie:'Malattie',n_altro:'Altro',
+    nm_sezioni:'Sezioni',nm_profilo:'Profilo',nm_ambienti:'Ambienti',nm_pest:'Parassiti',
+    nm_raccolta:'Raccolta',nm_galleria:'Galleria',nm_malattie:'Malattie',nm_esporta:'Esporta',
+    t_fase:'Ciclo Vitale',s_fase:'Gestisci le fasi e la transizione alla fioritura',
+    t_nutrienti:'Schedulatore Nutrienti',s_nutrienti:'Costruisci la tua tabella settimanale e salvala su Firestore',
+    t_calendario:'Calendario Log',s_calendario:'Filtra tutte le azioni registrate per giornata',
+    t_ambienti:'Ambienti',s_ambienti:'Monitora temperatura, umidità e CO₂ per ogni grow room',
+    t_parassiti:'Parassiti & Trattamenti',s_parassiti:'Identifica i problemi e registra i trattamenti',
+    t_raccolto:'Raccolto & Archivio',s_raccolto:'Chiudi il ciclo, registra i grammi e archivia su Firestore',
+    t_galleria:'Galleria Fotografica',s_galleria:'Documenta la crescita della tua coltivazione',
+    t_malattie:'Guida Malattie',s_malattie:'Identifica patologie, carenze e parassiti',
+    t_export:'Esporta Dati',s_export:'Scarica il log completo in CSV o JSON',
+    t_profilo:'Il tuo Profilo',s_profilo:'Account, impostazioni e statistiche',
+    tab_ciclo:'Ciclo',tab_finanze:'Finanze',
+    fin_title:'RICAVO TOTALE CICLO',
+    fin_g_venduti:'g Venduti',fin_g_personali:'g Personali',fin_prezzo:'€/g',
+    fin_inp_totali:'Grammi Totali',fin_inp_venduti:'Grammi Venduti',fin_inp_prezzo:'Prezzo €/g',fin_inp_costi:'Costi Sostenuti €',
+    fin_dati_raccolto:'Dati Raccolto',
+    fin_lordo:'Ricavo lordo vendite',fin_costi_lbl:'Costi totali',fin_personale_lbl:'Valore uso personale',fin_netto_lbl:'Profitto netto',
+    fin_distrib:'Distribuzione grammi',
+    fin_empty_t:'Nessun dato ancora',fin_empty_s:'Inserisci i grammi raccolti, quelli venduti e il prezzo al grammo per vedere il recap finanziario.',
+    ds_totali:'Totali',ds_fioritura:'Fioritura',ds_rimanenti:'Rimanenti',
+    lbl_timeline:'Timeline Ciclo',lbl_pianta:'Pianta selezionata',
+    ph_seme:'Seme',ph_plantula:'Plantula',ph_veg:'Veg',ph_bloom:'Bloom',ph_flush:'Flush',ph_harvest:'Raccolto',
+    bloom_nextstep:'🌸 Prossimo Step',bloom_title:'Pronto per la Fioritura?',
+    bloom_gg_bloom:'Gg Stimati Bloom',bloom_harvest_date:'Raccolto Previsto',bloom_gg_ciclo:'Gg Ciclo Totale',
+    bloom_cta:'🌸 Passa a Fioritura → Salva su Firestore',
+    prof_settings:'Impostazioni',prof_account:'Account',prof_danger:'Zona Pericolosa',
+    prof_discrete:'Modalità Discreta',prof_discrete_s:'Sfoca nomi piante e foto in pubblico',
+    prof_dark:'Tema Scuro',prof_dark_s:"Cambia aspetto dell'app",
+    prof_lang:'Lingua',prof_lang_s:"Cambia lingua dell'app",
+    prof_notif:'Notifiche',prof_notif_s:'Promemoria irrigazione e fasi',
+    prof_changepw:'Cambia Password',prof_changepw_s:'Invia email di recupero password',
+    prof_signout:"Esci dall'Account",
+    prof_delete:'Elimina Account',prof_delete_s:'Cancella tutti i tuoi dati (GDPR)',
+    stat_cicli:'Cicli Completati',stat_cicli_s:'harvest confermati',
+    stat_grammi:'Grammi Raccolti',stat_grammi_s:'somma totale',
+    stat_piante:'Piante Attive',stat_piante_s:'in coltivazione',
+    stat_giorni:'Giorni Totali',stat_giorni_s:'da primo ciclo',
+    guest_title:'Esplora liberamente',
+    guest_sub:'Stai usando GrowManager come ospite. Registrati per salvare i tuoi dati, sincronizzarli su tutti i dispositivi e non perderli mai.',
+    guest_register:'🚀 Registrati gratis',guest_login:'Accedi',
+    guest_perks_t:'Cosa ottieni con un account',
+    perk1_t:'Dati sempre al sicuro',perk1_s:'Sincronizzazione automatica su Firestore',
+    perk2_t:'Multi-dispositivo',perk2_s:'Accedi da telefono, tablet, PC',
+    perk3_t:'Storico completo',perk3_s:'Tutti i cicli, log e harvest salvati',
+    perk4_t:'Privacy garantita',perk4_s:'I tuoi dati non vengono mai condivisi',
+    btn_annulla:'Annulla',btn_salva:'Salva',btn_chiudi:'Chiudi',btn_conferma:'Conferma',btn_aggiungi:'+ Aggiungi',
+    fab_add_plant:'Nuova Pianta',
+    modal_new_plant:'Aggiungi Pianta',
+    ap_name:'Nome pianta',ap_name_ph:'Es. OG Kush #1, AK-47...',
+    ap_strain:'Tipo di strain',
+    ap_cycle:'Ciclo stimato',ap_start:'Data inizio',
+    btn_create_plant:'Crea Pianta',
+    hero_session:'GROW SESSION ATTIVA',hero_giorni:'GIORNI',
+    months:['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+    months_s:['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'],
+  },
+  en:{
+    n_fase:'Phase',n_nutrienti:'Nutrients',n_calendario:'Calendar',n_malattie:'Diseases',n_altro:'More',
+    nm_sezioni:'Sections',nm_profilo:'Profile',nm_ambienti:'Envs',nm_pest:'Pests',
+    nm_raccolta:'Harvest',nm_galleria:'Gallery',nm_malattie:'Diseases',nm_esporta:'Export',
+    t_fase:'Grow Cycle',s_fase:'Manage phases and the bloom transition',
+    t_nutrienti:'Nutrient Planner',s_nutrienti:'Build your weekly schedule and save to Firestore',
+    t_calendario:'Grow Log',s_calendario:'Filter all recorded actions by day',
+    t_ambienti:'Environments',s_ambienti:'Monitor temperature, humidity and CO₂ for each grow room',
+    t_parassiti:'Pests & Treatments',s_parassiti:'Identify issues and record treatments',
+    t_raccolto:'Harvest & Archive',s_raccolto:'Close the cycle, record grams and archive to Firestore',
+    t_galleria:'Photo Gallery',s_galleria:'Document the growth of your cultivation',
+    t_malattie:'Disease Guide',s_malattie:'Identify diseases, deficiencies and pests',
+    t_export:'Export Data',s_export:'Download the full log in CSV or JSON',
+    t_profilo:'Your Profile',s_profilo:'Account, settings and statistics',
+    tab_ciclo:'Cycle',tab_finanze:'Financials',
+    fin_title:'TOTAL CYCLE REVENUE',
+    fin_g_venduti:'g Sold',fin_g_personali:'g Personal',fin_prezzo:'€/g',
+    fin_inp_totali:'Total Grams',fin_inp_venduti:'Sold Grams',fin_inp_prezzo:'Price €/g',fin_inp_costi:'Total Costs €',
+    fin_dati_raccolto:'Harvest Data',
+    fin_lordo:'Gross sales revenue',fin_costi_lbl:'Total costs',fin_personale_lbl:'Personal use value',fin_netto_lbl:'Net profit',
+    fin_distrib:'Gram distribution',
+    fin_empty_t:'No data yet',fin_empty_s:'Enter harvested grams, sold grams and price per gram to see the financial recap for this cycle.',
+    ds_totali:'Total',ds_fioritura:'Bloom',ds_rimanenti:'Remaining',
+    lbl_timeline:'Cycle Timeline',lbl_pianta:'Selected plant',
+    ph_seme:'Seed',ph_plantula:'Seedling',ph_veg:'Veg',ph_bloom:'Bloom',ph_flush:'Flush',ph_harvest:'Harvest',
+    bloom_nextstep:'🌸 Next Step',bloom_title:'Ready for Bloom?',
+    bloom_gg_bloom:'Est. Bloom Days',bloom_harvest_date:'Expected Harvest',bloom_gg_ciclo:'Total Cycle Days',
+    bloom_cta:'🌸 Start Bloom → Save to Firestore',
+    prof_settings:'Settings',prof_account:'Account',prof_danger:'Danger Zone',
+    prof_discrete:'Stealth Mode',prof_discrete_s:'Blur plant names and photos in public',
+    prof_dark:'Dark Theme',prof_dark_s:'Change app appearance',
+    prof_lang:'Language',prof_lang_s:'Change app language',
+    prof_notif:'Notifications',prof_notif_s:'Watering and phase reminders',
+    prof_changepw:'Change Password',prof_changepw_s:'Send password recovery email',
+    prof_signout:'Sign Out',
+    prof_delete:'Delete Account',prof_delete_s:'Delete all your data (GDPR)',
+    stat_cicli:'Completed Cycles',stat_cicli_s:'confirmed harvests',
+    stat_grammi:'Grams Harvested',stat_grammi_s:'total sum',
+    stat_piante:'Active Plants',stat_piante_s:'growing now',
+    stat_giorni:'Total Days',stat_giorni_s:'since first cycle',
+    guest_title:'Explore freely',
+    guest_sub:'You are using GrowManager as a guest. Sign up to save your data, sync it across all devices and never lose it.',
+    guest_register:'🚀 Sign up free',guest_login:'Sign in',
+    guest_perks_t:'What you get with an account',
+    perk1_t:'Data always safe',perk1_s:'Automatic sync on Firestore',
+    perk2_t:'Multi-device',perk2_s:'Access from phone, tablet, PC',
+    perk3_t:'Complete history',perk3_s:'All cycles, logs and harvests saved',
+    perk4_t:'Privacy guaranteed',perk4_s:'Your data is never shared',
+    btn_annulla:'Cancel',btn_salva:'Save',btn_chiudi:'Close',btn_conferma:'Confirm',btn_aggiungi:'+ Add',
+    fab_add_plant:'New Plant',
+    modal_new_plant:'Add Plant',
+    ap_name:'Plant name',ap_name_ph:'E.g. OG Kush #1, AK-47...',
+    ap_strain:'Strain type',
+    ap_cycle:'Estimated cycle',ap_start:'Start date',
+    btn_create_plant:'Create Plant',
+    hero_session:'ACTIVE GROW SESSION',hero_giorni:'DAYS',
+    months:['January','February','March','April','May','June','July','August','September','October','November','December'],
+    months_s:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+  }
+};
+
+let _lang=localStorage.getItem('gm3-lang')||'it';
+
+function _t(k){return LANG_DATA[_lang]?.[k]??LANG_DATA['it'][k]??k}
+
+function applyI18n(){
+  /* 1 — data-i18n elements */
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const v=_t(el.getAttribute('data-i18n'));
+    if(v!=null) el.textContent=v;
+  });
+
+  /* 2 — section titles per screen */
+  const scTitles={
+    'sc-phase':    [_t('t_fase'),   _t('s_fase')],
+    'sc-nutrients':[_t('t_nutrienti'),_t('s_nutrienti')],
+    'sc-calendar': [_t('t_calendario'),_t('s_calendario')],
+    'sc-envs':     [_t('t_ambienti'),_t('s_ambienti')],
+    'sc-pests':    [_t('t_parassiti'),_t('s_parassiti')],
+    'sc-harvest':  [_t('t_raccolto'),_t('s_raccolto')],
+    'sc-gallery':  [_t('t_galleria'),_t('s_galleria')],
+    'sc-diseases': [_t('t_malattie'),_t('s_malattie')],
+    'sc-export':   [_t('t_export'),_t('s_export')],
+    'sc-profile':  [_t('t_profilo'),_t('s_profilo')],
+  };
+  Object.entries(scTitles).forEach(([id,[title,sub]])=>{
+    const sc=document.getElementById(id);
+    if(!sc) return;
+    const t1=sc.querySelector('.sec-title');
+    const t2=sc.querySelector('.sec-sub');
+    if(t1) t1.textContent=title;
+    if(t2) t2.textContent=sub;
+  });
+
+  /* 3 — home tabs */
+  const htCiclo=document.getElementById('htab-ciclo');
+  const htFin=document.getElementById('htab-finanze');
+  if(htCiclo) htCiclo.childNodes[htCiclo.childNodes.length-1].textContent=' '+_t('tab_ciclo');
+  if(htFin) htFin.childNodes[htFin.childNodes.length-1].textContent=' '+_t('tab_finanze');
+
+  /* 4 — financial labels */
+  const finMap={
+    'fin-total-card .fin-total-card__ey':'fin_title',
+    '.fin-mini-stat:nth-child(1) .fin-mini-stat__lbl':'fin_g_venduti',
+    '.fin-mini-stat:nth-child(2) .fin-mini-stat__lbl':'fin_g_personali',
+    '.fin-mini-stat:nth-child(3) .fin-mini-stat__lbl':'fin_prezzo',
+  };
+  Object.entries(finMap).forEach(([sel,key])=>{
+    const el=document.querySelector('.'+sel+',[id="'+sel+'"]')||document.querySelector(sel);
+    if(el) el.textContent=_t(key);
+  });
+
+  /* 5 — hero card */
+  const heroEye=document.querySelector('.phase-hero__eyebrow');
+  const heroDayLbl=document.querySelector('.phase-hero__day-lbl');
+  if(heroEye) heroEye.textContent=_t('hero_session');
+  if(heroDayLbl) heroDayLbl.textContent=_t('hero_giorni');
+
+  /* 6 — lang button */
+  const lb=document.getElementById('lang-btn');
+  if(lb) lb.textContent='🌐 '+(_lang==='it'?'IT':'EN');
+
+  /* 7 — lang pills */
+  ['guest','user'].forEach(scope=>{
+    const itP=document.getElementById('lp-'+scope+'-it');
+    const enP=document.getElementById('lp-'+scope+'-en');
+    if(itP){itP.classList.toggle('on',_lang==='it');enP.classList.toggle('on',_lang==='en')}
+  });
+
+  /* 8 — html lang */
+  document.documentElement.lang=_lang;
+
+  /* 9 — update MESI arrays used by calendar */
+  if(typeof MESI!=='undefined'){
+    const m=_t('months');
+    const ms=_t('months_s');
+    m.forEach((v,i)=>{ MESI[i]=v; MESI_S[i]=ms[i]; });
+  }
+}
+
+function setLang(lang){
+  if(_lang===lang) return;
+  _lang=lang;
+  localStorage.setItem('gm3-lang',lang);
+  haptic.light();
+  applyI18n();
+  // Re-render dynamic content
+  try{ loadPlantData(); }catch(e){}
+  try{ renderCalendar(); }catch(e){}
+  try{ diseaseRender(); }catch(e){}
+  try{ renderEnvironments(); }catch(e){}
+  toast(lang==='it'?'🇮🇹':'🇬🇧',
+    lang==='it'?'Lingua: Italiano':'Language: English',
+    lang==='it'?'App in italiano':'App switched to English',
+    'g');
+}
+
+function toggleLang(){ setLang(_lang==='it'?'en':'it'); }
+
+/* ═══════════════════════════════════════════════════════
+   PLANT MANAGER — Add / Remove plants (localStorage)
+═══════════════════════════════════════════════════════ */
+let _apStrain='indica';
+
+function apSelectStrain(btn){
+  document.querySelectorAll('.ap-strain-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  _apStrain=btn.dataset.strain;
+  _apUpdateEstimates();
+}
+
+function _apUpdateEstimates(){
+  const cycle=parseInt(document.getElementById('ap-cycle-slider')?.value||98);
+  document.getElementById('ap-cycle-display').textContent=cycle;
+  document.getElementById('ap-cycle-num').textContent=cycle;
+  // bloom estimate: roughly cycle * 0.57
+  const bloomEst=Math.round(cycle*0.57);
+  document.getElementById('ap-bloom-est').textContent=bloomEst;
+  // harvest estimate
+  const start=document.getElementById('ap-inp-start')?.value;
+  if(start){
+    const h=addDays(new Date(start),cycle);
+    const ms=_t('months_s');
+    document.getElementById('ap-harvest-est').textContent=h.getDate()+' '+ms[h.getMonth()]+' '+h.getFullYear();
+  } else {
+    document.getElementById('ap-harvest-est').textContent='—';
+  }
+}
+
+function apInitModal(){
+  // set today as default
+  const today=new Date();
+  const ymd=today.toISOString().split('T')[0];
+  document.getElementById('ap-inp-start').value=ymd;
+  document.getElementById('ap-inp-name').value='';
+  document.getElementById('ap-cycle-slider').value=98;
+  _apStrain='indica';
+  document.querySelectorAll('.ap-strain-btn').forEach(b=>b.classList.toggle('on',b.dataset.strain==='indica'));
+  _apUpdateEstimates();
+}
+
+function apCreatePlant(){
+  const name=(document.getElementById('ap-inp-name').value||'').trim();
+  if(!name){ toast('⚠️',_t('t_fase'),'Inserisci un nome','am'); return; }
+  const cycle=parseInt(document.getElementById('ap-cycle-slider').value||98);
+  const startVal=document.getElementById('ap-inp-start').value;
+  const start=startVal?new Date(startVal):new Date();
+  const totalDays=Math.round((Date.now()-start.getTime())/864e5);
+  const id='plant_'+Date.now();
+
+  const plant={
+    name, fase:'veg', bloomDays:0,
+    totalDays:Math.max(0,totalDays),
+    estimatedCycle:cycle,
+    startDate:start,
+    bloomStartDate:null,
+    strain:_apStrain,
+    custom:true,
+    id,
+  };
+  PLANTS_DATA[id]=plant;
+
+  // add to select
+  const sel=document.getElementById('plant-select');
+  const opt=document.createElement('option');
+  opt.value=id;
+  const ms=_t('months_s');
+  opt.textContent=name+' — '+_t('ph_veg')+' '+_t('ds_totali').toLowerCase()+' '+plant.totalDays;
+  sel.appendChild(opt);
+  sel.value=id;
+
+  // persist
+  try{
+    const saved=JSON.parse(localStorage.getItem('gm3-custom-plants')||'[]');
+    saved.push({...plant,startDate:start.toISOString()});
+    localStorage.setItem('gm3-custom-plants',JSON.stringify(saved));
+  }catch(e){}
+
+  closeModal('modal-add-plant');
+  loadPlantData();
+  haptic.success();
+  toast('🌱',name,_t('t_fase'),'g');
+}
+
+function _loadCustomPlants(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('gm3-custom-plants')||'[]');
+    saved.forEach(p=>{
+      if(!PLANTS_DATA[p.id]){
+        PLANTS_DATA[p.id]={
+          ...p,
+          startDate:new Date(p.startDate),
+          bloomStartDate:p.bloomStartDate?new Date(p.bloomStartDate):null,
+        };
+        const sel=document.getElementById('plant-select');
+        const opt=document.createElement('option');
+        opt.value=p.id;
+        const days=Math.round((Date.now()-new Date(p.startDate).getTime())/864e5);
+        opt.textContent=p.name+' — '+days+'gg';
+        sel.appendChild(opt);
+      }
+    });
+  }catch(e){}
+}
+
+/* ── Hook slider input event ── */
+document.addEventListener('DOMContentLoaded',()=>{
+  const sl=document.getElementById('ap-cycle-slider');
+  if(sl) sl.addEventListener('input',_apUpdateEstimates);
+  const ds=document.getElementById('ap-inp-start');
+  if(ds) ds.addEventListener('input',_apUpdateEstimates);
+});
+
+/* ═══════════════════════════════════════════════════════
    UTILITIES
 ═══════════════════════════════════════════════════════ */
 const haptic = {
@@ -2531,19 +3574,33 @@ const haptic = {
   error:()=>navigator.vibrate?.([80,40,160])
 };
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
-function fmtDate(d){const o={day:'numeric',month:'short',year:'numeric'};return new Date(d).toLocaleDateString('it-IT',o)}
-function fmtDateShort(d){return new Date(d).toLocaleDateString('it-IT',{day:'numeric',month:'short'})}
-function fmtTime(d){return new Date(d).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}
+function fmtDate(d){const o={day:'numeric',month:'short',year:'numeric'};return new Date(d).toLocaleDateString(_lang==='en'?'en-GB':'it-IT',o)}
+function fmtDateShort(d){return new Date(d).toLocaleDateString(_lang==='en'?'en-GB':'it-IT',{day:'numeric',month:'short'})}
+function fmtTime(d){return new Date(d).toLocaleTimeString(_lang==='en'?'en-GB':'it-IT',{hour:'2-digit',minute:'2-digit'})}
 function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r}
 function padZ(n){return String(n).padStart(2,'0')}
 const MESI=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 const MESI_S=['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+
+/* ── SPLASH SCREEN ── */
+;(()=>{
+  const splash=document.getElementById('splash');
+  if(!splash) return;
+  const dur=1800;
+  setTimeout(()=>{
+    splash.classList.add('out');
+    setTimeout(()=>{ splash.style.display='none'; },500);
+  }, dur);
+})();
 
 /* ── THEME ── */
 let dark=localStorage.getItem('gm3-theme')==='dark'||(!localStorage.getItem('gm3-theme')&&matchMedia('(prefers-color-scheme:dark)').matches);
 function applyTheme(){document.documentElement.setAttribute('data-theme',dark?'dark':'light');document.getElementById('theme-btn').textContent=dark?'☀️':'🌙'}
 applyTheme();
 document.getElementById('theme-btn').addEventListener('click',()=>{dark=!dark;localStorage.setItem('gm3-theme',dark?'dark':'light');haptic.tick();applyTheme()});
+
+/* ── APPLY I18N on boot ── */
+applyI18n();
 
 /* ── NAV ── */
 // IDs that live in the "More" drawer (not the main nav bar)
@@ -2635,6 +3692,75 @@ const PHASES=[
 ];
 const STRAIN_BLOOM_DAYS={indica:56,hybrid:63,sativa:75,auto:49};
 
+/* ── HOME TABS ── */
+function homeTabSwitch(tab){
+  ['ciclo','finanze'].forEach(t=>{
+    document.getElementById('htab-'+t).classList.toggle('on',t===tab);
+    document.getElementById('htpanel-'+t).classList.toggle('on',t===tab);
+  });
+  if(tab==='finanze') finCalc();
+}
+
+/* ── FINANCIAL CALC ── */
+function finCalc(){
+  const totali  = parseFloat(document.getElementById('fin-inp-totali').value)||0;
+  const venduti = parseFloat(document.getElementById('fin-inp-venduti').value)||0;
+  const prezzo  = parseFloat(document.getElementById('fin-inp-prezzo').value)||0;
+  const costi   = parseFloat(document.getElementById('fin-inp-costi').value)||0;
+  const personali = Math.max(0, totali - venduti);
+  const lordo = venduti * prezzo;
+  const valPersonale = personali * prezzo;
+  const netto = lordo - costi;
+  const hasData = totali>0 || venduti>0 || prezzo>0;
+
+  document.getElementById('fin-ricavo-display').textContent = lordo>=10 ? Math.round(lordo) : lordo.toFixed(2);
+  document.getElementById('fin-gram-venduti-display').textContent   = venduti>0  ? venduti+'g' : '—';
+  document.getElementById('fin-gram-personali-display').textContent = personali>0 ? personali+'g' : '—';
+  document.getElementById('fin-prezzo-medio-display').textContent   = prezzo>0   ? '€'+prezzo  : '—';
+  document.getElementById('fin-ricavo-sub').textContent = hasData
+    ? venduti+'g venduti · '+personali+'g uso personale'
+    : 'Inserisci i grammi e il prezzo per calcolare';
+
+  document.getElementById('fin-breakdown').style.display    = hasData ? '' : 'none';
+  document.getElementById('fin-distrib-bar').style.display  = (hasData && totali>0) ? '' : 'none';
+  document.getElementById('fin-empty').style.display        = hasData ? 'none' : '';
+
+  if(hasData){
+    document.getElementById('fin-bd-lordo').textContent     = '€'+lordo.toFixed(2);
+    document.getElementById('fin-bd-costi').textContent     = '−€'+costi.toFixed(2);
+    document.getElementById('fin-bd-personale').textContent = '€'+valPersonale.toFixed(2);
+    const nettoEl = document.getElementById('fin-bd-netto');
+    nettoEl.textContent = (netto>=0?'':'−')+'€'+Math.abs(netto).toFixed(2);
+    nettoEl.style.color = netto>=0 ? 'var(--g500)' : 'var(--re400)';
+  }
+  if(totali>0){
+    const pctV = (venduti/totali)*100;
+    const pctP = (personali/totali)*100;
+    document.getElementById('fin-seg-venduti').style.width   = Math.min(pctV,100)+'%';
+    document.getElementById('fin-seg-personali').style.width = Math.min(pctP,100)+'%';
+    document.getElementById('fin-pct-venduti').textContent   = Math.round(pctV)+'% venduto';
+    document.getElementById('fin-leg-venduti').textContent   = venduti+'g venduti';
+    document.getElementById('fin-leg-personali').textContent = personali+'g personali';
+  }
+  try{
+    const k='gm3-fin-'+(document.getElementById('plant-select')?.value||'default');
+    localStorage.setItem(k,JSON.stringify({totali,venduti,prezzo,costi}));
+  }catch(e){}
+}
+
+function finLoad(){
+  try{
+    const k='gm3-fin-'+(document.getElementById('plant-select')?.value||'default');
+    const d=JSON.parse(localStorage.getItem(k)||'null');
+    if(!d) return;
+    if(d.totali!=null)  document.getElementById('fin-inp-totali').value=d.totali||'';
+    if(d.venduti!=null) document.getElementById('fin-inp-venduti').value=d.venduti||'';
+    if(d.prezzo!=null)  document.getElementById('fin-inp-prezzo').value=d.prezzo||'';
+    if(d.costi!=null)   document.getElementById('fin-inp-costi').value=d.costi||'';
+    finCalc();
+  }catch(e){}
+}
+
 const PLANTS_DATA={
   ogkush:{name:'OG Kush #3',startDate:new Date(Date.now()-42*864e5),fase:'veg',bloomDays:0,totalDays:42,estimatedCycle:98,bloomStartDate:null},
   ww:{name:'White Widow',startDate:new Date(Date.now()-18*864e5),fase:'veg',bloomDays:0,totalDays:18,estimatedCycle:98,bloomStartDate:null},
@@ -2648,6 +3774,7 @@ function loadPlantData(){
   renderTimeline(p.fase);
   updateDayStats(p);
   updateBloomCard(p);
+  finLoad();
 }
 
 function renderTimeline(activeFase){
@@ -2679,12 +3806,42 @@ function updateDayStats(p){
   document.getElementById('ds-rem').textContent=rem>0?rem:'✓';
 
   const bar=document.getElementById('prog-bar');
-  bar.style.width=Math.min(100,pct)+'%';
-  bar.className='pbar-fill '+(p.fase==='bloom'?'pbar-fill-am':p.fase==='flush'||p.fase==='harvest'?'pbar-fill-vi':'pbar-fill-g');
-  document.getElementById('prog-badge').textContent=pct+'%';
-  document.getElementById('prog-label').textContent=`Progresso Ciclo — ${p.name}`;
-  document.getElementById('prog-start').textContent=fmtDateShort(p.startDate);
-  document.getElementById('prog-end').textContent=fmtDateShort(addDays(p.startDate,p.estimatedCycle));
+  if(bar){
+    bar.style.width=Math.min(100,pct)+'%';
+    bar.className='pbar-fill '+(p.fase==='bloom'?'pbar-fill-am':p.fase==='flush'||p.fase==='harvest'?'pbar-fill-vi':'pbar-fill-g');
+  }
+  const badge=document.getElementById('prog-badge');
+  if(badge) badge.textContent=pct+'%';
+  const label=document.getElementById('prog-label');
+  if(label) label.textContent=`Progresso Ciclo — ${p.name}`;
+  const start=document.getElementById('prog-start');
+  if(start) start.textContent=fmtDateShort(p.startDate);
+  const end=document.getElementById('prog-end');
+  if(end) end.textContent=fmtDateShort(addDays(p.startDate,p.estimatedCycle));
+
+  /* ── Sync Hero Card ── */
+  const heroPlant=document.getElementById('hero-plant-name');
+  const heroDays=document.getElementById('hero-days');
+  const heroPct=document.getElementById('hero-pct');
+  const heroFill=document.getElementById('hero-prog-fill');
+  const heroBadge=document.getElementById('hero-phase-badge');
+  const heroStart=document.getElementById('hero-date-start');
+  const heroEnd=document.getElementById('hero-date-end');
+
+  if(heroPlant) heroPlant.textContent=p.name;
+  if(heroDays) heroDays.textContent=totalDays;
+  if(heroPct) heroPct.textContent=pct+'%';
+  if(heroFill){
+    heroFill.style.width=Math.min(100,pct)+'%';
+    heroFill.className='phase-hero__prog-fill'+(p.fase==='bloom'?' bloom-fill':'');
+  }
+  if(heroBadge){
+    const phaseMap={seed:'SEME',seedling:'PLANTULA',veg:'VEG',bloom:'BLOOM',flush:'FLUSH',harvest:'RACCOLTO'};
+    heroBadge.textContent=phaseMap[p.fase]||p.fase.toUpperCase();
+    heroBadge.className='phase-hero__badge '+p.fase;
+  }
+  if(heroStart) heroStart.textContent=fmtDateShort(p.startDate);
+  if(heroEnd) heroEnd.textContent=fmtDateShort(addDays(p.startDate,p.estimatedCycle));
 }
 
 function updateBloomCard(p){
@@ -5146,6 +6303,9 @@ initAuth();
 stealthApply(); // Ripristina modalità discreta al boot
 
 ;(() => {
+  // Load custom plants from localStorage
+  _loadCustomPlants();
+
   // Phase
   loadPlantData();
 
@@ -5184,6 +6344,19 @@ stealthApply(); // Ripristina modalità discreta al boot
 
   // Guida Malattie
   diseaseRender();
+
+  // Hook FAB: only show on sc-phase
+  const fab=document.getElementById('fab-add-plant');
+  if(fab){
+    const observer=new MutationObserver(()=>{
+      const phaseOn=document.getElementById('sc-phase')?.classList.contains('on');
+      fab.style.display=phaseOn?'flex':'none';
+    });
+    document.querySelectorAll('.screen').forEach(s=>observer.observe(s,{attributes:true,attributeFilter:['class']}));
+  }
+
+  // Hook add-plant modal open to init the form
+  document.getElementById('fab-add-plant')?.addEventListener('click',apInitModal);
 })();
 </script>
 
