@@ -135,8 +135,8 @@ a,button,input,select,textarea,label,[onclick],[role="button"]{
 /* ── NAV MORE DRAWER ── */
 .nav-more-backdrop{position:fixed;inset:0;z-index:1510;background:rgba(0,0,0,0);pointer-events:none;transition:background .3s}
 .nav-more-backdrop.open{background:rgba(0,0,0,.45);pointer-events:auto}
-.nav-more-ov{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;background:var(--sf);border-radius:22px 22px 0 0;border-top:1px solid var(--bd);z-index:1520;padding:10px 16px calc(calc(var(--nav-h)+var(--safe-b))+12px);transition:transform .38s cubic-bezier(.16,1,.3,1);box-shadow:0 -8px 32px rgba(0,0,0,.13)}
-.nav-more-ov.open{transform:translateX(-50%) translateY(0)}
+.nav-more-ov{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;background:var(--sf);border-radius:22px 22px 0 0;border-top:1px solid var(--bd);z-index:1520;padding:10px 16px calc(calc(var(--nav-h)+var(--safe-b))+12px);transition:transform .38s cubic-bezier(.16,1,.3,1);box-shadow:0 -8px 32px rgba(0,0,0,.13);pointer-events:none}
+.nav-more-ov.open{transform:translateX(-50%) translateY(0);pointer-events:auto}
 .nav-more-handle{width:32px;height:4px;background:var(--bd2);border-radius:99px;margin:0 auto 14px}
 .nav-more-title{font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--t4);text-align:center;margin-bottom:12px}
 .nav-more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
@@ -937,9 +937,11 @@ body.stealth-mode .stealth-badge{display:block}
   z-index:1570;
   box-shadow:0 -12px 48px rgba(0,0,0,.18);
   transition:transform .42s cubic-bezier(.16,1,.3,1);
+  pointer-events:none;
 }
 #pwa-install-sheet.show{
   transform:translateX(-50%) translateY(0);
+  pointer-events:auto;
 }
 
 .pwa-inst-handle{
