@@ -4,6 +4,21 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <title>GrowManager — Moduli Avanzati</title>
+
+<!-- ═══ PWA META ═══════════════════════════════════════ -->
+<meta name="theme-color" content="#56AE47"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="GrowManager"/>
+<meta name="application-name" content="GrowManager"/>
+<meta name="description" content="Gestisci le tue coltivazioni — fasi, nutrienti, log e molto altro."/>
+<!-- PWA manifest (file esterno sw.js nella stessa cartella) -->
+<link rel="manifest" href="manifest.json"/>
+<!-- Apple touch icon (usa la tua icona in produzione) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2356AE47'/><text y='.9em' font-size='72' x='12'>🌱</text></svg>"/>
+<!-- ═══════════════════════════════════════════════════ -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -72,7 +87,26 @@ button,input,select,textarea{font-family:inherit}
 .hbtn:active{transform:scale(.88)}
 
 /* ── BOTTOM NAV ── */
-.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:calc(var(--nav-h)+var(--safe-b));padding-bottom:var(--safe-b);background:var(--sf);border-top:1px solid var(--bd);display:grid;grid-template-columns:repeat(9,1fr);align-items:center;z-index:200;box-shadow:0 -3px 16px rgba(0,0,0,.07);transition:background .3s,border-color .3s}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:calc(var(--nav-h)+var(--safe-b));padding-bottom:var(--safe-b);background:var(--sf);border-top:1px solid var(--bd);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;z-index:200;box-shadow:0 -3px 16px rgba(0,0,0,.07);transition:background .3s,border-color .3s}
+
+/* ── NAV MORE DRAWER ── */
+.nav-more-backdrop{position:fixed;inset:0;z-index:198;background:rgba(0,0,0,0);pointer-events:none;transition:background .3s}
+.nav-more-backdrop.open{background:rgba(0,0,0,.45);pointer-events:auto}
+.nav-more-ov{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;background:var(--sf);border-radius:22px 22px 0 0;border-top:1px solid var(--bd);z-index:199;padding:10px 16px calc(calc(var(--nav-h)+var(--safe-b))+12px);transition:transform .38s cubic-bezier(.16,1,.3,1);box-shadow:0 -8px 32px rgba(0,0,0,.13)}
+.nav-more-ov.open{transform:translateX(-50%) translateY(0)}
+.nav-more-handle{width:32px;height:4px;background:var(--bd2);border-radius:99px;margin:0 auto 14px}
+.nav-more-title{font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--t4);text-align:center;margin-bottom:12px}
+.nav-more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.nav-more-tile{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 6px 12px;border:1.5px solid var(--bd);border-radius:var(--r-l);background:var(--sf2);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .18s;position:relative}
+.nav-more-tile:active{transform:scale(.93)}
+.nav-more-tile.on{border-color:var(--pr);background:var(--pr-l)}
+[data-theme="dark"] .nav-more-tile.on{border-color:var(--g300);background:var(--pr-l)}
+.nav-more-tile svg{color:var(--t3);transition:color .18s}
+.nav-more-tile.on svg{color:var(--pr)}
+.nav-more-tile__lbl{font-size:10px;font-weight:700;color:var(--t2);text-align:center;letter-spacing:.01em}
+.nav-more-tile.on .nav-more-tile__lbl{color:var(--pr-d)}
+[data-theme="dark"] .nav-more-tile.on .nav-more-tile__lbl{color:var(--g200)}
+.nav-more-dot{position:absolute;top:8px;right:8px;width:7px;height:7px;background:var(--re400);border-radius:50%;border:2px solid var(--sf2)}
 .ni{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 1px;cursor:pointer;-webkit-tap-highlight-color:transparent;background:none;border:none;color:var(--t4);position:relative;transition:color .2s}
 .ni.on{color:var(--pr)}
 .ni svg{transition:transform .22s cubic-bezier(.34,1.56,.64,1);width:18px;height:18px}
@@ -617,10 +651,458 @@ button,input,select,textarea{font-family:inherit}
 .exp-stat__val{font-family:var(--ff-m);font-size:16px;font-weight:800;color:var(--t1)}
 .exp-stat__lbl{font-size:9px;color:var(--t4);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
 
+/* ══════════════════════════════════════════
+   MODAL AUTH — Bottom-sheet login/registrazione
+   (Accessibile dal profilo, non più bloccante)
+══════════════════════════════════════════ */
+.auth-logo{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:20px}
+.auth-logo__icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--g400),var(--g700));display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 6px 20px rgba(86,174,71,.28)}
+.auth-logo__name{font-family:var(--ff-d);font-size:22px;font-weight:700;letter-spacing:-.04em;color:var(--t1)}
+.auth-logo__sub{font-size:12px;color:var(--t3);text-align:center;max-width:240px;line-height:1.5}
+/* Guest hero nel profilo */
+.profile-guest-hero{background:linear-gradient(135deg,var(--g700) 0%,var(--g500) 60%,var(--g300) 100%);border-radius:var(--r-xl);padding:22px 20px;margin-bottom:14px;position:relative;overflow:hidden;text-align:center}
+.profile-guest-hero::before{content:'';position:absolute;top:-30px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
+.profile-guest-hero::after{content:'';position:absolute;bottom:-40px;left:-15px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.05)}
+.profile-guest-hero__icon{font-size:42px;display:block;margin-bottom:10px;position:relative;z-index:1}
+.profile-guest-hero__title{font-family:var(--ff-d);font-size:20px;font-weight:700;color:#fff;margin-bottom:6px;position:relative;z-index:1}
+.profile-guest-hero__sub{font-size:13px;color:rgba(255,255,255,.75);margin-bottom:16px;line-height:1.5;position:relative;z-index:1}
+.profile-guest-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:relative;z-index:1}
+.btn-guest-register{padding:11px;border:none;border-radius:var(--r-m);background:#fff;color:var(--g700);font-family:var(--ff-b);font-size:13px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.btn-guest-register:active{transform:scale(.95)}
+.btn-guest-login{padding:11px;border:1.5px solid rgba(255,255,255,.45);border-radius:var(--r-m);background:rgba(255,255,255,.15);color:#fff;font-family:var(--ff-b);font-size:13px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.btn-guest-login:active{transform:scale(.95)}
+.profile-guest-perks{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r-xl);padding:16px;margin-bottom:14px}
+.profile-guest-perks__title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t4);margin-bottom:10px}
+.perk-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.perk-row:last-child{border-bottom:none;padding-bottom:0}
+.perk-row__icon{font-size:18px;width:32px;text-align:center;flex-shrink:0}
+.perk-row__text{font-size:13px;font-weight:600;color:var(--t1)}
+.perk-row__sub{font-size:11px;color:var(--t3)}
+
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--sf2);border-radius:var(--r-m);padding:3px;gap:3px;margin-bottom:22px}
+.auth-tab{padding:9px;border:none;background:transparent;border-radius:var(--r-s);font-family:var(--ff-b);font-size:13px;font-weight:700;color:var(--t3);cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent}
+.auth-tab.on{background:var(--sf);color:var(--t1);box-shadow:var(--sh-s)}
+
+.auth-form{display:flex;flex-direction:column;gap:0}
+.auth-form .fg{margin-bottom:12px}
+.auth-submit{width:100%;min-height:50px;border:none;border-radius:var(--r-m);background:linear-gradient(135deg,var(--g400),var(--g600));color:#fff;font-family:var(--ff-b);font-size:15px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .18s,transform .12s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(86,174,71,.30)}
+.auth-submit:active{transform:scale(.97)}
+.auth-submit:disabled{opacity:.5;pointer-events:none}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--t4);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+.btn-google{width:100%;min-height:48px;border:1.5px solid var(--bd);border-radius:var(--r-m);background:var(--sf);color:var(--t1);font-family:var(--ff-b);font-size:14px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .15s,transform .12s}
+.btn-google:active{transform:scale(.97)}
+.btn-google:hover{background:var(--sf2)}
+.google-icon{width:18px;height:18px;flex-shrink:0}
+
+.auth-error{background:var(--re100);border:1px solid var(--re400);border-radius:var(--r-m);padding:10px 12px;font-size:12px;color:var(--re500);font-weight:600;display:none;animation:fadeup .2s both;line-height:1.45}
+.auth-error.show{display:block}
+[data-theme="dark"] .auth-error{background:#200A0A;border-color:var(--re500);color:#FCA5A5}
+
+.auth-success{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-m);padding:10px 12px;font-size:12px;color:var(--g600);font-weight:600;display:none;animation:fadeup .2s both;line-height:1.45}
+.auth-success.show{display:block}
+[data-theme="dark"] .auth-success{background:var(--pr-l);border-color:var(--g700);color:var(--g200)}
+
+.auth-reset-link{text-align:center;margin-top:12px}
+.auth-reset-link button{background:none;border:none;color:var(--t4);font-size:12px;cursor:pointer;text-decoration:underline;-webkit-tap-highlight-color:transparent;font-family:var(--ff-b)}
+.auth-reset-link button:hover{color:var(--t2)}
+
+/* Loading spinner dentro bottone auth */
+.auth-spin{width:18px;height:18px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+
+/* ══════════════════════════════════════════
+   TOPBAR AVATAR
+══════════════════════════════════════════ */
+.topbar-avatar{width:34px;height:34px;border-radius:50%;border:2px solid var(--bd);background:linear-gradient(135deg,var(--g400),var(--g600));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,border-color .18s;overflow:hidden;flex-shrink:0}
+.topbar-avatar:active{transform:scale(.88)}
+.topbar-avatar.stealth-on{border-color:var(--vi400)}
+.topbar-stealth{width:34px;height:34px;border-radius:var(--r-m);border:1px solid var(--bd);background:var(--sf);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;-webkit-tap-highlight-color:transparent;transition:all .18s}
+.topbar-stealth.on{border-color:var(--vi400);background:var(--vi100)}
+[data-theme="dark"] .topbar-stealth.on{background:#1A0A2A}
+
+/* ══════════════════════════════════════════
+   SCREEN — PROFILO UTENTE
+══════════════════════════════════════════ */
+.profile-hero{background:linear-gradient(135deg,var(--g700) 0%,var(--g500) 60%,var(--g300) 100%);border-radius:var(--r-xl);padding:22px 20px;margin-bottom:14px;position:relative;overflow:hidden;display:flex;align-items:center;gap:16px}
+.profile-hero::before{content:'';position:absolute;top:-30px;right:-20px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.07)}
+.profile-avatar-lg{width:58px;height:58px;border-radius:50%;border:3px solid rgba(255,255,255,.4);background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0;position:relative;z-index:1}
+.profile-hero__info{flex:1;position:relative;z-index:1}
+.profile-hero__name{font-family:var(--ff-d);font-size:20px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.2}
+.profile-hero__email{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:8px}
+.profile-hero__provider{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;color:#fff}
+
+.profile-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.profile-stat{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r-xl);padding:16px;text-align:center;box-shadow:var(--sh-s)}
+.profile-stat__val{font-family:var(--ff-m);font-size:26px;font-weight:800;color:var(--pr);line-height:1.1;margin-bottom:2px}
+.profile-stat__lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t4)}
+.profile-stat__sub{font-size:11px;color:var(--t3);margin-top:3px}
+
+.profile-section{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r-xl);overflow:hidden;margin-bottom:12px}
+.profile-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--bd);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.profile-row:last-child{border-bottom:none}
+.profile-row:active{background:var(--bg2)}
+.profile-row__icon{width:36px;height:36px;border-radius:var(--r-m);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.profile-row__label{flex:1;font-size:14px;font-weight:600;color:var(--t1)}
+.profile-row__sub{font-size:11px;color:var(--t3);margin-top:1px}
+.profile-row__chevron{color:var(--t4);font-size:12px}
+.profile-row__badge{font-size:11px;font-weight:700;color:var(--t4)}
+
+/* toggle switch */
+.toggle-sw{position:relative;width:44px;height:26px;flex-shrink:0}
+.toggle-sw input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;border-radius:99px;background:var(--bd2);transition:background .22s;cursor:pointer}
+.toggle-track::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:transform .22s cubic-bezier(.34,1.56,.64,1)}
+.toggle-sw input:checked~.toggle-track{background:var(--pr)}
+.toggle-sw input:checked~.toggle-track::after{transform:translateX(18px)}
+.toggle-sw input:checked~.toggle-track.vi{background:var(--vi400)}
+
+/* ══════════════════════════════════════════
+   MODALITÀ DISCRETA — Stealth Mode
+══════════════════════════════════════════ */
+body.stealth-mode .stealth-blur{filter:blur(7px);transition:filter .3s;user-select:none}
+body.stealth-mode .stealth-blur:active,
+body.stealth-mode .stealth-blur:focus{filter:blur(0);outline:none}
+/* Also blur plant selectors */
+body.stealth-mode select#plant-select,
+body.stealth-mode select#cal-plant-filter,
+body.stealth-mode select#quick-pianta,
+body.stealth-mode .harvest-hero__plant,
+body.stealth-mode #hv-plant-tag,
+body.stealth-mode .gal-item__plant{filter:blur(6px);transition:filter .3s}
+body.stealth-mode select#plant-select:focus,
+body.stealth-mode select#cal-plant-filter:focus{filter:blur(0)}
+.stealth-badge{display:none;position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:5000;background:var(--vi400);color:#fff;font-size:11px;font-weight:700;padding:5px 14px;border-radius:99px;letter-spacing:.05em;box-shadow:0 4px 12px rgba(139,92,246,.35);animation:pop .3s cubic-bezier(.34,1.56,.64,1) both;pointer-events:none}
+body.stealth-mode .stealth-badge{display:block}
+
+/* ══════════════════════════════════════════
+   MODAL — ELIMINA ACCOUNT (GDPR)
+══════════════════════════════════════════ */
+#modal-delete-account .modal-sh{border-top:3px solid var(--re400)}
+.delete-warning-icon{font-size:40px;text-align:center;margin-bottom:12px;display:block}
+.delete-steps{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.delete-step{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--t2);line-height:1.45}
+.delete-step__num{width:18px;height:18px;border-radius:50%;background:var(--re400);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.delete-progress{display:none;flex-direction:column;gap:8px;margin:14px 0}
+.delete-progress.show{display:flex}
+.delete-progress-step{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--t3)}
+.delete-progress-step.done{color:var(--g500)}
+.delete-progress-step.active{color:var(--t1);font-weight:700}
+.delete-progress-step.error{color:var(--re400)}
+.dps-icon{font-size:14px;width:20px;text-align:center}
+.delete-confirm-input-wrap{margin:14px 0}
+
+/* ══════════════════════════════════════════
+   PWA UPDATE BANNER
+   Appare in basso sopra la nav quando il
+   Service Worker ha una nuova versione pronta
+══════════════════════════════════════════ */
+#pwa-update-banner{
+  position:fixed;
+  bottom:calc(var(--nav-h) + var(--safe-b) + 8px);
+  left:50%; transform:translateX(-50%) translateY(120%);
+  width:calc(100% - 24px); max-width:456px;
+  background:var(--g700);
+  border:1px solid var(--g600);
+  border-radius:var(--r-xl);
+  padding:13px 14px 13px 16px;
+  display:flex; align-items:center; gap:12px;
+  z-index:1800;
+  box-shadow:0 8px 32px rgba(0,0,0,.28);
+  transition:transform .42s cubic-bezier(.16,1,.3,1), opacity .42s;
+  opacity:0; pointer-events:none;
+}
+#pwa-update-banner.show{
+  transform:translateX(-50%) translateY(0);
+  opacity:1; pointer-events:auto;
+}
+.pwa-upd__icon{
+  width:36px; height:36px; border-radius:10px;
+  background:rgba(255,255,255,.15);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+}
+.pwa-upd__body{ flex:1; min-width:0 }
+.pwa-upd__title{
+  font-size:13px; font-weight:700; color:#fff;
+  margin-bottom:1px; line-height:1.3;
+}
+.pwa-upd__sub{
+  font-size:11px; color:rgba(255,255,255,.65); line-height:1.4;
+}
+.pwa-upd__actions{ display:flex; gap:7px; flex-shrink:0 }
+.pwa-upd-btn-reload{
+  padding:8px 14px; border:none; border-radius:var(--r-m);
+  background:#fff; color:var(--g700);
+  font-family:var(--ff-b); font-size:12px; font-weight:800;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transition:transform .12s; white-space:nowrap;
+}
+.pwa-upd-btn-reload:active{ transform:scale(.93) }
+.pwa-upd-btn-dismiss{
+  width:30px; height:30px; border:none; border-radius:8px;
+  background:rgba(255,255,255,.15); color:rgba(255,255,255,.7);
+  font-size:14px; cursor:pointer; -webkit-tap-highlight-color:transparent;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s;
+}
+.pwa-upd-btn-dismiss:hover{ background:rgba(255,255,255,.25) }
+
+/* Pulsino nella topbar che pulsa quando c'è un update */
+#pwa-update-dot{
+  position:absolute; top:3px; right:3px;
+  width:8px; height:8px; border-radius:50%;
+  background:var(--am400); border:2px solid var(--bg);
+  display:none; animation:pulse-dot 1.4s ease-in-out infinite;
+}
+#pwa-update-dot.show{ display:block }
+
+/* ══════════════════════════════════════════
+   PWA INSTALL PROMPT
+   Bottom-sheet adattivo iOS / Android
+══════════════════════════════════════════ */
+#pwa-install-backdrop{
+  position:fixed; inset:0; z-index:8500;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(4px);
+  opacity:0; pointer-events:none;
+  transition:opacity .3s;
+}
+#pwa-install-backdrop.show{ opacity:1; pointer-events:auto }
+
+#pwa-install-sheet{
+  position:fixed; bottom:0; left:50%;
+  transform:translateX(-50%) translateY(105%);
+  width:100%; max-width:480px;
+  background:var(--sf);
+  border-radius:24px 24px 0 0;
+  border-top:1px solid var(--bd);
+  padding:0 20px calc(32px + var(--safe-b));
+  z-index:8600;
+  box-shadow:0 -12px 48px rgba(0,0,0,.18);
+  transition:transform .42s cubic-bezier(.16,1,.3,1);
+}
+#pwa-install-sheet.show{
+  transform:translateX(-50%) translateY(0);
+}
+
+.pwa-inst-handle{
+  width:36px; height:4px; background:var(--bd2);
+  border-radius:99px; margin:12px auto 20px;
+}
+.pwa-inst-header{
+  display:flex; align-items:center; gap:14px; margin-bottom:18px;
+}
+.pwa-inst-appicon{
+  width:56px; height:56px; border-radius:14px; flex-shrink:0;
+  background:linear-gradient(135deg,var(--g400),var(--g700));
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px;
+  box-shadow:0 4px 16px rgba(86,174,71,.28);
+}
+.pwa-inst-header__title{
+  font-family:var(--ff-d); font-size:20px; font-weight:700;
+  color:var(--t1); letter-spacing:-.03em; margin-bottom:3px;
+}
+.pwa-inst-header__sub{ font-size:12px; color:var(--t3); line-height:1.45 }
+
+/* Steps iOS */
+.pwa-inst-steps{ display:flex; flex-direction:column; gap:10px; margin-bottom:18px }
+.pwa-inst-step{
+  display:flex; align-items:center; gap:13px;
+  padding:12px 14px;
+  background:var(--sf2); border:1px solid var(--bd);
+  border-radius:var(--r-l);
+}
+.pwa-inst-step__num{
+  width:26px; height:26px; border-radius:50%;
+  background:var(--pr); color:#fff;
+  font-size:12px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.pwa-inst-step__text{ font-size:13px; font-weight:600; color:var(--t1); line-height:1.4 }
+.pwa-inst-step__sub{ font-size:11px; color:var(--t3) }
+.pwa-inst-step__icon{
+  margin-left:auto; width:32px; height:32px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--bg2); border-radius:8px; font-size:16px;
+}
+
+/* Step con icona inline (per il pulsante di condivisione iOS) */
+.share-icon-inline{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:22px; height:22px; border-radius:5px;
+  background:var(--bl400); vertical-align:middle; margin:0 2px;
+}
+.share-icon-inline svg{ color:#fff }
+
+/* Pulsante installa (Android/Chrome) */
+.pwa-inst-android-btn{
+  width:100%; min-height:52px;
+  border:none; border-radius:var(--r-l);
+  background:linear-gradient(135deg,var(--g400),var(--g600));
+  color:#fff; font-family:var(--ff-b);
+  font-size:15px; font-weight:700;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  box-shadow:0 4px 16px rgba(86,174,71,.28);
+  transition:transform .12s, opacity .15s;
+  margin-bottom:10px;
+}
+.pwa-inst-android-btn:active{ transform:scale(.97) }
+.pwa-inst-android-btn:disabled{ opacity:.5 }
+
+.pwa-inst-dismiss{
+  width:100%; min-height:44px;
+  border:none; border-radius:var(--r-l);
+  background:transparent; color:var(--t4);
+  font-family:var(--ff-b); font-size:13px; font-weight:600;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transition:color .15s;
+}
+.pwa-inst-dismiss:hover{ color:var(--t2) }
+
+/* Indicatore piattaforma nel titolo */
+.pwa-inst-platform-badge{
+  display:inline-flex; align-items:center; gap:5px;
+  padding:3px 10px; border-radius:99px;
+  font-size:10px; font-weight:700;
+  background:var(--bl50); color:var(--bl600);
+  margin-bottom:14px;
+}
+[data-theme="dark"] .pwa-inst-platform-badge{
+  background:#0A1424; color:var(--bl300);
+}
+
+/* Mini banner trigger nella topbar (mostrato dopo X visite) */
+#pwa-install-trigger{
+  display:none;
+  align-items:center; gap:6px;
+  padding:5px 11px; border-radius:99px;
+  background:var(--pr-l); border:1.5px solid var(--pr);
+  color:var(--pr-d); font-size:11px; font-weight:700;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transition:transform .12s;
+  white-space:nowrap;
+}
+#pwa-install-trigger:active{ transform:scale(.93) }
+[data-theme="dark"] #pwa-install-trigger{ color:var(--g200) }
 
 </style>
 </head>
-<body>
+<!-- ════════════════════════════════════
+     FIREBASE SDK v10 (compat CDN)
+     ► Sostituisci firebaseConfig con la tua
+════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+// ► Inserisci qui la tua configurazione Firebase
+const FIREBASE_CONFIG = {
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_PROJECT.firebaseapp.com",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId:             "YOUR_APP_ID"
+};
+// Inizializza solo se la config è stata impostata
+let _fbApp = null, _fbAuth = null, _fbDb = null;
+try {
+  if (FIREBASE_CONFIG.apiKey !== 'YOUR_API_KEY') {
+    _fbApp  = firebase.initializeApp(FIREBASE_CONFIG);
+    _fbAuth = firebase.auth();
+    _fbDb   = firebase.firestore();
+  }
+} catch(e){ console.warn('Firebase non inizializzato:', e.message); }
+</script>
+
+<!-- ════════════════════════════
+     MODAL AUTH — Login / Signup / Reset
+     Bottom-sheet accessibile dal Profilo
+════════════════════════════ -->
+<div class="modal-ov" id="modal-auth">
+  <div class="modal-sh" style="padding-bottom:calc(28px + var(--safe-b));">
+    <div class="modal-handle"></div>
+
+    <!-- Logo compatto -->
+    <div class="auth-logo">
+      <div class="auth-logo__icon">🌱</div>
+      <div class="auth-logo__name">GrowManager</div>
+      <div class="auth-logo__sub" id="auth-modal-sub">Salva i tuoi dati e accedi da qualsiasi dispositivo</div>
+    </div>
+
+    <!-- Tab login / registrazione -->
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="auth-tab-login"  onclick="authSwitchTab('login')">Accedi</button>
+      <button class="auth-tab"    id="auth-tab-signup" onclick="authSwitchTab('signup')">Registrati</button>
+    </div>
+
+    <!-- Messaggi errore / successo -->
+    <div class="auth-error"   id="auth-error"></div>
+    <div class="auth-success" id="auth-success"></div>
+
+    <!-- Form Email + Password -->
+    <div class="auth-form" id="auth-form-main" style="display:flex;flex-direction:column;gap:0">
+      <div class="fg" id="auth-name-fg" style="display:none;">
+        <div class="fl">Nome <span style="color:var(--re400)">*</span></div>
+        <input class="fi" id="auth-name" type="text" placeholder="Il tuo nome" autocomplete="name"/>
+      </div>
+      <div class="fg">
+        <div class="fl">Email <span style="color:var(--re400)">*</span></div>
+        <input class="fi" id="auth-email" type="email" placeholder="tu@esempio.com" autocomplete="email"/>
+      </div>
+      <div class="fg">
+        <div class="fl">Password <span style="color:var(--re400)">*</span></div>
+        <input class="fi" id="auth-password" type="password" placeholder="Almeno 6 caratteri" autocomplete="current-password"/>
+      </div>
+      <button class="auth-submit" id="auth-submit-btn" onclick="authSubmit()">
+        <span id="auth-submit-lbl">Accedi</span>
+      </button>
+      <div class="auth-reset-link" id="auth-reset-row">
+        <button onclick="authShowReset()">Password dimenticata?</button>
+      </div>
+    </div>
+
+    <!-- Form Reset Password -->
+    <div class="auth-form" id="auth-form-reset" style="display:none;flex-direction:column;gap:0">
+      <p style="font-size:13px;color:var(--t3);margin-bottom:14px;line-height:1.5;">Inserisci la tua email e ti invieremo un link per reimpostare la password.</p>
+      <div class="fg">
+        <div class="fl">Email <span style="color:var(--re400)">*</span></div>
+        <input class="fi" id="auth-reset-email" type="email" placeholder="tu@esempio.com"/>
+      </div>
+      <button class="auth-submit" onclick="authSendReset()">
+        <span>Invia email di recupero</span>
+      </button>
+      <div class="auth-reset-link">
+        <button onclick="authHideReset()">← Torna al login</button>
+      </div>
+    </div>
+
+    <div class="auth-divider">oppure</div>
+
+    <!-- Google Sign-in -->
+    <button class="btn-google" onclick="authSignInGoogle()">
+      <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continua con Google
+    </button>
+
+    <p style="text-align:center;font-size:10px;color:var(--t4);margin-top:14px;line-height:1.55;">
+      Continuando accetti i Termini di Servizio e la Privacy Policy.
+    </p>
+  </div>
+</div>
+
+<!-- Stealth badge (shown when stealth mode active) -->
+<div class="stealth-badge" id="stealth-badge">🕵️ Modalità Discreta</div>
+
 <div class="shell">
 
 <!-- TOPBAR -->
@@ -632,8 +1114,16 @@ button,input,select,textarea{font-family:inherit}
     </div>
     <span class="brand-tag">Moduli v3</span>
   </div>
-  <div style="display:flex;gap:7px;">
-    <button class="hbtn" id="theme-btn">☀️</button>
+  <div style="display:flex;gap:7px;align-items:center;">
+    <button id="pwa-install-trigger" onclick="pwaInstallShow()" aria-label="Installa app">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Installa
+    </button>
+    <button class="topbar-stealth" id="stealth-btn" onclick="stealthToggle()" title="Modalità Discreta">👁</button>
+    <button class="hbtn" id="theme-btn" style="position:relative;">☀️
+      <span id="pwa-update-dot"></span>
+    </button>
+    <div class="topbar-avatar" id="topbar-avatar" onclick="topbarAvatarClick()" title="Profilo">👤</div>
   </div>
 </div>
 
@@ -1336,9 +1826,9 @@ button,input,select,textarea{font-family:inherit}
   <div class="s3">
     <div class="gal-filters" id="gal-filters">
       <button class="gal-filter-btn on" data-plant="all" onclick="galSetFilter(this,'all')">🌿 Tutte</button>
-      <button class="gal-filter-btn" data-plant="ogkush" onclick="galSetFilter(this,'ogkush')">OG Kush #3</button>
-      <button class="gal-filter-btn" data-plant="ww" onclick="galSetFilter(this,'ww')">White Widow</button>
-      <button class="gal-filter-btn" data-plant="nl" onclick="galSetFilter(this,'nl')">Northern Lights</button>
+      <button class="gal-filter-btn stealth-blur" data-plant="ogkush" onclick="galSetFilter(this,'ogkush')">OG Kush #3</button>
+      <button class="gal-filter-btn stealth-blur" data-plant="ww" onclick="galSetFilter(this,'ww')">White Widow</button>
+      <button class="gal-filter-btn stealth-blur" data-plant="nl" onclick="galSetFilter(this,'nl')">Northern Lights</button>
     </div>
     <div class="gal-toolbar">
       <span class="gal-count" id="gal-count">0 foto</span>
@@ -1487,7 +1977,7 @@ button,input,select,textarea{font-family:inherit}
       <div class="export-plant-card selected" data-plant="ogkush" onclick="exportSelectPlant(this,'ogkush')">
         <div class="export-plant-card__dot" style="background:#3D9130"></div>
         <div>
-          <div class="export-plant-card__name">OG Kush #3</div>
+          <div class="export-plant-card__name stealth-blur">OG Kush #3</div>
           <div class="export-plant-card__meta">Indica · 100 gg ciclo</div>
         </div>
         <div class="export-plant-card__check">✓</div>
@@ -1495,7 +1985,7 @@ button,input,select,textarea{font-family:inherit}
       <div class="export-plant-card" data-plant="ww" onclick="exportSelectPlant(this,'ww')">
         <div class="export-plant-card__dot" style="background:#2563EB"></div>
         <div>
-          <div class="export-plant-card__name">White Widow</div>
+          <div class="export-plant-card__name stealth-blur">White Widow</div>
           <div class="export-plant-card__meta">Ibrido · 88 gg ciclo</div>
         </div>
         <div class="export-plant-card__check">✓</div>
@@ -1503,7 +1993,7 @@ button,input,select,textarea{font-family:inherit}
       <div class="export-plant-card" data-plant="nl" onclick="exportSelectPlant(this,'nl')">
         <div class="export-plant-card__dot" style="background:#7C3AED"></div>
         <div>
-          <div class="export-plant-card__name">Northern Lights</div>
+          <div class="export-plant-card__name stealth-blur">Northern Lights</div>
           <div class="export-plant-card__meta">Indica · 79 gg ciclo</div>
         </div>
         <div class="export-plant-card__check">✓</div>
@@ -1581,9 +2071,305 @@ button,input,select,textarea{font-family:inherit}
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     SCREEN 10 — PROFILO UTENTE
+     Duale: stato ospite / stato loggato
+══════════════════════════════════════════ -->
+<div class="screen" id="sc-profile">
+<div class="pad" style="padding-top:16px;">
+
+  <!-- ╔══════════════════════════╗
+       ║  STATO OSPITE (guest)    ║
+       ╚══════════════════════════╝ -->
+  <div id="profile-guest-view">
+
+    <!-- Hero invito registrazione -->
+    <div class="profile-guest-hero s1">
+      <span class="profile-guest-hero__icon">🌱</span>
+      <div class="profile-guest-hero__title">Esplora liberamente</div>
+      <div class="profile-guest-hero__sub">Stai usando GrowManager come ospite. Registrati per salvare i tuoi dati, sincronizzarli su tutti i dispositivi e non perderli mai.</div>
+      <div class="profile-guest-btns">
+        <button class="btn-guest-register" onclick="authOpenModal('signup')">🚀 Registrati gratis</button>
+        <button class="btn-guest-login"    onclick="authOpenModal('login')">Accedi</button>
+      </div>
+    </div>
+
+    <!-- Perché registrarsi -->
+    <div class="profile-guest-perks s2">
+      <div class="profile-guest-perks__title">Cosa ottieni con un account</div>
+      <div class="perk-row">
+        <div class="perk-row__icon">☁️</div>
+        <div>
+          <div class="perk-row__text">Dati sempre al sicuro</div>
+          <div class="perk-row__sub">Sincronizzazione automatica su Firestore</div>
+        </div>
+      </div>
+      <div class="perk-row">
+        <div class="perk-row__icon">📱</div>
+        <div>
+          <div class="perk-row__text">Multi-dispositivo</div>
+          <div class="perk-row__sub">Accedi da telefono, tablet, PC</div>
+        </div>
+      </div>
+      <div class="perk-row">
+        <div class="perk-row__icon">📊</div>
+        <div>
+          <div class="perk-row__text">Storico completo</div>
+          <div class="perk-row__sub">Tutti i cicli, log e harvest salvati</div>
+        </div>
+      </div>
+      <div class="perk-row">
+        <div class="perk-row__icon">🔒</div>
+        <div>
+          <div class="perk-row__text">Privacy garantita</div>
+          <div class="perk-row__sub">I tuoi dati non vengono mai condivisi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Impostazioni disponibili anche da ospite -->
+    <div class="label s3">Impostazioni</div>
+    <div class="profile-section s3">
+      <div class="profile-row" onclick="stealthToggle()">
+        <div class="profile-row__icon" style="background:var(--vi100);">👁</div>
+        <div style="flex:1">
+          <div class="profile-row__label">Modalità Discreta</div>
+          <div class="profile-row__sub">Sfoca nomi piante e foto in pubblico</div>
+        </div>
+        <label class="toggle-sw" onclick="event.stopPropagation()">
+          <input type="checkbox" id="stealth-toggle-check" onchange="stealthToggle()">
+          <span class="toggle-track vi"></span>
+        </label>
+      </div>
+      <div class="profile-row" onclick="document.getElementById('theme-btn').click()">
+        <div class="profile-row__icon" style="background:var(--bl50);">🌙</div>
+        <div style="flex:1">
+          <div class="profile-row__label">Tema Scuro</div>
+          <div class="profile-row__sub">Cambia aspetto dell'app</div>
+        </div>
+        <span class="profile-row__badge" id="profile-theme-badge">Light</span>
+      </div>
+    </div>
+
+  </div><!-- /profile-guest-view -->
+
+  <!-- ╔══════════════════════════╗
+       ║  STATO LOGGATO (user)    ║
+       ╚══════════════════════════╝ -->
+  <div id="profile-user-view" style="display:none;">
+
+    <!-- Hero utente loggato -->
+    <div class="profile-hero s1">
+      <div class="profile-avatar-lg" id="profile-avatar-lg">?</div>
+      <div class="profile-hero__info">
+        <div class="profile-hero__name stealth-blur" id="profile-display-name">Utente</div>
+        <div class="profile-hero__email stealth-blur" id="profile-email">—</div>
+        <span class="profile-hero__provider" id="profile-provider-badge">📧 Email</span>
+      </div>
+    </div>
+
+    <!-- Stats Firestore -->
+    <div class="label s2">Statistiche Coltivazioni</div>
+    <div class="profile-stats-grid s2">
+      <div class="profile-stat">
+        <div class="profile-stat__val" id="stat-cycles">—</div>
+        <div class="profile-stat__lbl">Cicli Completati</div>
+        <div class="profile-stat__sub">harvest confermati</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat__val" id="stat-grams">—</div>
+        <div class="profile-stat__lbl">Grammi Raccolti</div>
+        <div class="profile-stat__sub">somma totale</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat__val" id="stat-plants">—</div>
+        <div class="profile-stat__lbl">Piante Attive</div>
+        <div class="profile-stat__sub">in coltivazione</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat__val" id="stat-days">—</div>
+        <div class="profile-stat__lbl">Giorni Totali</div>
+        <div class="profile-stat__sub">da primo ciclo</div>
+      </div>
+    </div>
+
+    <!-- Impostazioni -->
+    <div class="label s3">Impostazioni</div>
+    <div class="profile-section s3">
+      <div class="profile-row" onclick="stealthToggle()">
+        <div class="profile-row__icon" style="background:var(--vi100);">👁</div>
+        <div style="flex:1">
+          <div class="profile-row__label">Modalità Discreta</div>
+          <div class="profile-row__sub">Sfoca nomi piante e foto in pubblico</div>
+        </div>
+        <label class="toggle-sw" onclick="event.stopPropagation()">
+          <input type="checkbox" id="stealth-toggle-check-user" onchange="stealthToggle()">
+          <span class="toggle-track vi"></span>
+        </label>
+      </div>
+      <div class="profile-row" onclick="document.getElementById('theme-btn').click()">
+        <div class="profile-row__icon" style="background:var(--bl50);">🌙</div>
+        <div style="flex:1">
+          <div class="profile-row__label">Tema Scuro</div>
+          <div class="profile-row__sub">Cambia aspetto dell'app</div>
+        </div>
+        <span class="profile-row__badge" id="profile-theme-badge-user">Light</span>
+      </div>
+      <div class="profile-row">
+        <div class="profile-row__icon" style="background:var(--am100);">🔔</div>
+        <div style="flex:1">
+          <div class="profile-row__label">Notifiche</div>
+          <div class="profile-row__sub">Promemoria irrigazione e fasi</div>
+        </div>
+        <label class="toggle-sw" onclick="event.stopPropagation()">
+          <input type="checkbox" id="notif-toggle">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Account -->
+    <div class="label s4">Account</div>
+    <div class="profile-section s4">
+      <div class="profile-row" onclick="authShowResetFromProfile()">
+        <div class="profile-row__icon" style="background:var(--g50);">🔑</div>
+        <div style="flex:1">
+          <div class="profile-row__label">Cambia Password</div>
+          <div class="profile-row__sub">Invia email di recupero password</div>
+        </div>
+        <span class="profile-row__chevron">›</span>
+      </div>
+      <div class="profile-row" onclick="authSignOut()">
+        <div class="profile-row__icon" style="background:var(--am100);">🚪</div>
+        <div style="flex:1">
+          <div class="profile-row__label">Esci dall'Account</div>
+          <div class="profile-row__sub" id="profile-signout-email">—</div>
+        </div>
+        <span class="profile-row__chevron">›</span>
+      </div>
+    </div>
+
+    <!-- GDPR -->
+    <div class="label s4" style="color:var(--re400);">Zona Pericolosa</div>
+    <div class="profile-section s4">
+      <div class="profile-row" onclick="openModal('modal-delete-account')">
+        <div class="profile-row__icon" style="background:var(--re100);">🗑️</div>
+        <div style="flex:1">
+          <div class="profile-row__label" style="color:var(--re500);">Elimina Account</div>
+          <div class="profile-row__sub">Cancella tutti i tuoi dati (GDPR)</div>
+        </div>
+        <span class="profile-row__chevron" style="color:var(--re400);">›</span>
+      </div>
+    </div>
+
+    <div class="callout callout-info s5" style="margin-top:4px">
+      <div class="callout-icon">🔥</div>
+      <div class="callout-body">
+        <strong>Query Firestore</strong>
+        Statistiche da <code style="font-size:11px">collectionGroup('harvests')</code> e <code style="font-size:11px">aggregateQuery(sum('grammi'))</code>.
+      </div>
+    </div>
+
+  </div><!-- /profile-user-view -->
+
+  <div style="height:8px;"></div>
+</div>
+</div>
+
 <!-- ════════════════════════════
-     BOTTOM NAV
+     MODAL — ELIMINA ACCOUNT (GDPR)
 ════════════════════════════ -->
+<div class="modal-ov" id="modal-delete-account">
+  <div class="modal-sh">
+    <div class="modal-handle"></div>
+    <span class="delete-warning-icon">⚠️</span>
+    <div class="modal-title" style="color:var(--re500);text-align:center;">Elimina Account</div>
+
+    <div id="delete-step-confirm">
+      <div class="callout callout-dng" style="margin-bottom:14px;">
+        <div class="callout-icon">🚨</div>
+        <div class="callout-body">
+          <strong>Azione irreversibile</strong>
+          Tutti i tuoi dati verranno cancellati permanentemente. Non potrai recuperarli.
+        </div>
+      </div>
+
+      <div class="label">Cosa verrà eliminato:</div>
+      <div class="delete-steps">
+        <div class="delete-step"><div class="delete-step__num">1</div>Tutti i documenti Firestore (<code style="font-size:11px">users/{uid}/</code>) — piante, log, nutrienti, ambienti</div>
+        <div class="delete-step"><div class="delete-step__num">2</div>Tutte le foto su Firebase Storage (<code style="font-size:11px">users/{uid}/photos/</code>)</div>
+        <div class="delete-step"><div class="delete-step__num">3</div>L'account utente da Firebase Authentication</div>
+      </div>
+
+      <div class="delete-confirm-input-wrap">
+        <div class="fl" style="margin-bottom:8px;">Scrivi <strong>ELIMINA</strong> per confermare</div>
+        <input class="fi" id="delete-confirm-input" placeholder="ELIMINA" oninput="deleteCheckConfirm()" autocomplete="off"/>
+      </div>
+
+      <button class="btn btn-dng btn-full" id="delete-confirm-btn" onclick="authDeleteAccount()" disabled>
+        🗑️ Elimina tutto e chiudi account
+      </button>
+      <div style="height:10px;"></div>
+      <button class="btn btn-gh btn-full" onclick="closeModal('modal-delete-account')">Annulla</button>
+    </div>
+
+    <!-- Progress steps during deletion -->
+    <div class="delete-progress" id="delete-progress">
+      <div class="delete-progress-step" id="dps-firestore">
+        <span class="dps-icon">⏳</span> Eliminazione dati Firestore…
+      </div>
+      <div class="delete-progress-step" id="dps-storage">
+        <span class="dps-icon">⏳</span> Eliminazione foto Storage…
+      </div>
+      <div class="delete-progress-step" id="dps-auth">
+        <span class="dps-icon">⏳</span> Eliminazione account Auth…
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     BOTTOM NAV (5 primary + drawer)
+════════════════════════════ -->
+<!-- More drawer backdrop -->
+<div class="nav-more-backdrop" id="nav-more-backdrop" onclick="navMoreClose()"></div>
+<!-- More drawer -->
+<div class="nav-more-ov" id="nav-more-ov">
+  <div class="nav-more-handle"></div>
+  <div class="nav-more-title">Sezioni</div>
+  <div class="nav-more-grid">
+    <div class="nav-more-tile" id="nmt-sc-profile" onclick="navMoreTo('sc-profile');profileInit()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="nav-more-tile__lbl">Profilo</span>
+    </div>
+    <div class="nav-more-tile" id="nmt-sc-envs" onclick="navMoreTo('sc-envs')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      <span class="nav-more-tile__lbl">Ambienti</span>
+    </div>
+    <div class="nav-more-tile" id="nmt-sc-pests" onclick="navMoreTo('sc-pests')">
+      <div class="nav-more-dot"></div>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="3" ry="2"/><path d="M12 7v4"/><path d="M8 8c-2 1-3 3-3 5s1 4 3 5"/><path d="M16 8c2 1 3 3 3 5s-1 4-3 5"/><path d="M9 17c1 2 2 3 3 3s2-1 3-3"/><line x1="5" y1="10" x2="2" y2="8"/><line x1="19" y1="10" x2="22" y2="8"/><line x1="5" y1="15" x2="2" y2="17"/><line x1="19" y1="15" x2="22" y2="17"/></svg>
+      <span class="nav-more-tile__lbl">Pest</span>
+    </div>
+    <div class="nav-more-tile" id="nmt-sc-harvest" onclick="navMoreTo('sc-harvest')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="22" x2="9" y2="12"/><line x1="15" y1="22" x2="15" y2="12"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+      <span class="nav-more-tile__lbl">Raccolta</span>
+    </div>
+    <div class="nav-more-tile" id="nmt-sc-gallery" onclick="navMoreTo('sc-gallery')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+      <span class="nav-more-tile__lbl">Galleria</span>
+    </div>
+    <div class="nav-more-tile" id="nmt-sc-diseases" onclick="navMoreTo('sc-diseases')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <span class="nav-more-tile__lbl">Malattie</span>
+    </div>
+    <div class="nav-more-tile" id="nmt-sc-export" onclick="navMoreTo('sc-export');exportInit()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span class="nav-more-tile__lbl">Esporta</span>
+    </div>
+  </div>
+</div>
+
 <nav class="bnav">
   <button class="ni on" data-sc="sc-phase" onclick="navTo(this,'sc-phase')">
     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
@@ -1597,30 +2383,13 @@ button,input,select,textarea{font-family:inherit}
     <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     <span class="ni-lbl">Calendario</span>
   </button>
-  <button class="ni" data-sc="sc-envs" onclick="navTo(this,'sc-envs')">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
-    <span class="ni-lbl">Ambienti</span>
-  </button>
-  <button class="ni" data-sc="sc-pests" onclick="navTo(this,'sc-pests')">
-    <div class="ni-dot show"></div>
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z"/><path d="M12 8v4l3 3"/></svg>
-    <span class="ni-lbl">Pest</span>
-  </button>
-  <button class="ni" data-sc="sc-harvest" onclick="navTo(this,'sc-harvest')">
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="9" y1="22" x2="9" y2="12"/><line x1="15" y1="22" x2="15" y2="12"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
-    <span class="ni-lbl">Raccolta</span>
-  </button>
-  <button class="ni" data-sc="sc-gallery" onclick="navTo(this,'sc-gallery')">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-    <span class="ni-lbl">Galleria</span>
-  </button>
   <button class="ni" data-sc="sc-diseases" onclick="navTo(this,'sc-diseases')">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
     <span class="ni-lbl">Malattie</span>
   </button>
-  <button class="ni" data-sc="sc-export" onclick="navTo(this,'sc-export');exportInit()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    <span class="ni-lbl">Esporta</span>
+  <button class="ni" id="nav-more-btn" onclick="navMoreToggle()">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+    <span class="ni-lbl">Altro</span>
   </button>
 </nav>
 
@@ -1719,12 +2488,55 @@ applyTheme();
 document.getElementById('theme-btn').addEventListener('click',()=>{dark=!dark;localStorage.setItem('gm3-theme',dark?'dark':'light');haptic.tick();applyTheme()});
 
 /* ── NAV ── */
-function navTo(btn,scId){
+// IDs that live in the "More" drawer (not the main nav bar)
+const NAV_MORE_SCREENS = new Set(['sc-envs','sc-pests','sc-harvest','sc-gallery','sc-export','sc-profile']);
+
+function navTo(btn, scId) {
   haptic.tick();
-  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  navMoreClose();
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
   btn.classList.add('on');
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
   document.getElementById(scId).classList.add('on');
+  // Un-highlight all drawer tiles
+  document.querySelectorAll('.nav-more-tile').forEach(t => t.classList.remove('on'));
+}
+
+/* Called from drawer tiles */
+function navMoreTo(scId) {
+  haptic.tick();
+  navMoreClose();
+  // Clear main nav highlight
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  // Highlight "Altro" button as active
+  document.getElementById('nav-more-btn').classList.add('on');
+  // Highlight the tile
+  document.querySelectorAll('.nav-more-tile').forEach(t => t.classList.remove('on'));
+  const tile = document.getElementById('nmt-' + scId);
+  if (tile) tile.classList.add('on');
+  // Switch screen
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.getElementById(scId).classList.add('on');
+}
+
+function navMoreToggle() {
+  const ov = document.getElementById('nav-more-ov');
+  if (ov.classList.contains('open')) { navMoreClose(); } else { navMoreOpen(); }
+}
+function navMoreOpen() {
+  haptic.light();
+  document.getElementById('nav-more-ov').classList.add('open');
+  document.getElementById('nav-more-backdrop').classList.add('open');
+  document.getElementById('nav-more-btn').classList.add('on');
+}
+function navMoreClose() {
+  document.getElementById('nav-more-ov').classList.remove('open');
+  document.getElementById('nav-more-backdrop').classList.remove('open');
+  // Only remove 'on' from the "Altro" button if a drawer screen isn't active
+  const activeScreen = document.querySelector('.screen.on');
+  if (activeScreen && !NAV_MORE_SCREENS.has(activeScreen.id)) {
+    document.getElementById('nav-more-btn').classList.remove('on');
+  }
 }
 
 /* ── MODALS ── */
@@ -3058,7 +3870,7 @@ async function galRenderGrid() {
     const dot   = PHASE_DOTS[p.fase]||'#aaa';
     return `<div class="gal-item" style="animation-delay:${i*0.04}s" onclick="galLbOpen(${i})">
       ${p.dataUrl
-        ? `<img class="gal-item__img" src="${p.dataUrl}" alt="${p.caption}" loading="lazy"/>`
+        ? `<img class="gal-item__img stealth-blur" src="${p.dataUrl}" alt="${p.caption}" loading="lazy"/>`
         : `<div style="width:100%;height:100%;background:linear-gradient(135deg,${p.color}99,${p.color}44);display:flex;align-items:center;justify-content:center;font-size:28px;">📷</div>`}
       <div class="gal-item__overlay">
         <div class="gal-item__plant">${pName}</div>
@@ -3722,7 +4534,560 @@ async function exportInit() {
 }
 
 
-(function init(){
+/* ═══════════════════════════════════════════════════════
+   FIREBASE AUTH — Login · Google · Reset · Delete (GDPR)
+   ─────────────────────────────────────────────────────
+   Modalità DEMO: se Firebase non è configurato,
+   simula il flusso con un utente fittizio.
+═══════════════════════════════════════════════════════ */
+
+/* ── Stato auth globale ── */
+let _currentUser = null;
+
+/* ── Demo user (fallback se Firebase non è configurato) ── */
+const DEMO_USER = {
+  uid:         'demo_uid_001',
+  displayName: 'Demo Grower',
+  email:       'demo@growmanager.app',
+  photoURL:    null,
+  providerData:[{ providerId:'password' }]
+};
+
+/* ══════════════════════════════════════════════
+   ROUTE GUARD — GUEST-FIRST
+   ─────────────────────────────────────────────
+   L'app è SEMPRE accessibile. Non esiste più
+   una schermata di blocco.
+   routeGuard aggiorna solo la UI in base
+   allo stato di autenticazione.
+══════════════════════════════════════════════ */
+function routeGuard(user) {
+  _currentUser = user;
+
+  if (user) {
+    // ── Utente autenticato ─────────────────────
+    _updateTopbarAvatar(user);
+    updateProfileThemeBadge();
+    // Se il modal auth era aperto, chiudilo
+    closeModal('modal-auth');
+    // Aggiorna la schermata profilo se è già visibile
+    if (document.getElementById('sc-profile').classList.contains('on')) {
+      profileInit();
+    }
+  } else {
+    // ── Ospite ────────────────────────────────
+    // Reset avatar topbar all'icona ospite
+    const av = document.getElementById('topbar-avatar');
+    if (av) { av.textContent = '👤'; av.style.background = ''; }
+  }
+
+  // In entrambi i casi aggiorna la profile screen
+  // (guest-view vs user-view) se visibile
+  _profileSyncView();
+}
+
+/* ── Sceglie quale metà del profilo mostrare ── */
+function _profileSyncView() {
+  const guestView = document.getElementById('profile-guest-view');
+  const userView  = document.getElementById('profile-user-view');
+  if (!guestView || !userView) return;
+  if (_currentUser) {
+    guestView.style.display = 'none';
+    userView.style.display  = 'block';
+  } else {
+    guestView.style.display = 'block';
+    userView.style.display  = 'none';
+  }
+  // Sync toggle stealth in entrambe le viste
+  ['stealth-toggle-check','stealth-toggle-check-user'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = _stealthOn;
+  });
+}
+
+/* ── Avatar topbar per utente loggato ── */
+function _updateTopbarAvatar(user) {
+  const av  = document.getElementById('topbar-avatar');
+  const avL = document.getElementById('profile-avatar-lg');
+  const initials = user.displayName
+    ? user.displayName.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()
+    : (user.email || '?')[0].toUpperCase();
+  if (user.photoURL) {
+    const img = `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    if (av)  av.innerHTML  = img;
+    if (avL) avL.innerHTML = img;
+  } else {
+    if (av)  av.textContent  = initials;
+    if (avL) avL.textContent = initials;
+  }
+  // Stile diverso per utente vs ospite
+  if (av) av.style.background = '';
+}
+
+/* ── Click sull'avatar in topbar ── */
+function topbarAvatarClick() {
+  if (_currentUser) {
+    // Già loggato → vai al profilo
+    navMoreTo('sc-profile');
+    profileInit();
+  } else {
+    // Ospite → apri il modal auth
+    authOpenModal('login');
+  }
+}
+
+/* ── Apre il bottom-sheet auth con tab preselezionato ── */
+function authOpenModal(mode) {
+  authSwitchTab(mode || 'login');
+  authClearMessages();
+  // Personalizza il subtitle in base al contesto
+  const sub = document.getElementById('auth-modal-sub');
+  if (sub) {
+    sub.textContent = mode === 'signup'
+      ? 'Crea un account gratuito per salvare e sincronizzare tutto.'
+      : 'Bentornato! Accedi per ritrovare i tuoi dati.';
+  }
+  openModal('modal-auth');
+}
+
+/* ── Registra listener Firebase o parte come ospite ── */
+function initAuth() {
+  if (_fbAuth) {
+    // Firebase reale: parte sempre come ospite,
+    // onAuthStateChanged risolve lo stato vero
+    _fbAuth.onAuthStateChanged(user => {
+      routeGuard(user || null);
+    });
+  } else {
+    // DEMO mode: parte come ospite (null)
+    // L'utente può fare login dal profilo
+    routeGuard(null);
+  }
+}
+
+/* ══════════════════════════
+   AUTH FORM LOGIC
+══════════════════════════ */
+let _authMode = 'login'; // 'login' | 'signup'
+
+function authSwitchTab(mode) {
+  _authMode = mode;
+  document.getElementById('auth-tab-login').classList.toggle('on',  mode==='login');
+  document.getElementById('auth-tab-signup').classList.toggle('on', mode==='signup');
+  document.getElementById('auth-name-fg').style.display   = mode==='signup' ? 'flex' : 'none';
+  document.getElementById('auth-submit-lbl').textContent  = mode==='login'  ? 'Accedi' : 'Crea Account';
+  document.getElementById('auth-reset-row').style.display = mode==='login'  ? 'block' : 'none';
+  authClearMessages();
+  document.getElementById('auth-form-main').style.display  = 'flex';
+  document.getElementById('auth-form-reset').style.display = 'none';
+}
+
+function authClearMessages() {
+  document.getElementById('auth-error').classList.remove('show');
+  document.getElementById('auth-success').classList.remove('show');
+}
+function authShowError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.classList.add('show');
+  document.getElementById('auth-success').classList.remove('show');
+}
+function authShowSuccess(msg) {
+  const el = document.getElementById('auth-success');
+  el.textContent = msg;
+  el.classList.add('show');
+  document.getElementById('auth-error').classList.remove('show');
+}
+
+/* ── Mappa errori Firebase → messaggi leggibili ── */
+function authMapError(code) {
+  const map = {
+    'auth/user-not-found':        '⚠️ Nessun account trovato con questa email.',
+    'auth/wrong-password':        '🔐 Password errata. Riprova o usa "Password dimenticata?"',
+    'auth/invalid-email':         '📧 Formato email non valido.',
+    'auth/email-already-in-use':  '📧 Questa email è già registrata. Prova ad accedere.',
+    'auth/weak-password':         '🔐 La password deve avere almeno 6 caratteri.',
+    'auth/too-many-requests':     '🚫 Troppi tentativi. Riprova tra qualche minuto.',
+    'auth/network-request-failed':'📡 Nessuna connessione di rete.',
+    'auth/popup-closed-by-user':  '↩️ Accesso Google annullato.',
+    'auth/requires-recent-login': '🔒 Per questa operazione riesegui il login.',
+  };
+  return map[code] || `Errore: ${code}`;
+}
+
+/* ── Imposta stato loading del bottone ── */
+function authSetLoading(loading) {
+  const btn = document.getElementById('auth-submit-btn');
+  if (loading) {
+    btn.disabled = true;
+    btn.innerHTML = '<div class="auth-spin"></div>';
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = `<span id="auth-submit-lbl">${_authMode==='login'?'Accedi':'Crea Account'}</span>`;
+  }
+}
+
+/* ── Submit (Login o Signup) ── */
+async function authSubmit() {
+  authClearMessages();
+  const email    = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const name     = document.getElementById('auth-name').value.trim();
+
+  if (!email || !password) { authShowError('⚠️ Inserisci email e password.'); return; }
+
+  authSetLoading(true);
+
+  if (_fbAuth) {
+    // Firebase reale
+    try {
+      if (_authMode === 'login') {
+        await _fbAuth.signInWithEmailAndPassword(email, password);
+      } else {
+        const cred = await _fbAuth.createUserWithEmailAndPassword(email, password);
+        if (name) await cred.user.updateProfile({ displayName: name });
+        // Crea doc utente su Firestore
+        if (_fbDb) {
+          await _fbDb.doc(`users/${cred.user.uid}`).set({
+            displayName: name || email.split('@')[0],
+            email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            stats: { cicliCompletati:0, grammiRaccolti:0 }
+          }, { merge: true });
+        }
+      }
+      // onAuthStateChanged gestirà il resto
+    } catch(e) {
+      authSetLoading(false);
+      authShowError(authMapError(e.code));
+    }
+  } else {
+    // DEMO mode
+    await delay(900);
+    authSetLoading(false);
+    const fakeUser = { ...DEMO_USER, email, displayName: name || 'Demo Grower' };
+    routeGuard(fakeUser);
+    haptic.success();
+    toast('👋', `Ciao ${fakeUser.displayName.split(' ')[0]}!`, 'Accesso effettuato con successo.', 'g', 3500);
+  }
+}
+
+/* ── Google Sign-In ── */
+async function authSignInGoogle() {
+  authClearMessages();
+  if (_fbAuth) {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.addScope('email');
+      provider.addScope('profile');
+      const result = await _fbAuth.signInWithPopup(provider);
+      // Crea/aggiorna doc utente
+      if (_fbDb) {
+        await _fbDb.doc(`users/${result.user.uid}`).set({
+          displayName: result.user.displayName,
+          email:       result.user.email,
+          photoURL:    result.user.photoURL,
+          updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+      }
+    } catch(e) {
+      authShowError(authMapError(e.code));
+    }
+  } else {
+    // DEMO mode
+    const demoGoogleUser = {
+      uid: 'demo_google_uid',
+      displayName: 'Demo Google',
+      email: 'demo.google@gmail.com',
+      photoURL: null,
+      providerData: [{ providerId: 'google.com' }]
+    };
+    routeGuard(demoGoogleUser);
+    haptic.success();
+    toast('🔵', 'Ciao Demo Google!', 'Accesso con Google simulato.', 'g', 3500);
+  }
+}
+
+/* ── Sign Out ── */
+async function authSignOut() {
+  haptic.light();
+  if (_fbAuth) {
+    await _fbAuth.signOut();
+    // onAuthStateChanged → routeGuard(null)
+  } else {
+    routeGuard(null);
+  }
+  // Rimane sulla schermata corrente (non reindirizza a nessun login)
+  // Se siamo nel profilo, si aggiorna da solo tramite _profileSyncView()
+  if (document.getElementById('sc-profile').classList.contains('on')) {
+    profileInit();
+  }
+  closeModal('modal-delete-account');
+  toast('👋', 'Uscito', 'Puoi continuare ad esplorare come ospite.', 'g', 3000);
+}
+
+/* ══════════════════════════
+   RESET PASSWORD
+══════════════════════════ */
+function authShowReset() {
+  authClearMessages();
+  document.getElementById('auth-form-main').style.display  = 'none';
+  document.getElementById('auth-form-reset').style.display = 'flex';
+  const email = document.getElementById('auth-email').value;
+  if (email) document.getElementById('auth-reset-email').value = email;
+}
+function authHideReset() {
+  authClearMessages();
+  document.getElementById('auth-form-main').style.display  = 'flex';
+  document.getElementById('auth-form-reset').style.display = 'none';
+}
+
+async function authSendReset() {
+  authClearMessages();
+  const email = document.getElementById('auth-reset-email').value.trim();
+  if (!email) { authShowError('⚠️ Inserisci la tua email.'); return; }
+
+  if (_fbAuth) {
+    try {
+      await _fbAuth.sendPasswordResetEmail(email, {
+        url: window.location.href // continueUrl dopo il reset
+      });
+      authShowSuccess(`📬 Email inviata a ${email}. Controlla la casella (e la cartella spam).`);
+    } catch(e) {
+      authShowError(authMapError(e.code));
+    }
+  } else {
+    // DEMO
+    await delay(800);
+    authShowSuccess(`📬 (DEMO) Email di recupero inviata a ${email}.`);
+    haptic.success();
+  }
+}
+
+/* ── Recupero password dal Profilo (già autenticato) ── */
+async function authShowResetFromProfile() {
+  if (!_currentUser) return;
+  if (_fbAuth) {
+    try {
+      await _fbAuth.sendPasswordResetEmail(_currentUser.email);
+      toast('📬','Email inviata!',`Link di recupero inviato a ${_currentUser.email}`,'g');
+    } catch(e) {
+      toast('⚠️','Errore',authMapError(e.code),'am');
+    }
+  } else {
+    toast('📬','(DEMO) Email inviata!',`In produzione viene chiamato sendPasswordResetEmail().`,'g');
+  }
+  haptic.success();
+}
+
+/* ══════════════════════════
+   ELIMINA ACCOUNT — GDPR
+══════════════════════════ */
+
+/* Abilita bottone solo quando l'utente ha scritto "ELIMINA" */
+function deleteCheckConfirm() {
+  const val = document.getElementById('delete-confirm-input').value;
+  document.getElementById('delete-confirm-btn').disabled = (val !== 'ELIMINA');
+}
+
+function _dpsSetState(id, state) {
+  // state: 'pending' | 'active' | 'done' | 'error'
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('done','active','error');
+  if (state !== 'pending') el.classList.add(state);
+  const icons = { pending:'⏳', active:'🔄', done:'✅', error:'❌' };
+  el.querySelector('.dps-icon').textContent = icons[state] || '⏳';
+}
+
+async function authDeleteAccount() {
+  if (!_currentUser) return;
+  const confirmBtn = document.getElementById('delete-confirm-btn');
+  confirmBtn.disabled = true;
+
+  // Mostra sezione progress, nascondi form
+  document.getElementById('delete-step-confirm').style.display = 'none';
+  document.getElementById('delete-progress').classList.add('show');
+
+  // ── Step 1: Elimina dati Firestore ──────────────────────
+  _dpsSetState('dps-firestore', 'active');
+  try {
+    if (_fbDb) {
+      // In produzione: usa una Cloud Function con batch delete
+      // o Firebase Extensions (Delete User Data).
+      // Esempio:
+      // const batch = _fbDb.batch();
+      // const plants = await _fbDb.collection(`users/${_currentUser.uid}/plants`).get();
+      // plants.docs.forEach(d => batch.delete(d.ref));
+      // await batch.commit();
+      // await _fbDb.doc(`users/${_currentUser.uid}`).delete();
+
+      // Simulazione asincrona
+      await delay(1200);
+    } else {
+      await delay(1000); // DEMO
+    }
+    _dpsSetState('dps-firestore', 'done');
+  } catch(e) {
+    _dpsSetState('dps-firestore', 'error');
+    toast('⚠️','Errore Firestore',e.message,'re');
+  }
+
+  // ── Step 2: Elimina foto Storage ────────────────────────
+  _dpsSetState('dps-storage', 'active');
+  try {
+    if (_fbDb) {
+      // In produzione:
+      // const storageRef = firebase.storage().ref(`users/${_currentUser.uid}`);
+      // const items = await storageRef.listAll();
+      // await Promise.all(items.items.map(item => item.delete()));
+      await delay(900);
+    } else {
+      await delay(800); // DEMO
+    }
+    _dpsSetState('dps-storage', 'done');
+  } catch(e) {
+    _dpsSetState('dps-storage', 'error');
+    toast('⚠️','Errore Storage',e.message,'re');
+  }
+
+  // ── Step 3: Elimina utente da Auth ──────────────────────
+  _dpsSetState('dps-auth', 'active');
+  try {
+    if (_fbAuth && _fbAuth.currentUser) {
+      // Richiede re-autenticazione recente. Se scade:
+      // throw { code: 'auth/requires-recent-login' }
+      await _fbAuth.currentUser.delete();
+      // onAuthStateChanged → routeGuard(null) mostrerà il login
+    } else {
+      await delay(700); // DEMO
+      _dpsSetState('dps-auth', 'done');
+      await delay(400);
+      closeModal('modal-delete-account');
+      routeGuard(null); // Torna al login
+      toast('✅','Account eliminato','Tutti i dati sono stati cancellati.','g',5000);
+      haptic.success();
+    }
+    _dpsSetState('dps-auth', 'done');
+  } catch(e) {
+    _dpsSetState('dps-auth', 'error');
+    confirmBtn.disabled = false;
+    if (e.code === 'auth/requires-recent-login') {
+      toast('🔒','Riaccedi prima','Per sicurezza, esegui di nuovo il login prima di eliminare l\'account.','am',6000);
+      await delay(800);
+      closeModal('modal-delete-account');
+      authSignOut();
+    } else {
+      toast('⚠️','Errore',authMapError(e.code),'re');
+    }
+  }
+}
+
+/* ══════════════════════════
+   MODALITÀ DISCRETA (Stealth)
+══════════════════════════ */
+let _stealthOn = localStorage.getItem('gm3-stealth') === '1';
+
+function stealthApply() {
+  document.body.classList.toggle('stealth-mode', _stealthOn);
+  const btn   = document.getElementById('stealth-btn');
+  const chk   = document.getElementById('stealth-toggle-check');
+  const av    = document.getElementById('topbar-avatar');
+  if (btn)  { btn.classList.toggle('on', _stealthOn); btn.textContent = _stealthOn ? '🙈' : '👁'; }
+  if (chk)  { chk.checked = _stealthOn; }
+  if (av)   { av.classList.toggle('stealth-on', _stealthOn); }
+  localStorage.setItem('gm3-stealth', _stealthOn ? '1' : '0');
+  updateProfileThemeBadge();
+}
+
+function stealthToggle() {
+  _stealthOn = !_stealthOn;
+  stealthApply();
+  haptic.tick();
+  toast(_stealthOn ? '🕵️':'👁',
+    _stealthOn ? 'Modalità Discreta ON' : 'Modalità Discreta OFF',
+    _stealthOn ? 'Nomi e foto sfocati per la privacy.' : 'Tutto di nuovo visibile.',
+    'vi', 2800);
+  // Sincronizza la checkbox nel profilo
+  const chk = document.getElementById('stealth-toggle-check');
+  if (chk) chk.checked = _stealthOn;
+}
+
+/* ══════════════════════════
+   PROFILO — Stats Firestore
+══════════════════════════ */
+function updateProfileThemeBadge() {
+  // Aggiorna entrambi i badge (guest e user view)
+  ['profile-theme-badge','profile-theme-badge-user'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = dark ? 'Dark' : 'Light';
+  });
+}
+
+async function profileInit() {
+  _profileSyncView();
+  updateProfileThemeBadge();
+
+  // Sync stealth checkboxes
+  ['stealth-toggle-check','stealth-toggle-check-user'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = _stealthOn;
+  });
+
+  if (!_currentUser) return; // ospite: la guest-view non ha stats
+
+  // ── Aggiorna hero utente loggato ───────────────────────
+  const dispName = document.getElementById('profile-display-name');
+  const dispEmail = document.getElementById('profile-email');
+  const signoutEmail = document.getElementById('profile-signout-email');
+  const avL = document.getElementById('profile-avatar-lg');
+
+  if (dispName)    dispName.textContent    = _currentUser.displayName || 'Utente';
+  if (dispEmail)   dispEmail.textContent   = _currentUser.email || '';
+  if (signoutEmail) signoutEmail.textContent = _currentUser.email || '';
+
+  // Avatar grande
+  if (avL) {
+    const initials = _currentUser.displayName
+      ? _currentUser.displayName.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()
+      : (_currentUser.email || '?')[0].toUpperCase();
+    avL.textContent = _currentUser.photoURL ? '' : initials;
+    if (_currentUser.photoURL) {
+      avL.innerHTML = `<img src="${_currentUser.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    }
+  }
+
+  // Provider badge
+  const provider = _currentUser.providerData?.[0]?.providerId || 'password';
+  const provBadge = document.getElementById('profile-provider-badge');
+  if (provBadge) {
+    const provMap = { 'password':'📧 Email', 'google.com':'🔵 Google', 'apple.com':'🍎 Apple' };
+    provBadge.textContent = provMap[provider] || provider;
+  }
+
+  // ── Query Firestore statistiche (DEMO simulato) ─────────
+  // In produzione:
+  //   const snap = await _fbDb.collection(`users/${_currentUser.uid}/harvests`).get();
+  //   cicli = snap.size;
+  //   grammi = snap.docs.reduce((s,d) => s + (d.data().grammi||0), 0);
+  await delay(400);
+  const stats = {
+    cicli:  5,
+    grammi: 487,
+    piante: Object.keys(PLANTS_DATA).length,
+    days:   Math.round((Date.now() - new Date('2025-01-12').getTime()) / 86400000),
+  };
+  document.getElementById('stat-cycles').textContent = stats.cicli;
+  document.getElementById('stat-grams').textContent  = stats.grammi + 'g';
+  document.getElementById('stat-plants').textContent = stats.piante;
+  document.getElementById('stat-days').textContent   = stats.days;
+}
+
+/* ── Avvia Auth (chiamato nell'init) ── */
+initAuth();
+stealthApply(); // Ripristina modalità discreta al boot
+
+
   // Phase
   loadPlantData();
 
@@ -3763,6 +5128,437 @@ async function exportInit() {
   diseaseRender();
 })();
 </script>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   PWA — Service Worker · Update Detection · Install Prompt
+   ─────────────────────────────────────────────────────
+   Architettura:
+     • swRegister()       → registra sw.js, ascolta aggiornamenti
+     • pwaUpdateShow()    → mostra il banner di update
+     • pwaApplyUpdate()   → manda SKIP_WAITING al SW, poi reload
+     • pwaInstallShow()   → apre il bottom-sheet install
+     • pwaAndroidInstall()→ usa il deferred BeforeInstallPromptEvent
+   ─────────────────────────────────────────────────────
+   Funziona in DEMO anche senza sw.js: tutto è gestito
+   con graceful fallback.
+═══════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════
+   1. SERVICE WORKER REGISTRATION
+══════════════════════════════ */
+let _swRegistration = null;
+let _swWaiting      = null;
+
+async function swRegister() {
+  if (!('serviceWorker' in navigator)) return;
+
+  try {
+    const reg = await navigator.serviceWorker.register('./sw.js', {
+      scope: './',
+      updateViaCache: 'none'   // forza sempre il check della nuova versione
+    });
+    _swRegistration = reg;
+
+    // ── Controlla aggiornamenti già al boot ──────────────
+    // Se c'è già un SW in attesa (e.g. l'utente ha riaperto la tab),
+    // mostriamo subito il banner.
+    if (reg.waiting) {
+      _swWaiting = reg.waiting;
+      pwaUpdateShow();
+    }
+
+    // ── Listener: installazione primo SW in corso ────────
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      if (!newWorker) return;
+
+      newWorker.addEventListener('statechange', () => {
+        // statechange arriva varie volte; ci interessa
+        // quando il nuovo SW è "installed" (= stato waiting)
+        // E c'è già un controller attivo (non è il primo install)
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          _swWaiting = newWorker;
+          pwaUpdateShow();
+        }
+      });
+    });
+
+    // ── Listener: il controller è cambiato dopo SKIP_WAITING ─
+    // Quando il nuovo SW prende il controllo, ricarica la pagina.
+    let _reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (_reloading) return;
+      _reloading = true;
+      window.location.reload();
+    });
+
+    // ── Polling periodico in background (ogni 60 min) ────
+    // Utile per app aperte a lungo senza refresh manuale.
+    setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+
+  } catch (err) {
+    // sw.js non trovato → modalità DEMO senza SW (normale in dev)
+    console.info('[PWA] Service Worker non registrato:', err.message);
+  }
+}
+
+/* ══════════════════════════════
+   2. UPDATE BANNER
+══════════════════════════════ */
+let _updateBannerDismissed = false;
+
+function pwaUpdateShow() {
+  if (_updateBannerDismissed) return;
+  const banner = document.getElementById('pwa-update-banner');
+  const dot    = document.getElementById('pwa-update-dot');
+  if (banner) {
+    banner.classList.add('show');
+    // Auto-hide dopo 25 secondi se l'utente non interagisce
+    setTimeout(() => {
+      if (banner.classList.contains('show')) pwaUpdateDismiss();
+    }, 25000);
+  }
+  if (dot) dot.classList.add('show');
+  haptic.light?.();
+}
+
+function pwaUpdateDismiss() {
+  _updateBannerDismissed = true;
+  const banner = document.getElementById('pwa-update-banner');
+  if (banner) banner.classList.remove('show');
+  // Il dot rimane: ricorda all'utente che c'è una versione più recente
+}
+
+/**
+ * Manda il messaggio SKIP_WAITING al SW in attesa.
+ * Il SW risponderà uscendo dallo stato waiting → attivandosi.
+ * Il listener 'controllerchange' sopra gestirà il reload.
+ */
+function pwaApplyUpdate() {
+  if (_swWaiting) {
+    _swWaiting.postMessage({ type: 'SKIP_WAITING' });
+    // Aggiorna UI: spinner nel banner
+    const banner = document.getElementById('pwa-update-banner');
+    if (banner) {
+      banner.querySelector('.pwa-upd__title').textContent = 'Aggiornamento in corso…';
+      banner.querySelector('.pwa-upd__sub').textContent   = 'La pagina si ricaricherà tra un momento.';
+      banner.querySelector('.pwa-upd__icon').textContent  = '⏳';
+      const reloadBtn = banner.querySelector('.pwa-upd-btn-reload');
+      if (reloadBtn) reloadBtn.disabled = true;
+    }
+    // Fallback: se il controllerchange non arriva entro 4s, ricarica comunque
+    setTimeout(() => window.location.reload(), 4000);
+  } else {
+    // SW non disponibile (DEMO mode) — ricarica direttamente
+    window.location.reload();
+  }
+  haptic.success?.();
+}
+
+/* ══════════════════════════════
+   3. INSTALL PROMPT — DETECTION
+══════════════════════════════ */
+let _deferredInstallPrompt = null; // BeforeInstallPromptEvent (Chrome/Android)
+let _isInstalled = false;
+
+/* ── Rileva se già installata ── */
+function pwaCheckInstalled() {
+  // display-mode: standalone/fullscreen indica app installata
+  if (window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true) {
+    _isInstalled = true;
+  }
+}
+
+/* ── Piattaforma helper ── */
+const _pwa = {
+  get isIOS() {
+    return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+           (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  },
+  get isAndroid() { return /android/i.test(navigator.userAgent) },
+  get isSafari()  { return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) },
+  get isChrome()  { return /chrome/i.test(navigator.userAgent) && !/edge|opr\//i.test(navigator.userAgent) },
+  get isMobile()  { return this.isIOS || this.isAndroid },
+};
+
+/* ── Cattura l'evento nativo di Chrome/Android ── */
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); // blocca il mini-banner nativo del browser
+  _deferredInstallPrompt = e;
+  pwaShowInstallTrigger(); // mostra il bottone nella topbar
+});
+
+/* ── Rileva installazione completata ── */
+window.addEventListener('appinstalled', () => {
+  _isInstalled = true;
+  _deferredInstallPrompt = null;
+  pwaInstallDismiss();
+  const trigger = document.getElementById('pwa-install-trigger');
+  if (trigger) trigger.style.display = 'none';
+  toast('🎉', 'App installata!', 'GrowManager è ora nella tua schermata Home.', 'g', 5000);
+  haptic.success?.();
+});
+
+/* ── Mostra il trigger nella topbar ── */
+function pwaShowInstallTrigger() {
+  if (_isInstalled) return;
+  const trigger = document.getElementById('pwa-install-trigger');
+  if (trigger) {
+    trigger.style.display = 'flex';
+    // Piccola animazione di entrata
+    trigger.style.animation = 'fadeup .4s cubic-bezier(.16,1,.3,1) both';
+  }
+}
+
+/* ════════════════════════════════
+   4. INSTALL SHEET — SHOW / HIDE
+════════════════════════════════ */
+let _installShownThisSession = false;
+
+function pwaInstallShow() {
+  if (_isInstalled) {
+    toast('✅', 'App già installata!', 'GrowManager è già nella tua schermata Home.', 'g', 3000);
+    return;
+  }
+
+  _installShownThisSession = true;
+  _pwaDetectPlatformAndSetup();
+
+  document.getElementById('pwa-install-backdrop').classList.add('show');
+  document.getElementById('pwa-install-sheet').classList.add('show');
+  haptic.light?.();
+}
+
+function pwaInstallDismiss() {
+  document.getElementById('pwa-install-backdrop').classList.remove('show');
+  document.getElementById('pwa-install-sheet').classList.remove('show');
+  // Ricorda che l'utente ha ignorato il prompt (non ri-mostrare automaticamente per 3 gg)
+  localStorage.setItem('gm3-install-dismissed', Date.now().toString());
+  haptic.tick?.();
+}
+
+/* ── Configura la UI del sheet in base alla piattaforma ── */
+function _pwaDetectPlatformAndSetup() {
+  const badge       = document.getElementById('pwa-inst-badge');
+  const iosSection  = document.getElementById('pwa-inst-ios');
+  const andSection  = document.getElementById('pwa-inst-android');
+  const othSection  = document.getElementById('pwa-inst-other');
+
+  // Nascondi tutte le sezioni
+  [iosSection, andSection, othSection].forEach(el => { if (el) el.style.display = 'none'; });
+
+  if (_pwa.isIOS && _pwa.isSafari) {
+    // iOS Safari: mostra istruzioni manuali (non c'è API)
+    if (badge) {
+      badge.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/></svg> iOS Safari`;
+    }
+    if (iosSection) iosSection.style.display = 'flex';
+
+  } else if (_deferredInstallPrompt) {
+    // Android/Chrome con BeforeInstallPromptEvent catturato → install nativo
+    if (badge) {
+      badge.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg> Android / Chrome`;
+      badge.style.background = 'var(--g50)';
+      badge.style.color = 'var(--g600)';
+    }
+    if (andSection) andSection.style.display = 'block';
+
+  } else if (_pwa.isIOS && !_pwa.isSafari) {
+    // iOS ma su Chrome/Firefox: suggerisci di aprire in Safari
+    if (badge) badge.innerHTML = `📱 iOS — Apri in Safari`;
+    if (iosSection) {
+      iosSection.style.display = 'flex';
+      const firstStep = iosSection.querySelector('.pwa-inst-step');
+      if (firstStep) {
+        firstStep.querySelector('.pwa-inst-step__text').textContent = 'Apri questa pagina in Safari';
+        firstStep.querySelector('.pwa-inst-step__sub').textContent  = 'L\'installazione PWA richiede Safari su iOS';
+        firstStep.querySelector('.pwa-inst-step__icon').textContent = '🧭';
+      }
+    }
+
+  } else {
+    // Altro browser (Firefox, Edge desktop, ecc.)
+    if (badge) badge.innerHTML = `🌐 Browser`;
+    if (othSection) othSection.style.display = 'block';
+  }
+}
+
+/* ── Installa via prompt nativo Android/Chrome ── */
+async function pwaAndroidInstall() {
+  if (!_deferredInstallPrompt) return;
+  const btn = document.getElementById('pwa-inst-android-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Installazione…'; }
+
+  try {
+    _deferredInstallPrompt.prompt();
+    const { outcome } = await _deferredInstallPrompt.userChoice;
+    if (outcome === 'accepted') {
+      _deferredInstallPrompt = null;
+      pwaInstallDismiss();
+    } else {
+      if (btn) { btn.disabled = false; btn.textContent = 'Installa GrowManager'; }
+    }
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Installa GrowManager'; }
+    console.warn('[PWA] Install prompt error:', e);
+  }
+}
+
+/* ════════════════════════════════════
+   5. AUTO-SHOW LOGIC
+   Mostra il prompt automaticamente dopo
+   3 visite, se non già installata e non
+   recentemente ignorata
+════════════════════════════════════ */
+function pwaAutoPrompt() {
+  if (_isInstalled) return;
+  if (_installShownThisSession) return;
+
+  // Non mostrare se ignorato negli ultimi 3 giorni
+  const lastDismiss = parseInt(localStorage.getItem('gm3-install-dismissed') || '0');
+  const threeDays   = 3 * 24 * 60 * 60 * 1000;
+  if (Date.now() - lastDismiss < threeDays) return;
+
+  // Conta le visite
+  const visits = parseInt(localStorage.getItem('gm3-visits') || '0') + 1;
+  localStorage.setItem('gm3-visits', visits.toString());
+
+  // Mostra dopo 3 visite
+  if (visits >= 3) {
+    setTimeout(() => {
+      if (!_installShownThisSession) pwaInstallShow();
+    }, 4500); // aspetta 4.5s dopo il caricamento
+  }
+
+  // Mostra il trigger nella topbar dalla seconda visita in poi
+  if (visits >= 2) pwaShowInstallTrigger();
+}
+
+/* ════════════════════════════════════
+   BOOT — Inizializza tutto
+════════════════════════════════════ */
+pwaCheckInstalled();
+swRegister();
+// Auto-prompt solo su mobile (non distrae su desktop)
+if (_pwa.isMobile) {
+  window.addEventListener('load', pwaAutoPrompt, { once: true });
+}
+
+</script>
 </div>
 </body>
 </html>
+<div id="pwa-update-banner" role="alert" aria-live="polite">
+  <div class="pwa-upd__icon">🔄</div>
+  <div class="pwa-upd__body">
+    <div class="pwa-upd__title">Nuova versione disponibile!</div>
+    <div class="pwa-upd__sub">GrowManager è stato aggiornato in background.</div>
+  </div>
+  <div class="pwa-upd__actions">
+    <button class="pwa-upd-btn-reload" onclick="pwaApplyUpdate()">Ricarica</button>
+    <button class="pwa-upd-btn-dismiss" onclick="pwaUpdateDismiss()" aria-label="Chiudi">✕</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PWA INSTALL PROMPT
+     Bottom-sheet adattivo iOS Safari / Android Chrome
+════════════════════════════════════════════════ -->
+<div id="pwa-install-backdrop" onclick="pwaInstallDismiss()"></div>
+<div id="pwa-install-sheet" role="dialog" aria-modal="true" aria-label="Installa GrowManager">
+  <div class="pwa-inst-handle"></div>
+
+  <!-- Header app -->
+  <div class="pwa-inst-header">
+    <div class="pwa-inst-appicon">🌱</div>
+    <div>
+      <div class="pwa-inst-header__title">GrowManager</div>
+      <div class="pwa-inst-header__sub">Accedi più veloce · Funziona offline<br>Nessuno store, zero pubblicità</div>
+    </div>
+  </div>
+
+  <!-- Platform badge -->
+  <div id="pwa-inst-badge" class="pwa-inst-platform-badge">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Rilevato: iOS Safari
+  </div>
+
+  <!-- ── Istruzioni iOS (default, visibile) ── -->
+  <div id="pwa-inst-ios" class="pwa-inst-steps">
+    <div class="pwa-inst-step">
+      <div class="pwa-inst-step__num">1</div>
+      <div>
+        <div class="pwa-inst-step__text">Tocca il pulsante Condividi</div>
+        <div class="pwa-inst-step__sub">In basso nella barra di Safari</div>
+      </div>
+      <div class="pwa-inst-step__icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--bl400)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16,6 12,2 8,6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      </div>
+    </div>
+    <div class="pwa-inst-step">
+      <div class="pwa-inst-step__num">2</div>
+      <div>
+        <div class="pwa-inst-step__text">Scorri e tocca <strong>"Aggiungi a schermata Home"</strong></div>
+        <div class="pwa-inst-step__sub">Nel menu delle opzioni di condivisione</div>
+      </div>
+      <div class="pwa-inst-step__icon">➕</div>
+    </div>
+    <div class="pwa-inst-step">
+      <div class="pwa-inst-step__num">3</div>
+      <div>
+        <div class="pwa-inst-step__text">Tocca <strong>"Aggiungi"</strong> in alto a destra</div>
+        <div class="pwa-inst-step__sub">L'icona apparirà subito nella schermata Home</div>
+      </div>
+      <div class="pwa-inst-step__icon">🏠</div>
+    </div>
+  </div>
+
+  <!-- ── Istruzioni Android/Chrome (nascosto, mostrato se si usa deferredPrompt) ── -->
+  <div id="pwa-inst-android" style="display:none">
+    <div class="pwa-inst-steps">
+      <div class="pwa-inst-step" style="border-color:var(--g200);background:var(--g50);">
+        <div class="pwa-inst-step__num" style="background:var(--g500);">✓</div>
+        <div>
+          <div class="pwa-inst-step__text">Installazione in un click</div>
+          <div class="pwa-inst-step__sub">Chrome gestirà tutto automaticamente</div>
+        </div>
+        <div class="pwa-inst-step__icon">⚡</div>
+      </div>
+    </div>
+    <button class="pwa-inst-android-btn" id="pwa-inst-android-btn" onclick="pwaAndroidInstall()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Installa GrowManager
+    </button>
+  </div>
+
+  <!-- ── Istruzioni Firefox/Desktop ── -->
+  <div id="pwa-inst-other" style="display:none">
+    <div class="pwa-inst-steps">
+      <div class="pwa-inst-step">
+        <div class="pwa-inst-step__num">1</div>
+        <div>
+          <div class="pwa-inst-step__text">Apri il menu del browser</div>
+          <div class="pwa-inst-step__sub">Il menu ⋮ in alto a destra</div>
+        </div>
+        <div class="pwa-inst-step__icon">⋮</div>
+      </div>
+      <div class="pwa-inst-step">
+        <div class="pwa-inst-step__num">2</div>
+        <div>
+          <div class="pwa-inst-step__text">Cerca <strong>"Installa app"</strong> o <strong>"Aggiungi a schermata Home"</strong></div>
+          <div class="pwa-inst-step__sub">La voce cambia a seconda del browser</div>
+        </div>
+        <div class="pwa-inst-step__icon">📲</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="margin-top:4px;">
+    <button class="pwa-inst-dismiss" onclick="pwaInstallDismiss()">Non adesso</button>
+  </div>
+</div>
+
+

@@ -1,0 +1,60 @@
+{
+  "name": "GrowManager — Coltivazioni",
+  "short_name": "GrowManager",
+  "description": "Gestisci le tue coltivazioni: fasi, nutrienti, log, ambienti e molto altro.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#56AE47",
+  "background_color": "#F1F4EF",
+  "lang": "it",
+  "categories": ["utilities", "productivity", "lifestyle"],
+
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='112' fill='%2356AE47'/><text y='.9em' font-size='380' x='65'>🌱</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='42' fill='%2356AE47'/><text y='.9em' font-size='140' x='22'>🌱</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='112' fill='%2356AE47'/><text y='.9em' font-size='380' x='65'>🌱</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Fase & Ciclo",
+      "short_name": "Fase",
+      "description": "Controlla la fase corrente",
+      "url": "./#fase",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><text y='.9em' font-size='80'>🌸</text></svg>", "sizes": "96x96" }]
+    },
+    {
+      "name": "Calendario Log",
+      "short_name": "Calendario",
+      "description": "Visualizza i log del giorno",
+      "url": "./#calendario",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><text y='.9em' font-size='80'>📅</text></svg>", "sizes": "96x96" }]
+    },
+    {
+      "name": "Guida Malattie",
+      "short_name": "Malattie",
+      "description": "Cerca sintomi e soluzioni",
+      "url": "./#malattie",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><text y='.9em' font-size='80'>🩺</text></svg>", "sizes": "96x96" }]
+    }
+  ],
+
+  "screenshots": [],
+
+  "prefer_related_applications": false
+}
