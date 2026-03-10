@@ -1,676 +1,678 @@
 <!DOCTYPE html>
-<html lang="it" data-theme="dark">
+<html lang="it">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
-<title>GrowManager</title>
-<meta name="theme-color" content="#080F09"/>
+<title>titanpharmacy</title>
+<meta name="theme-color" content="#05060A"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
-/* ══════════════════════════════════════════
-   DESIGN TOKENS
-══════════════════════════════════════════ */
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
 :root {
-  /* Dark palette — editorial forest */
-  --bg0: #080F09;
-  --bg1: #0D1710;
-  --bg2: #121F14;
-  --sf1: #192B1C;
-  --sf2: #1E3322;
-  --brd: rgba(255,255,255,.07);
-  --brd2: rgba(255,255,255,.13);
+  --bg:     #05060A;
+  --bg1:    #090B10;
+  --bg2:    #0F1118;
+  --bg3:    #14161F;
+  --bg4:    #1C1E28;
 
-  --t1: #E4EDE0;
-  --t2: #8EA890;
-  --t3: #4D6A50;
-  --t4: #2D4530;
+  --neon:   #C8FF57;   /* acid green — main accent */
+  --neon2:  #57D9FF;   /* cyan */
+  --red:    #FF4A6B;
+  --gold:   #FFB830;
 
-  /* Accents */
-  --g4: #5DDE85;    /* neon green */
-  --g5: #35C460;    /* mid green */
-  --g6: #1A7A38;    /* deep green */
-  --gold: #D4A853;
-  --gold2: #F5C96B;
-  --red: #E05252;
-  --blue: #5A9BE8;
-  --vi: #9B7DE8;
-  --am: #E8A24A;
+  --t1: #F0F2F8;
+  --t2: #7A7D94;
+  --t3: #3A3D52;
+  --t4: #22253A;
 
-  --ff-d: 'Bricolage Grotesque', sans-serif;
-  --ff-b: 'Instrument Sans', sans-serif;
-  --ff-it: 'Instrument Serif', serif;
+  --brd:  rgba(255,255,255,.055);
+  --brd2: rgba(255,255,255,.11);
 
-  --r: 18px;
-  --rs: 10px;
-  --rm: 14px;
-  --nav: 72px;
+  --ff-d: 'Bebas Neue', sans-serif;       /* display numbers + headers */
+  --ff-b: 'Space Grotesk', sans-serif;    /* body UI */
+  --ff-m: 'Space Mono', monospace;        /* labels, tags, badges */
+
+  --nav:   68px;
   --safeB: env(safe-area-inset-bottom, 0px);
   --safeT: env(safe-area-inset-top, 0px);
-}
-[data-theme="light"] {
-  --bg0: #F0F4ED;
-  --bg1: #F6FAF3;
-  --bg2: #FFFFFF;
-  --sf1: #FFFFFF;
-  --sf2: #F0F4ED;
-  --brd: rgba(0,0,0,.07);
-  --brd2: rgba(0,0,0,.13);
-  --t1: #0D1A0F;
-  --t2: #3A5C3D;
-  --t3: #7A9E7D;
-  --t4: #B0CCB2;
-  --g4: #1A8C42;
-  --g5: #1A8C42;
-  --gold: #A07820;
-  --gold2: #C89A30;
+  --r:     14px;
+  --rs:    8px;
 }
 
-/* ══════════════════════════════════════════
-   RESET & BASE
-══════════════════════════════════════════ */
-*,*::before,*::after { box-sizing: border-box; margin:0; padding:0; }
-html { height:100%; -webkit-text-size-adjust:100%; }
+/* ─────────────────────────────────────────
+   BASE
+───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--ff-b);
-  background: var(--bg0);
+  background: var(--bg);
   color: var(--t1);
   -webkit-font-smoothing: antialiased;
-  min-height:100dvh;
+  min-height: 100dvh;
   overscroll-behavior: none;
 }
-button, input, select { font-family: inherit; }
-a, button, [onclick] { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+button, input, select, textarea { font-family: inherit; }
+[onclick], button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 input:focus, select:focus, textarea:focus { outline: none; }
+* { scrollbar-width: none; }
+*::-webkit-scrollbar { display: none; }
 
-/* ══════════════════════════════════════════
+/* ─────────────────────────────────────────
    SHELL
-══════════════════════════════════════════ */
-.shell { max-width:480px; margin:0 auto; min-height:100dvh; position:relative; }
+───────────────────────────────────────── */
+.shell { max-width: 480px; margin: 0 auto; min-height: 100dvh; }
 
-/* ══════════════════════════════════════════
+/* ─────────────────────────────────────────
    TOPBAR
-══════════════════════════════════════════ */
+───────────────────────────────────────── */
 .topbar {
-  position: sticky; top:0; z-index:200;
-  background: var(--bg0);
-  border-bottom: 1px solid var(--brd);
+  position: sticky; top: 0; z-index: 200;
   padding: calc(var(--safeT) + 12px) 18px 12px;
-  display: flex; align-items:center; justify-content: space-between;
+  background: rgba(5,6,10,.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--brd);
+  display: flex; align-items: center; gap: 12px;
 }
-.tb-brand { display:flex; align-items:center; gap:10px; }
-.tb-leaf {
-  width:34px; height:34px; border-radius:10px;
-  background: rgba(93,222,133,.1);
-  border: 1px solid rgba(93,222,133,.2);
-  display:flex; align-items:center; justify-content:center;
+.tb-logo {
+  flex-shrink: 0;
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--neon);
+  display: flex; align-items: center; justify-content: center;
 }
-.tb-name { font-family:var(--ff-d); font-size:17px; font-weight:800; letter-spacing:-.03em; }
-.tb-actions { display:flex; gap:7px; }
+.tb-logo svg { width: 18px; height: 18px; }
+.tb-brand { flex: 1; min-width: 0; }
+.tb-name {
+  font-family: var(--ff-d);
+  font-size: 19px; letter-spacing: .06em;
+  color: var(--t1); line-height: 1;
+}
+.tb-name span { color: var(--neon); }
+.tb-sel {
+  flex: 1; max-width: 160px;
+  padding: 7px 26px 7px 10px;
+  background: var(--bg3); border: 1px solid var(--brd2);
+  border-radius: var(--rs); color: var(--t1);
+  font-size: 12px; font-weight: 600;
+  -webkit-appearance: none; appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%233A3D52'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center;
+  display: none;
+}
 .tb-btn {
-  width:34px; height:34px; border-radius:9px;
-  border: 1px solid var(--brd2);
-  background: var(--sf1);
-  color: var(--t2);
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; font-size:15px;
-  transition: transform .12s;
+  width: 34px; height: 34px; border-radius: var(--rs);
+  border: 1px solid var(--brd2); background: var(--bg3);
+  color: var(--t2); display: flex; align-items: center;
+  justify-content: center; cursor: pointer; font-size: 15px;
+  transition: transform .12s; flex-shrink: 0;
 }
-.tb-btn:active { transform: scale(.86); }
+.tb-btn:active { transform: scale(.84); }
 
-/* Plant selector in topbar (for Ciclo tab) */
-.plant-sel-wrap {
-  flex:1; margin:0 12px;
-  position:relative;
-}
-.plant-sel-wrap select {
-  width:100%; padding:7px 30px 7px 12px;
-  background: var(--sf1);
-  border: 1px solid var(--brd2);
-  border-radius: 9px;
-  color: var(--t1);
-  font-size: 13px; font-weight:600;
-  -webkit-appearance:none; appearance:none;
-  cursor:pointer;
-}
-.plant-sel-wrap::after {
-  content:'⌄'; position:absolute; right:10px; top:50%; transform:translateY(-55%);
-  color:var(--t3); pointer-events:none; font-size:14px;
-}
-
-/* ══════════════════════════════════════════
+/* ─────────────────────────────────────────
    BOTTOM NAV
-══════════════════════════════════════════ */
+───────────────────────────────────────── */
 .bnav {
-  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-  width:100%; max-width:480px;
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px;
   height: calc(var(--nav) + var(--safeB));
   padding-bottom: var(--safeB);
-  background: var(--bg1);
+  background: rgba(9,11,16,.96);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   border-top: 1px solid var(--brd);
-  display:grid; grid-template-columns: repeat(4,1fr);
-  z-index:200;
+  display: grid; grid-template-columns: repeat(4,1fr);
+  z-index: 200;
 }
 .ni {
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:4px; border:none; background:none;
-  color: var(--t3);
-  cursor:pointer; padding:8px 4px;
-  position:relative; transition:color .2s;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px; border: none; background: none;
+  color: var(--t3); cursor: pointer;
+  position: relative; transition: color .18s;
+  padding: 6px 4px;
 }
-.ni.on { color: var(--g4); }
-.ni svg { width:21px; height:21px; transition:transform .22s cubic-bezier(.34,1.56,.64,1); }
-.ni.on svg { transform:scale(1.15); }
-.ni span { font-size:10px; font-weight:600; letter-spacing:.025em; }
+.ni.on { color: var(--neon); }
+.ni svg { width: 20px; height: 20px; transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
+.ni.on svg { transform: scale(1.1); }
+.ni-lbl { font-family: var(--ff-m); font-size: 8px; letter-spacing: .08em; text-transform: uppercase; }
 .ni::before {
-  content:''; position:absolute; top:0; left:20%; right:20%; height:2px;
-  background: var(--g4); border-radius:0 0 4px 4px;
-  transform:scaleX(0); transition:transform .22s cubic-bezier(.34,1.56,.64,1);
+  content: ''; position: absolute; top: 0; left: 25%; right: 25%;
+  height: 2px; background: var(--neon);
+  box-shadow: 0 0 8px rgba(200,255,87,.5);
+  border-radius: 0 0 4px 4px;
+  transform: scaleX(0); transition: transform .2s cubic-bezier(.34,1.56,.64,1);
 }
-.ni.on::before { transform:scaleX(1); }
+.ni.on::before { transform: scaleX(1); }
 
-/* ══════════════════════════════════════════
+/* ─────────────────────────────────────────
    SCREENS
-══════════════════════════════════════════ */
+───────────────────────────────────────── */
 .screen {
-  display:none;
-  padding: 18px 18px calc(var(--nav) + var(--safeB) + 22px);
+  display: none;
+  padding: 20px 18px calc(var(--nav) + var(--safeB) + 24px);
   min-height: 100dvh;
+  position: relative; z-index: 1;
 }
-.screen.on {
-  display:block;
-  animation: scFadeUp .22s ease both;
+.screen.on { display: block; animation: su .2s ease both; }
+@keyframes su { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
+
+/* ─────────────────────────────────────────
+   TYPOGRAPHY HELPERS
+───────────────────────────────────────── */
+.sc-ttl {
+  font-family: var(--ff-d); font-size: 32px; letter-spacing: .05em;
+  color: var(--t1); margin-bottom: 2px; line-height: 1;
 }
-@keyframes scFadeUp {
-  from { opacity:0; transform:translateY(5px); }
-  to   { opacity:1; transform:none; }
+.sc-sub { font-size: 12px; color: var(--t2); margin-bottom: 22px; }
+.row-label {
+  font-family: var(--ff-m); font-size: 9px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--t3);
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+}
+.row-label::before {
+  content: ''; width: 16px; height: 1px;
+  background: linear-gradient(90deg, var(--neon), transparent);
+  box-shadow: 0 0 4px rgba(200,255,87,.4);
 }
 
-/* ══════════════════════════════════════════
-   TYPOGRAPHY
-══════════════════════════════════════════ */
-.sc-title { font-family:var(--ff-d); font-size:24px; font-weight:800; letter-spacing:-.04em; color:var(--t1); margin-bottom:3px; }
-.sc-sub { font-size:13px; color:var(--t2); margin-bottom:20px; line-height:1.5; }
-.sec-label {
-  font-family:var(--ff-b);
-  font-size:10px; font-weight:600;
-  letter-spacing:.12em; text-transform:uppercase;
-  color:var(--t3); margin-bottom:9px;
-}
-
-/* ══════════════════════════════════════════
+/* ─────────────────────────────────────────
    CARDS
-══════════════════════════════════════════ */
+───────────────────────────────────────── */
 .card {
-  background: var(--sf1);
-  border: 1px solid var(--brd);
-  border-radius: var(--r);
-  padding:16px;
-  margin-bottom:12px;
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--r); padding: 16px;
+  margin-bottom: 10px;
 }
-.card-sm { padding:12px 14px; }
+.card-compact { padding: 12px 14px; }
 
-/* ══════════════════════════════════════════
-   HERO CYCLE CARD (Ciclo screen)
-══════════════════════════════════════════ */
-.cycle-hero {
-  border-radius:22px;
-  padding:22px 22px 18px;
-  margin-bottom:16px;
-  background: linear-gradient(150deg, #0B2511 0%, #0F2D18 50%, #091A0C 100%);
-  border: 1px solid rgba(93,222,133,.12);
-  position:relative; overflow:hidden;
+/* ─────────────────────────────────────────
+   PHASE TAGS
+───────────────────────────────────────── */
+.ptag {
+  font-family: var(--ff-m); font-size: 8px; letter-spacing: .1em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 3px;
 }
-.cycle-hero::before {
-  content:'';
-  position:absolute; top:-60px; right:-60px;
-  width:200px; height:200px; border-radius:50%;
-  background: radial-gradient(circle, rgba(93,222,133,.07) 0%, transparent 65%);
-  pointer-events:none;
-}
-[data-theme="light"] .cycle-hero {
-  background: linear-gradient(150deg, #C8EDCF 0%, #B8E8C2 50%, #C0EBC8 100%);
-  border-color: rgba(26,140,66,.2);
-}
-.ch-eyebrow {
-  font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
-  color:rgba(93,222,133,.5); margin-bottom:10px;
-}
-[data-theme="light"] .ch-eyebrow { color:rgba(26,100,42,.6); }
-.ch-plant-name {
-  font-family:var(--ff-d); font-size:22px; font-weight:800;
-  letter-spacing:-.03em; color:var(--t1); margin-bottom:2px;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.ch-phase-row { display:flex; align-items:center; gap:8px; margin-bottom:16px; }
-.ch-phase-badge {
-  font-family:var(--ff-b); font-size:10px; font-weight:600;
-  letter-spacing:.1em; text-transform:uppercase;
-  padding:3px 9px; border-radius:6px;
-}
-.pb-seed    { background:rgba(212,168,83,.12); color:#D4A853; border:1px solid rgba(212,168,83,.25); }
-.pb-veg     { background:rgba(93,222,133,.12); color:#5DDE85; border:1px solid rgba(93,222,133,.25); }
-.pb-bloom   { background:rgba(232,162,74,.12); color:#E8A24A; border:1px solid rgba(232,162,74,.25); }
-.pb-flush   { background:rgba(90,155,232,.12); color:#5A9BE8; border:1px solid rgba(90,155,232,.25); }
-.pb-harvest { background:rgba(155,125,232,.12); color:#9B7DE8; border:1px solid rgba(155,125,232,.25); }
-.ch-strain  { font-size:12px; color:var(--t2); }
+.pt-seed    { background: rgba(255,184,48,.08); color: var(--gold); border: 1px solid rgba(255,184,48,.2); }
+.pt-veg     { background: rgba(200,255,87,.08); color: var(--neon); border: 1px solid rgba(200,255,87,.2); }
+.pt-bloom   { background: rgba(255,184,48,.1);  color: #FF9500; border: 1px solid rgba(255,148,0,.2); }
+.pt-flush   { background: rgba(87,217,255,.08); color: var(--neon2); border: 1px solid rgba(87,217,255,.2); }
+.pt-harvest { background: rgba(255,74,107,.08); color: var(--red); border: 1px solid rgba(255,74,107,.2); }
 
-/* Giant day counter */
-.ch-days-display {
-  display:flex; align-items:baseline; gap:0; position:relative; z-index:1;
-  margin-bottom:14px;
+/* ─────────────────────────────────────────
+   FORM ELEMENTS
+───────────────────────────────────────── */
+.fg { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.fl {
+  font-family: var(--ff-m); font-size: 9px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--t3);
 }
-.ch-days-num {
-  font-family:var(--ff-d); font-size:72px; font-weight:800;
-  letter-spacing:-.06em; line-height:1;
-  color:var(--g4);
-  text-shadow: 0 0 40px rgba(93,222,133,.25);
-}
-[data-theme="light"] .ch-days-num { text-shadow:none; color:var(--g6); }
-.ch-days-unit { font-family:var(--ff-d); font-size:22px; font-weight:700; color:rgba(93,222,133,.5); margin-left:6px; margin-bottom:8px; }
-[data-theme="light"] .ch-days-unit { color:rgba(26,100,42,.4); }
-.ch-sub-stats {
-  display:grid; grid-template-columns:repeat(3,1fr);
-  gap:0; position:relative; z-index:1;
-  background:rgba(0,0,0,.15); border-radius:12px;
-  overflow:hidden; margin-bottom:14px;
-}
-[data-theme="light"] .ch-sub-stats { background:rgba(0,0,0,.06); }
-.ch-sub-stat {
-  text-align:center; padding:10px 6px;
-}
-.ch-sub-stat + .ch-sub-stat { border-left:1px solid rgba(255,255,255,.07); }
-.ch-sub-val { font-family:var(--ff-d); font-size:18px; font-weight:800; letter-spacing:-.03em; color:var(--t1); }
-.ch-sub-lbl { font-size:9px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--t3); margin-top:2px; }
-
-/* Progress bar */
-.ch-prog-wrap { position:relative; z-index:1; }
-.ch-prog-labels { display:flex; justify-content:space-between; margin-bottom:5px; }
-.ch-prog-label { font-size:10px; color:var(--t3); font-family:var(--ff-b); }
-.ch-prog-bar { height:5px; background:rgba(255,255,255,.08); border-radius:99px; overflow:hidden; }
-.ch-prog-fill { height:100%; border-radius:99px; background: linear-gradient(90deg, var(--g6), var(--g4)); transition:width .8s cubic-bezier(.16,1,.3,1); }
-
-/* Phase stepper */
-.phase-steps {
-  display:flex; align-items:center; gap:0;
-  padding:4px 0; margin-bottom:16px;
-  overflow-x:auto; scrollbar-width:none;
-}
-.phase-steps::-webkit-scrollbar { display:none; }
-.ps-item {
-  display:flex; flex-direction:column; align-items:center; gap:5px;
-  flex-shrink:0; padding:0 8px;
-  background:none; border:none; cursor:pointer;
-}
-.ps-dot {
-  width:36px; height:36px; border-radius:50%;
-  border:2px solid var(--brd2);
-  background:var(--sf1);
-  display:flex; align-items:center; justify-content:center;
-  font-size:15px;
-  transition: all .2s cubic-bezier(.34,1.56,.64,1);
-}
-.ps-item.done .ps-dot { background:var(--g6); border-color:var(--g5); }
-.ps-item.current .ps-dot { background:rgba(212,168,83,.15); border-color:var(--gold); box-shadow:0 0 0 5px rgba(212,168,83,.1); }
-.ps-lbl { font-size:9px; font-weight:600; color:var(--t3); letter-spacing:.05em; text-transform:uppercase; }
-.ps-item.done .ps-lbl { color:var(--g5); }
-.ps-item.current .ps-lbl { color:var(--gold); }
-.ps-line { width:18px; height:2px; background:var(--brd2); flex-shrink:0; margin-bottom:12px; }
-.ps-line.done { background:var(--g6); }
-
-/* Advance phase button */
-.btn-advance {
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  width:100%; padding:13px;
-  border:none; border-radius:var(--rm);
-  background: linear-gradient(135deg, var(--g6), var(--g5));
-  color:#fff; font-family:var(--ff-d); font-size:13px; font-weight:800;
-  letter-spacing:-.01em;
-  cursor:pointer; transition:transform .15s, opacity .15s;
-  margin-bottom:12px;
-}
-.btn-advance:active { transform:scale(.97); }
-.btn-advance:disabled { opacity:.3; cursor:default; }
-.btn-advance.amber-btn { background: linear-gradient(135deg, #7A4A10, var(--am)); }
-
-/* ══════════════════════════════════════════
-   BLOOM ESTIMATOR
-══════════════════════════════════════════ */
-.bloom-estimator {
-  background: var(--sf1);
-  border: 1px solid var(--brd);
-  border-radius: var(--r);
-  overflow:hidden;
-  margin-bottom:12px;
-}
-.be-header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 16px;
-  cursor:pointer;
-  transition:background .15s;
-}
-.be-header:active { background: var(--sf2); }
-.be-title { font-family:var(--ff-d); font-size:14px; font-weight:800; letter-spacing:-.02em; color:var(--t1); }
-.be-chevron { color:var(--t3); font-size:16px; transition:transform .2s; }
-.be-chevron.open { transform:rotate(180deg); }
-.be-body { padding:0 16px 16px; display:none; }
-.be-body.open { display:block; }
-.be-stats {
-  display:grid; grid-template-columns:repeat(3,1fr);
-  gap:8px; margin-bottom:14px;
-}
-.be-stat {
-  background:var(--sf2); border-radius:var(--rm);
-  padding:10px 8px; text-align:center;
-}
-.be-stat-val { font-family:var(--ff-d); font-size:20px; font-weight:800; letter-spacing:-.03em; color:var(--am); }
-.be-stat-lbl { font-size:9px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--t3); margin-top:3px; }
-
-/* ══════════════════════════════════════════
-   PLANTS SCREEN
-══════════════════════════════════════════ */
-.plant-card {
-  background:var(--sf1); border:1px solid var(--brd);
-  border-radius:var(--r); padding:15px;
-  display:flex; align-items:center; gap:12px;
-  margin-bottom:9px;
-  transition:border-color .2s, transform .15s;
-}
-.plant-card:active { transform:scale(.98); border-color:var(--brd2); }
-.pca {
-  width:46px; height:46px; border-radius:13px;
-  background:rgba(93,222,133,.07);
-  border:1px solid rgba(93,222,133,.14);
-  display:flex; align-items:center; justify-content:center;
-  font-size:20px; flex-shrink:0; position:relative;
-}
-.pca-day {
-  position:absolute; bottom:-4px; right:-4px;
-  background:var(--bg0); border:1px solid var(--brd2);
-  border-radius:5px;
-  font-family:var(--ff-b); font-size:8px; font-weight:600;
-  padding:1px 4px; color:var(--g4);
-}
-.pc-info { flex:1; min-width:0; }
-.pc-name { font-family:var(--ff-d); font-size:15px; font-weight:800; letter-spacing:-.025em; color:var(--t1); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.pc-meta { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--t2); }
-.pc-prog { width:100%; height:3px; background:var(--brd); border-radius:99px; margin-top:7px; overflow:hidden; }
-.pc-prog-fill { height:100%; border-radius:99px; background: linear-gradient(90deg, var(--g6), var(--g4)); transition:width .6s cubic-bezier(.16,1,.3,1); }
-.pc-acts { display:flex; flex-direction:column; gap:5px; }
-.pc-btn {
-  width:28px; height:28px; border-radius:8px;
-  border:1px solid var(--brd2); background:var(--sf2);
-  color:var(--t2);
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; font-size:13px;
-  transition: all .14s;
-}
-.pc-btn:active { transform:scale(.82); }
-.pc-btn.del:active { color:var(--red); border-color:var(--red); }
-
-/* Add plant form */
-.add-form {
-  background:var(--sf1); border:1px dashed var(--brd2);
-  border-radius:var(--r); padding:18px; margin-bottom:16px;
-}
-.af-title { font-family:var(--ff-d); font-size:15px; font-weight:800; letter-spacing:-.025em; color:var(--t1); margin-bottom:14px; }
-.fg { display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
-.fl { font-size:9px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--t3); }
 .fi {
-  padding:11px 13px;
-  background:var(--bg1); border:1.5px solid var(--brd2);
-  border-radius:var(--rm); color:var(--t1);
-  font-size:14px; font-weight:500;
-  transition:border-color .18s;
-  -webkit-appearance:none; appearance:none; width:100%;
+  padding: 10px 12px;
+  background: var(--bg); border: 1px solid var(--brd2);
+  border-radius: var(--rs); color: var(--t1);
+  font-size: 14px; font-weight: 500;
+  transition: border-color .16s; width: 100%;
+  -webkit-appearance: none; appearance: none;
 }
-.fi:focus { border-color:var(--g5); }
-.fi::placeholder { color:var(--t4); }
-.fg-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
-.strain-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:7px; }
+.fi:focus { border-color: var(--neon); box-shadow: 0 0 0 2px rgba(200,255,87,.08); }
+.fi::placeholder { color: var(--t4); }
+.strain-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 7px; }
 .strain-btn {
-  padding:10px 8px; border:1.5px solid var(--brd2);
-  border-radius:var(--rs); background:var(--bg1);
-  color:var(--t2); font-size:12px; font-weight:600;
-  cursor:pointer; text-align:center; transition:all .18s;
+  padding: 9px 8px; border: 1px solid var(--brd2);
+  border-radius: var(--rs); background: var(--bg);
+  color: var(--t2); font-size: 11px; font-weight: 600;
+  cursor: pointer; text-align: center; transition: all .16s;
 }
-.strain-btn.on { border-color:var(--g5); background:rgba(93,222,133,.08); color:var(--g4); }
-.btn-prim {
-  display:flex; align-items:center; justify-content:center; gap:7px;
-  width:100%; padding:13px;
-  border:none; border-radius:var(--rm);
-  background: linear-gradient(135deg, var(--g6), var(--g5));
-  color:#fff; font-family:var(--ff-d); font-size:13px; font-weight:800;
-  letter-spacing:-.01em; cursor:pointer;
-  transition:transform .14s;
-  margin-top:10px;
-}
-.btn-prim:active { transform:scale(.97); }
-.btn-prim:disabled { opacity:.35; }
+.strain-btn.on { border-color: var(--neon); background: rgba(200,255,87,.06); color: var(--neon); }
 
-/* ══════════════════════════════════════════
-   DIARY / NOTES SCREEN
-══════════════════════════════════════════ */
-.diary-entry {
-  background:var(--sf1); border:1px solid var(--brd);
-  border-radius:var(--r); padding:14px 15px;
-  margin-bottom:9px; display:flex; gap:12px;
-  animation: scFadeUp .2s ease both;
+/* Buttons */
+.btn-main {
+  width: 100%; padding: 13px;
+  border: none; border-radius: var(--rs);
+  background: var(--neon); color: var(--bg);
+  font-family: var(--ff-d); font-size: 16px; letter-spacing: .06em;
+  cursor: pointer; transition: transform .12s, opacity .12s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 10px;
 }
-.de-date {
-  flex-shrink:0; display:flex; flex-direction:column; align-items:center;
-  width:38px;
+.btn-main:active { transform: scale(.97); }
+.btn-main:disabled { opacity: .3; cursor: default; }
+.btn-ghost {
+  padding: 9px 14px; border: 1px solid var(--brd2);
+  border-radius: var(--rs); background: none;
+  color: var(--t2); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all .14s; white-space: nowrap;
 }
-.de-day { font-family:var(--ff-d); font-size:22px; font-weight:800; letter-spacing:-.04em; color:var(--g4); line-height:1; }
-.de-month { font-size:9px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--t3); margin-top:2px; }
-.de-sep { width:1px; background:var(--brd2); margin:0 2px; }
-.de-body { flex:1; min-width:0; }
-.de-plant { font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--t3); margin-bottom:3px; }
-.de-text { font-size:13px; color:var(--t1); line-height:1.5; }
-.de-tag {
-  display:inline-block; margin-top:6px;
-  font-size:9px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
-  padding:2px 7px; border-radius:5px;
+.btn-ghost:active { border-color: var(--neon); color: var(--neon); transform: scale(.95); }
+.btn-ghost.neon { border-color: rgba(200,255,87,.3); color: var(--neon); background: rgba(200,255,87,.05); }
+.btn-ghost.gold { border-color: rgba(255,184,48,.3); color: var(--gold); background: rgba(255,184,48,.05); }
+.btn-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  border: 1px solid var(--brd2); background: none;
+  color: var(--t3); display: flex; align-items: center;
+  justify-content: center; cursor: pointer; font-size: 12px;
+  transition: all .14s; flex-shrink: 0;
 }
-.tag-note   { background:rgba(90,155,232,.1);  color:var(--blue); }
-.tag-water  { background:rgba(90,155,232,.1);  color:var(--blue); }
-.tag-feed   { background:rgba(93,222,133,.1);  color:var(--g4); }
-.tag-check  { background:rgba(212,168,83,.1);  color:var(--gold); }
-.tag-issue  { background:rgba(224,82,82,.1);   color:var(--red); }
-.de-del {
-  width:26px; height:26px; flex-shrink:0;
-  border:1px solid var(--brd); border-radius:7px;
-  background:none; color:var(--t4);
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; font-size:12px; transition:all .15s;
-  align-self:flex-start;
-}
-.de-del:active { color:var(--red); border-color:var(--red); transform:scale(.84); }
+.btn-icon:active { color: var(--red); border-color: var(--red); transform: scale(.84); }
 
-/* Add diary entry */
-.add-diary {
-  background:var(--sf1); border:1px solid var(--brd);
-  border-radius:var(--r); padding:16px; margin-bottom:16px;
+/* ─────────────────────────────────────────
+   HOME SCREEN
+───────────────────────────────────────── */
+.home-header {
+  margin-bottom: 24px;
 }
-.diary-textarea {
-  width:100%; padding:11px 13px;
-  background:var(--bg1); border:1.5px solid var(--brd2);
-  border-radius:var(--rm); color:var(--t1);
-  font-size:14px; line-height:1.5; resize:none;
-  min-height:70px;
-  transition:border-color .18s;
+.home-brand {
+  font-family: var(--ff-d); font-size: 38px; letter-spacing: .08em;
+  line-height: 1; color: var(--t1);
 }
-.diary-textarea:focus { border-color:var(--g5); }
-.tag-row {
-  display:flex; gap:6px; margin:10px 0;
-  overflow-x:auto; scrollbar-width:none; padding:2px 0;
-}
-.tag-row::-webkit-scrollbar { display:none; }
-.tag-pick {
-  flex-shrink:0; padding:6px 12px; border-radius:7px;
-  border:1.5px solid var(--brd2); background:var(--bg1);
-  color:var(--t2); font-size:11px; font-weight:600;
-  cursor:pointer; transition:all .17s;
-}
-.tag-pick.on { border-color:var(--g5); color:var(--g4); background:rgba(93,222,133,.08); }
+.home-brand span { color: var(--neon); text-shadow: 0 0 20px rgba(200,255,87,.3); }
+.home-date { font-family: var(--ff-m); font-size: 10px; color: var(--t3); margin-top: 5px; letter-spacing: .08em; }
 
-/* ══════════════════════════════════════════
-   FINANCES SCREEN
-══════════════════════════════════════════ */
+/* Big profit card */
+.profit-card {
+  border-radius: 18px; padding: 22px;
+  margin-bottom: 14px; position: relative; overflow: hidden;
+  background: var(--bg2);
+  border: 1px solid var(--brd);
+}
+.profit-card::after {
+  content: 'PROFIT';
+  position: absolute; right: -8px; bottom: -20px;
+  font-family: var(--ff-d); font-size: 80px; letter-spacing: .05em;
+  color: rgba(200,255,87,.025); pointer-events: none; user-select: none;
+  line-height: 1;
+}
+.pc-label {
+  font-family: var(--ff-m); font-size: 9px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--t3); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.pc-label::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--neon); box-shadow: 0 0 8px var(--neon);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.pc-amount {
+  font-family: var(--ff-d); font-size: 62px; line-height: .9;
+  letter-spacing: .02em; position: relative; z-index: 1;
+}
+.pc-currency { font-size: 24px; opacity: .7; vertical-align: super; margin-right: 2px; }
+.pc-stats {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 0; margin-top: 18px; position: relative; z-index: 1;
+  background: var(--bg3); border-radius: 10px; overflow: hidden;
+}
+.pc-stat { text-align: center; padding: 10px 6px; }
+.pc-stat + .pc-stat { border-left: 1px solid var(--brd); }
+.pc-stat-val { font-family: var(--ff-d); font-size: 20px; letter-spacing: .02em; }
+.pc-stat-lbl { font-family: var(--ff-m); font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: var(--t3); margin-top: 3px; }
+
+/* Plant health strip */
+.plant-strip {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-bottom: 14px;
+}
+.ps-card {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--r); padding: 12px 14px;
+  cursor: pointer; transition: border-color .18s;
+}
+.ps-card:active { border-color: var(--brd2); }
+.ps-icon {
+  width: 40px; height: 40px; border-radius: 11px;
+  border: 1px solid var(--brd2); background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0; position: relative;
+}
+.ps-day {
+  position: absolute; bottom: -4px; right: -4px;
+  background: var(--bg); border: 1px solid var(--brd2);
+  border-radius: 4px; padding: 1px 3px;
+  font-family: var(--ff-d); font-size: 9px; color: var(--neon);
+}
+.ps-info { flex: 1; min-width: 0; }
+.ps-name { font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ps-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.ps-tag {
+  font-family: var(--ff-m); font-size: 8px; letter-spacing: .06em;
+  text-transform: uppercase; padding: 2px 6px; border-radius: 3px;
+}
+.pst-ok   { background: rgba(200,255,87,.07); color: var(--neon); border: 1px solid rgba(200,255,87,.15); }
+.pst-warn { background: rgba(255,184,48,.07); color: var(--gold); border: 1px solid rgba(255,184,48,.15); }
+.pst-bad  { background: rgba(255,74,107,.07); color: var(--red); border: 1px solid rgba(255,74,107,.15); }
+.ps-days-num { font-family: var(--ff-d); font-size: 30px; color: var(--t3); flex-shrink: 0; }
+
+/* Dual mini cards */
+.mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mini-card {
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--r); padding: 14px 12px;
+  position: relative; overflow: hidden;
+}
+.mini-card-bg {
+  position: absolute; right: -6px; bottom: -10px;
+  font-family: var(--ff-d); font-size: 52px; letter-spacing: .05em;
+  color: rgba(255,255,255,.018); pointer-events: none; user-select: none; line-height: 1;
+}
+.mc-lbl { font-family: var(--ff-m); font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: var(--t3); margin-bottom: 8px; }
+.mc-val { font-family: var(--ff-d); font-size: 34px; letter-spacing: .02em; line-height: 1; }
+.mc-sub { font-size: 10px; color: var(--t3); margin-top: 4px; }
+
+/* ─────────────────────────────────────────
+   PIANTE SCREEN
+───────────────────────────────────────── */
+.plant-card {
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--r); margin-bottom: 10px; overflow: hidden;
+  transition: border-color .18s;
+}
+.pc-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; cursor: pointer;
+}
+.pc-emoji {
+  width: 44px; height: 44px; border-radius: 11px;
+  border: 1px solid var(--brd2); background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; flex-shrink: 0; position: relative;
+}
+.pc-badge {
+  position: absolute; bottom: -4px; right: -4px;
+  background: var(--bg); border: 1px solid var(--brd2);
+  border-radius: 4px; padding: 1px 3px;
+  font-family: var(--ff-d); font-size: 9px; color: var(--neon);
+}
+.pc-info { flex: 1; min-width: 0; }
+.pc-name { font-size: 15px; font-weight: 700; color: var(--t1); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pc-meta { display: flex; align-items: center; gap: 7px; }
+.pc-strain-lbl { font-size: 11px; color: var(--t2); }
+.pc-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.pc-adv {
+  padding: 6px 11px; border-radius: 7px;
+  border: 1px solid rgba(200,255,87,.25);
+  background: rgba(200,255,87,.06); color: var(--neon);
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: all .14s; white-space: nowrap;
+}
+.pc-adv:active { background: rgba(200,255,87,.14); transform: scale(.93); }
+.pc-prog { height: 2px; background: var(--brd); }
+.pc-prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(200,255,87,.3), var(--neon));
+  box-shadow: 0 0 6px rgba(200,255,87,.3);
+  transition: width .7s cubic-bezier(.16,1,.3,1);
+}
+
+/* Expanded detail */
+.pc-detail {
+  display: none; border-top: 1px solid var(--brd);
+  padding: 14px 16px;
+  animation: su .15s ease both;
+}
+.pc-detail.on { display: block; }
+.pc-stats-row {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 8px; margin-bottom: 12px;
+}
+.pcs { background: var(--bg3); border-radius: var(--rs); padding: 10px 8px; text-align: center; }
+.pcs-val { font-family: var(--ff-d); font-size: 22px; letter-spacing: .02em; }
+.pcs-lbl { font-family: var(--ff-m); font-size: 8px; letter-spacing: .08em; text-transform: uppercase; color: var(--t3); margin-top: 2px; }
+.quick-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.qb {
+  padding: 9px 8px; border-radius: var(--rs);
+  border: 1px solid var(--brd2); background: var(--bg3);
+  color: var(--t2); font-size: 11px; font-weight: 600;
+  cursor: pointer; text-align: center; transition: all .14s;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.qb:active { border-color: var(--neon); color: var(--neon); background: rgba(200,255,87,.05); transform: scale(.96); }
+
+/* Add form */
+.add-form {
+  background: var(--bg2); border: 1px dashed var(--brd2);
+  border-radius: var(--r); padding: 18px; margin-top: 14px;
+}
+.add-form-title { font-family: var(--ff-d); font-size: 18px; letter-spacing: .05em; color: var(--t1); margin-bottom: 14px; }
+
+/* ─────────────────────────────────────────
+   LOG SCREEN
+───────────────────────────────────────── */
+.log-types {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 7px; margin-bottom: 12px;
+}
+.lt {
+  padding: 10px 6px; border-radius: var(--rs);
+  border: 1px solid var(--brd2); background: var(--bg2);
+  color: var(--t2); font-size: 11px; font-weight: 600;
+  cursor: pointer; text-align: center; transition: all .16s;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.lt span:first-child { font-size: 17px; }
+.lt.on { border-color: var(--neon2); color: var(--neon2); background: rgba(87,217,255,.06); }
+
+.log-filters {
+  display: flex; gap: 7px; overflow-x: auto; margin-bottom: 14px; padding: 2px 0;
+}
+.lf {
+  flex-shrink: 0; padding: 6px 12px; border-radius: 20px;
+  border: 1px solid var(--brd2); background: var(--bg2);
+  color: var(--t2); font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: all .16s;
+}
+.lf.on { border-color: var(--neon); color: var(--neon); background: rgba(200,255,87,.06); }
+
+.add-log-card {
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--r); padding: 16px; margin-bottom: 14px;
+}
+.log-textarea {
+  width: 100%; padding: 10px 12px;
+  background: var(--bg); border: 1px solid var(--brd2);
+  border-radius: var(--rs); color: var(--t1);
+  font-size: 13px; line-height: 1.6; resize: none; min-height: 62px;
+  transition: border-color .16s; margin-top: 10px;
+}
+.log-textarea:focus { border-color: var(--neon2); }
+.photo-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; padding: 9px;
+  border: 1px dashed var(--brd2); border-radius: var(--rs);
+  background: var(--bg); color: var(--t3);
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: all .16s; margin-top: 8px;
+}
+.photo-btn:active { border-color: var(--neon2); color: var(--neon2); }
+.photo-preview { width: 100%; border-radius: var(--rs); margin-top: 8px; max-height: 140px; object-fit: cover; border: 1px solid var(--brd); display: none; }
+#photo-inp { display: none; }
+
+/* Log entries */
+.log-entry {
+  display: flex; gap: 12px;
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--r); padding: 12px 14px; margin-bottom: 8px;
+  animation: su .16s ease both;
+}
+.le-d { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0; }
+.le-day { font-family: var(--ff-d); font-size: 24px; letter-spacing: .02em; color: var(--neon); line-height: 1; }
+.le-mon { font-family: var(--ff-m); font-size: 8px; text-transform: uppercase; color: var(--t3); letter-spacing: .06em; }
+.le-sep { width: 1px; background: var(--brd2); flex-shrink: 0; margin: 0 2px; }
+.le-body { flex: 1; min-width: 0; }
+.le-top { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; flex-wrap: wrap; }
+.le-type {
+  font-family: var(--ff-m); font-size: 8px; letter-spacing: .08em;
+  text-transform: uppercase; padding: 2px 6px; border-radius: 3px;
+}
+.lt-water   { background: rgba(87,217,255,.1); color: var(--neon2); border: 1px solid rgba(87,217,255,.2); }
+.lt-feed    { background: rgba(200,255,87,.1); color: var(--neon); border: 1px solid rgba(200,255,87,.2); }
+.lt-check   { background: rgba(255,184,48,.1); color: var(--gold); border: 1px solid rgba(255,184,48,.2); }
+.lt-disease { background: rgba(255,74,107,.1); color: var(--red); border: 1px solid rgba(255,74,107,.2); }
+.lt-photo   { background: rgba(167,139,250,.1); color: #A78BFA; border: 1px solid rgba(167,139,250,.2); }
+.lt-note    { background: rgba(255,255,255,.05); color: var(--t2); border: 1px solid var(--brd2); }
+.le-plant { font-family: var(--ff-m); font-size: 9px; color: var(--t3); }
+.le-text { font-size: 13px; color: var(--t1); line-height: 1.55; }
+.le-img { width: 100%; border-radius: 8px; margin-top: 7px; max-height: 160px; object-fit: cover; border: 1px solid var(--brd); }
+
+/* ─────────────────────────────────────────
+   FINANZE SCREEN
+───────────────────────────────────────── */
 .fin-hero {
-  border-radius:22px; padding:22px 22px 18px;
-  margin-bottom:16px;
-  background: linear-gradient(150deg, #1A0D05 0%, #221505 55%, #160B02 100%);
-  border: 1px solid rgba(212,168,83,.13);
-  position:relative; overflow:hidden;
+  border-radius: 18px; padding: 22px 22px 16px;
+  margin-bottom: 16px; position: relative; overflow: hidden;
+  background: var(--bg2); border: 1px solid var(--brd);
 }
-[data-theme="light"] .fin-hero {
-  background: linear-gradient(150deg, #FDF0D5 0%, #FAE8BE 55%, #FDF3D8 100%);
-  border-color: rgba(160,120,32,.2);
+.fh-deco {
+  position: absolute; right: -10px; top: -24px;
+  font-family: var(--ff-d); font-size: 130px; letter-spacing: .05em;
+  color: rgba(200,255,87,.025); pointer-events: none; user-select: none; line-height: 1;
 }
-.fin-hero::before {
-  content:''; position:absolute; top:-50px; right:-50px;
-  width:180px; height:180px; border-radius:50%;
-  background: radial-gradient(circle, rgba(212,168,83,.08) 0%, transparent 70%);
-}
-.fh-label { font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:rgba(212,168,83,.45); margin-bottom:8px; }
-[data-theme="light"] .fh-label { color:rgba(140,90,10,.5); }
-.fh-netto {
-  font-family:var(--ff-d); font-size:52px; font-weight:800;
-  letter-spacing:-.06em; line-height:1; color:var(--gold2);
-  text-shadow:0 0 36px rgba(212,168,83,.25);
-  position:relative; z-index:1;
-}
-[data-theme="light"] .fh-netto { text-shadow:none; color:#8C5A0A; }
-.fh-sub { font-size:12px; color:rgba(212,168,83,.35); margin-top:5px; position:relative; z-index:1; }
-[data-theme="light"] .fh-sub { color:rgba(140,90,10,.45); }
+.fh-label { font-family: var(--ff-m); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--t3); margin-bottom: 10px; }
+.fh-amount { font-family: var(--ff-d); font-size: 62px; line-height: .9; letter-spacing: .02em; position: relative; z-index: 1; }
+.fh-curr { font-size: 24px; opacity: .7; vertical-align: super; margin-right: 2px; }
+.fh-sub { font-size: 11px; color: var(--t3); margin-top: 6px; position: relative; z-index: 1; }
 .fh-grid {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
-  margin-top:16px; position:relative; z-index:1;
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 0; margin-top: 16px; position: relative; z-index: 1;
+  background: var(--bg3); border-radius: 10px; overflow: hidden;
 }
-.fh-stat {
-  background:rgba(0,0,0,.2); border-radius:11px; padding:10px 7px; text-align:center;
-}
-[data-theme="light"] .fh-stat { background:rgba(255,255,255,.45); }
-.fh-stat-val { font-family:var(--ff-d); font-size:17px; font-weight:800; letter-spacing:-.03em; color:var(--gold2); }
-[data-theme="light"] .fh-stat-val { color:#8C5A0A; }
-.fh-stat-lbl { font-size:8px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:rgba(212,168,83,.4); margin-top:3px; }
-[data-theme="light"] .fh-stat-lbl { color:rgba(140,90,10,.4); }
+.fh-stat { text-align: center; padding: 10px 6px; }
+.fh-stat + .fh-stat { border-left: 1px solid var(--brd); }
+.fh-stat-val { font-family: var(--ff-d); font-size: 19px; letter-spacing: .02em; }
+.fh-stat-lbl { font-family: var(--ff-m); font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: var(--t3); margin-top: 3px; }
 
-/* People selector */
-.people-row {
-  display:flex; gap:7px; margin-bottom:18px;
+/* Partners */
+.partner-card {
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--r); padding: 14px 16px; margin-bottom: 10px;
 }
-.ppl-btn {
-  flex:1; padding:12px 5px;
-  border:1.5px solid var(--brd2); border-radius:var(--rm);
-  background:var(--sf1);
-  display:flex; flex-direction:column; align-items:center; gap:3px;
-  cursor:pointer; transition:all .18s;
+.partner-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--brd); }
+.partner-row:last-of-type { border-bottom: none; }
+.partner-av {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--bg3); border: 1px solid var(--brd2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
 }
-.ppl-btn.on { border-color:var(--gold); background:rgba(212,168,83,.07); }
-.ppl-num { font-family:var(--ff-d); font-size:20px; font-weight:800; letter-spacing:-.03em; color:var(--t2); }
-.ppl-btn.on .ppl-num { color:var(--gold2); }
-.ppl-lbl { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--t4); }
-.ppl-btn.on .ppl-lbl { color:rgba(212,168,83,.5); }
+.partner-name-inp {
+  flex: 1; background: none; border: none;
+  border-bottom: 1px solid var(--brd2);
+  color: var(--t1); font-size: 14px; font-weight: 600;
+  padding: 2px 0; transition: border-color .14s; min-width: 0;
+}
+.partner-name-inp:focus { border-color: var(--neon); }
+.pct-inp {
+  width: 52px; padding: 5px 7px; text-align: center;
+  background: var(--bg3); border: 1px solid var(--brd2);
+  border-radius: 7px; color: var(--gold);
+  font-family: var(--ff-d); font-size: 20px; letter-spacing: .02em;
+  flex-shrink: 0; transition: border-color .14s;
+}
+.pct-inp:focus { border-color: var(--gold); }
+.pct-sym { font-family: var(--ff-m); font-size: 11px; color: var(--t3); }
+.pct-warn { font-family: var(--ff-m); font-size: 10px; color: var(--red); margin-top: 8px; display: none; }
 
-/* Expense / product rows */
-.fin-row-item {
-  display:flex; align-items:center; gap:10px;
-  padding:12px 14px;
-  background:var(--sf1); border:1px solid var(--brd);
-  border-radius:var(--rm); margin-bottom:7px;
-  animation: scFadeUp .18s ease both;
-  transition:border-color .15s;
-}
-.fri-icon { font-size:18px; flex-shrink:0; }
-.fri-info { flex:1; min-width:0; }
-.fri-name { font-size:14px; font-weight:600; color:var(--t1); margin-bottom:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.fri-sub { font-size:11px; color:var(--t2); font-family:var(--ff-b); }
-.fri-amt { font-family:var(--ff-d); font-size:16px; font-weight:800; letter-spacing:-.02em; flex-shrink:0; }
-.fri-del {
-  width:27px; height:27px; border-radius:7px;
-  border:1px solid var(--brd2); background:none;
-  color:var(--t4); display:flex; align-items:center; justify-content:center;
-  cursor:pointer; font-size:13px; flex-shrink:0;
-  transition:all .14s;
-}
-.fri-del:active { color:var(--red); border-color:var(--red); transform:scale(.84); }
+/* Inline add row */
+.add-row { display: flex; gap: 7px; align-items: center; margin-bottom: 10px; }
+.ar-main { flex: 1; }
+.ar-sm { width: 72px; flex: none; }
 
-/* Inline add forms */
-.add-row {
-  display:flex; gap:7px; align-items:center; margin-bottom:14px;
+/* Finance items */
+.fin-item {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--rs); padding: 11px 13px;
+  margin-bottom: 7px; animation: su .16s ease both;
 }
-.ar-inp { flex:1; }
-.ar-inp-sm { width:80px; flex:none; }
-.ar-btn {
-  padding:10px 14px; border:none; border-radius:var(--rm);
-  background:var(--g6); color:#fff;
-  font-size:12px; font-weight:700;
-  cursor:pointer; white-space:nowrap; flex-shrink:0;
-  transition:transform .12s;
+.fi-ico { font-size: 16px; flex-shrink: 0; }
+.fi-info { flex: 1; min-width: 0; }
+.fi-name { font-size: 13px; font-weight: 600; color: var(--t1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fi-sub { font-family: var(--ff-m); font-size: 9px; color: var(--t3); margin-top: 2px; }
+.fi-amt { font-family: var(--ff-d); font-size: 18px; letter-spacing: .02em; flex-shrink: 0; }
+
+/* Yield per pianta */
+.yield-card {
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--r); padding: 14px 16px; margin-bottom: 10px;
 }
-.ar-btn:active { transform:scale(.91); }
-.ar-btn.gold-bg { background: #7A5010; }
+.yc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.yc-name { font-size: 14px; font-weight: 700; color: var(--t1); }
+.yc-rev { font-family: var(--ff-d); font-size: 20px; letter-spacing: .02em; }
+.yc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.yc-field { display: flex; flex-direction: column; gap: 5px; }
 
 /* Breakdown */
 .breakdown {
-  background:var(--sf1); border:1px solid var(--brd);
-  border-radius:var(--r); overflow:hidden; margin-top:12px;
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--r); overflow: hidden;
 }
 .bd-row {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:12px 16px; border-bottom:1px solid var(--brd);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--brd);
 }
-.bd-row:last-child { border-bottom:none; }
-.bd-lbl { font-size:13px; color:var(--t2); display:flex; align-items:center; gap:8px; }
-.bd-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-.bd-val { font-family:var(--ff-d); font-size:16px; font-weight:800; letter-spacing:-.02em; }
-.per-person-block {
-  background:rgba(93,222,133,.06); border:1px solid rgba(93,222,133,.14);
-  border-radius:var(--r); padding:18px; text-align:center; margin-top:10px;
-}
-[data-theme="light"] .per-person-block { background:rgba(26,122,56,.05); border-color:rgba(26,122,56,.15); }
-.ppb-val { font-family:var(--ff-d); font-size:42px; font-weight:800; letter-spacing:-.05em; color:var(--g4); line-height:1; }
-[data-theme="light"] .ppb-val { color:var(--g6); }
-.ppb-lbl { font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--t3); margin-top:6px; }
+.bd-row:last-child { border-bottom: none; }
+.bd-lbl { font-size: 13px; color: var(--t2); display: flex; align-items: center; gap: 8px; }
+.bd-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.bd-val { font-family: var(--ff-d); font-size: 18px; letter-spacing: .02em; }
 
-/* ══════════════════════════════════════════
+/* Payout grid */
+.payout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.payout-card {
+  background: var(--bg2); border: 1px solid var(--brd);
+  border-radius: var(--r); padding: 16px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.payout-card::after {
+  content: '€'; position: absolute; right: -8px; bottom: -16px;
+  font-family: var(--ff-d); font-size: 70px;
+  color: rgba(200,255,87,.03); pointer-events: none; user-select: none;
+}
+.payout-name { font-family: var(--ff-m); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--t3); margin-bottom: 4px; }
+.payout-pct { font-family: var(--ff-m); font-size: 10px; color: var(--t3); margin-bottom: 10px; }
+.payout-amount { font-family: var(--ff-d); font-size: 38px; letter-spacing: .02em; line-height: 1; }
+.payout-lbl { font-family: var(--ff-m); font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: var(--t3); margin-top: 4px; }
+
+/* ─────────────────────────────────────────
    EMPTY STATES
-══════════════════════════════════════════ */
+───────────────────────────────────────── */
 .empty {
-  text-align:center; padding:36px 16px;
-  color:var(--t3);
+  text-align: center; padding: 36px 16px; color: var(--t3);
 }
-.empty-emoji { font-size:42px; margin-bottom:12px; }
-.empty-title { font-family:var(--ff-d); font-size:16px; font-weight:800; color:var(--t2); margin-bottom:5px; }
-.empty-sub { font-size:13px; line-height:1.55; }
+.empty-icon { font-size: 40px; margin-bottom: 12px; opacity: .5; }
+.empty-title { font-family: var(--ff-d); font-size: 22px; letter-spacing: .05em; color: var(--t2); margin-bottom: 5px; }
+.empty-sub { font-size: 12px; line-height: 1.6; }
 
-/* ══════════════════════════════════════════
+/* ─────────────────────────────────────────
    TOASTS
-══════════════════════════════════════════ */
+───────────────────────────────────────── */
 .toast-wrap {
-  position:fixed; top:calc(var(--safeT) + 70px); left:50%; transform:translateX(-50%);
-  width:calc(100% - 32px); max-width:440px; z-index:999;
-  display:flex; flex-direction:column; gap:8px;
-  pointer-events:none;
+  position: fixed; top: calc(var(--safeT) + 64px); left: 50%; transform: translateX(-50%);
+  width: calc(100% - 32px); max-width: 440px; z-index: 999;
+  display: flex; flex-direction: column; gap: 8px; pointer-events: none;
 }
 .toast {
-  background:var(--sf2); border:1px solid var(--brd2);
-  border-radius:var(--r); padding:11px 15px;
-  display:flex; align-items:center; gap:10px;
-  box-shadow:0 8px 30px rgba(0,0,0,.35);
-  animation: toastIn .28s cubic-bezier(.16,1,.3,1) both;
-  pointer-events:auto;
+  background: var(--bg4); border: 1px solid var(--brd2);
+  border-radius: var(--r); padding: 11px 15px;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  animation: tin .26s cubic-bezier(.16,1,.3,1) both;
+  pointer-events: auto;
 }
-.toast.out { animation: toastOut .22s ease both; }
-@keyframes toastIn  { from { opacity:0; transform:translateY(-7px) scale(.95); } to { opacity:1; transform:none; } }
-@keyframes toastOut { from { opacity:1; } to { opacity:0; transform:translateY(-5px) scale(.97); } }
-.ti { font-size:19px; }
-.tt { flex:1; font-size:13px; font-weight:600; color:var(--t1); }
-.ts { font-size:12px; color:var(--t2); }
+.toast.out { animation: tout .2s ease both; }
+@keyframes tin  { from{opacity:0;transform:translateY(-7px) scale(.95)} to{opacity:1;transform:none} }
+@keyframes tout { from{opacity:1} to{opacity:0;transform:translateY(-5px) scale(.97)} }
+.t-ico { font-size: 18px; }
+.t-msg { flex: 1; font-size: 13px; font-weight: 600; color: var(--t1); }
+.t-sub { font-family: var(--ff-m); font-size: 10px; color: var(--t2); margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -679,64 +681,91 @@ input:focus, select:focus, textarea:focus { outline: none; }
 
 <div class="shell">
 
-<!-- ══ TOPBAR ══ -->
-<header class="topbar" id="topbar">
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="tb-logo">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M12 21V13M12 13C12 13 5 11.5 4 4c0 0 8-2 8 9z" fill="#05060A"/>
+      <path d="M12 13c0 0 6-1.5 7-8 0 0-7.5-1.5-7 8z" fill="#05060A" opacity=".7"/>
+    </svg>
+  </div>
   <div class="tb-brand">
-    <div class="tb-leaf">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path d="M9 11C9 11 3.5 9.5 3 3C3 3 9 1.5 9 11Z" fill="#5DDE85"/>
-        <path d="M9 13C9 13 14.5 11.5 15 5.5C15 5.5 8.5 4 9 13Z" fill="#35C460"/>
-        <rect x="8" y="10" width="2" height="6" rx="1" fill="#5DDE85"/>
-      </svg>
-    </div>
-    <span class="tb-name">GrowManager</span>
+    <div class="tb-name">titan<span>pharmacy</span></div>
   </div>
-  <!-- Plant selector (shown in ciclo screen) -->
-  <div class="plant-sel-wrap" id="plant-sel-wrap" style="display:none">
-    <select id="plant-sel" onchange="onPlantChange()"></select>
-  </div>
-  <div class="tb-actions">
-    <button class="tb-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
-  </div>
+  <select class="tb-sel" id="tb-plant-sel"></select>
 </header>
 
-<!-- ══ SCREEN: PIANTE ══ -->
-<section class="screen on" id="sc-piante">
-  <div class="sc-title">Le tue Piante</div>
-  <div class="sc-sub">Gestisci il tuo grow · ogni pianta tracciata</div>
+<!-- ══ HOME ══ -->
+<section class="screen on" id="sc-home">
+  <div class="home-header">
+    <div class="home-brand">TITAN<span>PHARMACY</span></div>
+    <div class="home-date" id="home-date"></div>
+  </div>
 
-  <!-- Stats row -->
-  <div class="card card-sm" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-bottom:16px;padding:0">
-    <div style="text-align:center;padding:14px 8px">
-      <div id="ps-total" style="font-family:var(--ff-d);font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--g4)">0</div>
-      <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-top:2px">Piante</div>
+  <!-- Profit card -->
+  <div class="row-label">Profitto Netto</div>
+  <div class="profit-card">
+    <div class="pc-label">Live · Aggiornato in tempo reale</div>
+    <div class="pc-amount" id="h-netto" style="color:var(--neon)">
+      <span class="pc-currency">€</span><span id="h-netto-num">0</span>
     </div>
-    <div style="text-align:center;padding:14px 8px;border-left:1px solid var(--brd);border-right:1px solid var(--brd)">
-      <div id="ps-bloom" style="font-family:var(--ff-d);font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--am)">0</div>
-      <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-top:2px">Fioritura</div>
-    </div>
-    <div style="text-align:center;padding:14px 8px">
-      <div id="ps-avgd" style="font-family:var(--ff-d);font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--vi)">—</div>
-      <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-top:2px">Gg Medi</div>
+    <div class="pc-stats">
+      <div class="pc-stat">
+        <div class="pc-stat-val" id="h-ricavi" style="color:var(--neon)">€0</div>
+        <div class="pc-stat-lbl">Ricavi</div>
+      </div>
+      <div class="pc-stat">
+        <div class="pc-stat-val" id="h-costi" style="color:var(--red)">€0</div>
+        <div class="pc-stat-lbl">Spese</div>
+      </div>
+      <div class="pc-stat">
+        <div class="pc-stat-val" id="h-grammi" style="color:var(--neon2)">0g</div>
+        <div class="pc-stat-lbl">Grammi</div>
+      </div>
     </div>
   </div>
+
+  <!-- Plants -->
+  <div class="row-label" style="margin-top:6px">Stato Piante</div>
+  <div class="plant-strip" id="h-plants"></div>
+
+  <!-- Mini stats -->
+  <div class="mini-grid">
+    <div class="mini-card">
+      <div class="mini-card-bg">PLANT</div>
+      <div class="mc-lbl">Piante Attive</div>
+      <div class="mc-val" id="h-count" style="color:var(--neon)">0</div>
+      <div class="mc-sub">in coltivazione</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-card-bg">DAYS</div>
+      <div class="mc-lbl">Giorni Medi</div>
+      <div class="mc-val" id="h-avgd" style="color:var(--neon2)">—</div>
+      <div class="mc-sub">dall'inizio ciclo</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PIANTE ══ -->
+<section class="screen" id="sc-piante">
+  <div class="sc-ttl">PIANTE</div>
+  <div class="sc-sub">Gestisci ogni pianta del tuo grow</div>
 
   <div id="plants-list"></div>
 
-  <!-- Add form -->
   <div class="add-form">
-    <div class="af-title">🌱 Aggiungi Pianta</div>
+    <div class="add-form-title">+ NUOVA PIANTA</div>
     <div class="fg">
       <span class="fl">Nome / Strain</span>
       <input class="fi" id="inp-name" placeholder="Es. OG Kush #1, White Widow…" maxlength="40"/>
     </div>
     <div class="fg-row">
-      <div class="fg" style="margin-bottom:0">
-        <span class="fl">Data inizio</span>
+      <div class="fg" style="margin:0">
+        <span class="fl">Data Inizio</span>
         <input class="fi" id="inp-start" type="date"/>
       </div>
-      <div class="fg" style="margin-bottom:0">
-        <span class="fl">Fase attuale</span>
+      <div class="fg" style="margin:0">
+        <span class="fl">Fase</span>
         <select class="fi" id="inp-phase">
           <option value="seed">🌰 Seme</option>
           <option value="veg" selected>🌿 Veg</option>
@@ -746,780 +775,538 @@ input:focus, select:focus, textarea:focus { outline: none; }
         </select>
       </div>
     </div>
-    <div class="fg" style="margin-top:10px">
-      <span class="fl">Tipo strain</span>
+    <div class="fg" style="margin-top:6px">
+      <span class="fl">Tipo Strain</span>
       <div class="strain-grid">
         <button class="strain-btn on" data-s="indica" onclick="pickStrain(this)">🌿 Indica</button>
-        <button class="strain-btn" data-s="hybrid"  onclick="pickStrain(this)">🌀 Hybrid</button>
-        <button class="strain-btn" data-s="sativa"  onclick="pickStrain(this)">☀️ Sativa</button>
-        <button class="strain-btn" data-s="auto"    onclick="pickStrain(this)">⏱ Auto</button>
+        <button class="strain-btn" data-s="hybrid" onclick="pickStrain(this)">🌀 Hybrid</button>
+        <button class="strain-btn" data-s="sativa" onclick="pickStrain(this)">☀️ Sativa</button>
+        <button class="strain-btn" data-s="auto" onclick="pickStrain(this)">⏱ Auto</button>
       </div>
     </div>
-    <button class="btn-prim" onclick="addPlant()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Aggiungi Pianta
+    <button class="btn-main" onclick="addPlant()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      AGGIUNGI PIANTA
     </button>
   </div>
 </section>
 
-<!-- ══ SCREEN: CICLO ══ -->
-<section class="screen" id="sc-ciclo">
+<!-- ══ LOG ══ -->
+<section class="screen" id="sc-log">
+  <div class="sc-ttl">DIARIO</div>
+  <div class="sc-sub">Log di crescita, trattamenti, foto</div>
 
-  <!-- Hero card -->
-  <div class="cycle-hero" id="ch-root">
-    <div class="ch-eyebrow">CICLO IN CORSO</div>
-    <div class="ch-plant-name" id="ch-name">—</div>
-    <div class="ch-phase-row">
-      <span class="ch-phase-badge pb-veg" id="ch-badge">VEG</span>
-      <span class="ch-strain" id="ch-strain">Indica</span>
-    </div>
-    <div class="ch-days-display">
-      <span class="ch-days-num" id="ch-days">0</span>
-      <span class="ch-days-unit">gg</span>
-    </div>
-    <div class="ch-sub-stats">
-      <div class="ch-sub-stat">
-        <div class="ch-sub-val" id="ch-days-fase">—</div>
-        <div class="ch-sub-lbl">In Fase</div>
-      </div>
-      <div class="ch-sub-stat">
-        <div class="ch-sub-val" id="ch-gg-rem">—</div>
-        <div class="ch-sub-lbl">Rimanenti</div>
-      </div>
-      <div class="ch-sub-stat">
-        <div class="ch-sub-val" id="ch-harvest-date">—</div>
-        <div class="ch-sub-lbl">Raccolto Est.</div>
-      </div>
-    </div>
-    <div class="ch-prog-wrap" style="margin-top:14px">
-      <div class="ch-prog-labels">
-        <span class="ch-prog-label" id="ch-prog-start">—</span>
-        <span class="ch-prog-label" id="ch-prog-pct">0%</span>
-        <span class="ch-prog-label" id="ch-prog-end">—</span>
-      </div>
-      <div class="ch-prog-bar"><div class="ch-prog-fill" id="ch-prog-fill" style="width:0%"></div></div>
-    </div>
-  </div>
-
-  <!-- Phase stepper -->
-  <div class="sec-label">Avanzamento Fasi</div>
-  <div class="phase-steps" id="phase-steps"></div>
-
-  <!-- Advance phase button -->
-  <button class="btn-advance" id="btn-adv-phase" onclick="advanceSelectedPlant()">
-    🌸 Avanza alla fase successiva
-  </button>
-
-  <!-- Bloom estimator (collapsible) -->
-  <div class="bloom-estimator" id="bloom-est-card">
-    <div class="be-header" onclick="toggleBloomEst()">
-      <span class="be-title">🌸 Stimatore Fioritura</span>
-      <span class="be-chevron" id="be-chev">⌄</span>
-    </div>
-    <div class="be-body" id="be-body">
-      <div class="be-stats">
-        <div class="be-stat">
-          <div class="be-stat-val" id="be-bloom-days">—</div>
-          <div class="be-stat-lbl">Gg Bloom</div>
-        </div>
-        <div class="be-stat">
-          <div class="be-stat-val" id="be-harvest-est">—</div>
-          <div class="be-stat-lbl">Raccolto</div>
-        </div>
-        <div class="be-stat">
-          <div class="be-stat-val" id="be-total-cycle">—</div>
-          <div class="be-stat-lbl">Ciclo Tot.</div>
-        </div>
-      </div>
-      <div class="fg-row">
-        <div class="fg" style="margin-bottom:0">
-          <span class="fl">Gg Fioritura stimati</span>
-          <div style="display:flex;align-items:center;gap:8px">
-            <button class="tb-btn" onclick="adjBloomDays(-1)" style="flex-shrink:0">−</button>
-            <input class="fi" id="be-inp-days" type="number" value="56" min="30" max="100" oninput="calcBloomEst()" style="text-align:center;font-family:var(--ff-d);font-size:18px;font-weight:800"/>
-            <button class="tb-btn" onclick="adjBloomDays(1)" style="flex-shrink:0">+</button>
-          </div>
-        </div>
-        <div class="fg" style="margin-bottom:0">
-          <span class="fl">Override Strain</span>
-          <select class="fi" id="be-strain" onchange="calcBloomEst()">
-            <option value="indica">🌿 Indica (56gg)</option>
-            <option value="hybrid">🌀 Hybrid (63gg)</option>
-            <option value="sativa">☀️ Sativa (75gg)</option>
-            <option value="auto">⏱ Auto (49gg)</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Notes for this plant -->
-  <div class="sec-label" style="margin-top:14px">Ultime Note su questa Pianta</div>
-  <div id="ciclo-notes"></div>
-
-</section>
-
-<!-- ══ SCREEN: DIARIO ══ -->
-<section class="screen" id="sc-diario">
-  <div class="sc-title">Diario</div>
-  <div class="sc-sub">Note, annaffiature, controlli, problemi</div>
-
-  <div class="add-diary">
-    <div class="fg">
+  <div class="add-log-card">
+    <div class="fg" style="margin-bottom:10px">
       <span class="fl">Pianta</span>
-      <select class="fi" id="diary-plant-sel"></select>
+      <select class="fi" id="log-plant-sel"></select>
     </div>
-    <div class="fg">
-      <span class="fl">Nota</span>
-      <textarea class="diary-textarea" id="diary-text" placeholder="Es. Annaffiata con 1L, PH 6.4. Foglie leggermente gialle…"></textarea>
+    <div class="log-types">
+      <button class="lt on" data-t="water"   onclick="pickLogType(this)"><span>💧</span><span>Acqua</span></button>
+      <button class="lt" data-t="feed"    onclick="pickLogType(this)"><span>🌿</span><span>Nutrimento</span></button>
+      <button class="lt" data-t="check"   onclick="pickLogType(this)"><span>🔍</span><span>Controllo</span></button>
+      <button class="lt" data-t="disease" onclick="pickLogType(this)"><span>⚠️</span><span>Malattia</span></button>
+      <button class="lt" data-t="photo"   onclick="pickLogType(this)"><span>📸</span><span>Foto</span></button>
+      <button class="lt" data-t="note"    onclick="pickLogType(this)"><span>📝</span><span>Nota</span></button>
     </div>
-    <div class="tag-row" id="tag-row">
-      <button class="tag-pick on" data-tag="note"  onclick="pickTag(this)">📝 Nota</button>
-      <button class="tag-pick" data-tag="water" onclick="pickTag(this)">💧 Acqua</button>
-      <button class="tag-pick" data-tag="feed"  onclick="pickTag(this)">🌿 Nutrimento</button>
-      <button class="tag-pick" data-tag="check" onclick="pickTag(this)">🔍 Controllo</button>
-      <button class="tag-pick" data-tag="issue" onclick="pickTag(this)">⚠️ Problema</button>
-    </div>
-    <button class="btn-prim" onclick="addDiaryEntry()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Salva Nota
-    </button>
+    <label class="photo-btn" id="photo-label" style="display:none">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+      Allega Foto
+      <input type="file" id="photo-inp" accept="image/*" capture="environment" onchange="onPhoto(this)"/>
+    </label>
+    <img id="photo-prev" class="photo-preview"/>
+    <textarea class="log-textarea" id="log-text" placeholder="Scrivi una nota… Es: Annaffiata 1L, PH 6.4. Foglie sane."></textarea>
+    <button class="btn-main" style="margin-top:8px" onclick="addLog()">SALVA NEL DIARIO</button>
   </div>
 
-  <div id="diary-list"></div>
+  <div class="log-filters">
+    <button class="lf on" data-f="all"     onclick="setFilter(this)">Tutti</button>
+    <button class="lf" data-f="water"    onclick="setFilter(this)">💧 Acqua</button>
+    <button class="lf" data-f="feed"     onclick="setFilter(this)">🌿 Nutrimento</button>
+    <button class="lf" data-f="disease"  onclick="setFilter(this)">⚠️ Malattie</button>
+    <button class="lf" data-f="photo"    onclick="setFilter(this)">📸 Foto</button>
+    <button class="lf" data-f="note"     onclick="setFilter(this)">📝 Note</button>
+  </div>
+
+  <div id="log-list"></div>
 </section>
 
-<!-- ══ SCREEN: FINANZE ══ -->
-<section class="screen" id="sc-finanze">
+<!-- ══ FINANZE ══ -->
+<section class="screen" id="sc-fin">
 
-  <!-- Hero -->
   <div class="fin-hero">
-    <div class="fh-label">PROFITTO NETTO TOTALE</div>
-    <div class="fh-netto" id="fh-netto">€0</div>
-    <div class="fh-sub" id="fh-sub">Aggiungi ricavi e spese per calcolare</div>
+    <div class="fh-deco">PROFIT</div>
+    <div class="fh-label">Profitto Netto Totale</div>
+    <div class="fh-amount" id="fin-netto" style="color:var(--neon)">
+      <span class="fh-curr">€</span><span id="fin-netto-n">0</span>
+    </div>
+    <div class="fh-sub" id="fin-sub">Aggiungi ricavi e spese per calcolare</div>
     <div class="fh-grid">
       <div class="fh-stat">
-        <div class="fh-stat-val" id="fh-ricavi">€0</div>
+        <div class="fh-stat-val" id="fin-h-r" style="color:var(--neon)">€0</div>
         <div class="fh-stat-lbl">Ricavi</div>
       </div>
       <div class="fh-stat">
-        <div class="fh-stat-val" id="fh-costi">€0</div>
+        <div class="fh-stat-val" id="fin-h-c" style="color:var(--red)">€0</div>
         <div class="fh-stat-lbl">Spese</div>
       </div>
       <div class="fh-stat">
-        <div class="fh-stat-val" id="fh-ppl-show">1</div>
-        <div class="fh-stat-lbl">Persone</div>
+        <div class="fh-stat-val" id="fin-h-g" style="color:var(--neon2)">0g</div>
+        <div class="fh-stat-lbl">Grammi</div>
       </div>
     </div>
   </div>
 
-  <!-- Persone -->
-  <div class="sec-label">Persone nel progetto</div>
-  <div class="people-row" id="ppl-row">
-    <button class="ppl-btn on" data-n="1" onclick="setPpl(this)"><span class="ppl-num">1</span><span class="ppl-lbl">Solo</span></button>
-    <button class="ppl-btn" data-n="2" onclick="setPpl(this)"><span class="ppl-num">2</span><span class="ppl-lbl">In 2</span></button>
-    <button class="ppl-btn" data-n="3" onclick="setPpl(this)"><span class="ppl-num">3</span><span class="ppl-lbl">In 3</span></button>
-    <button class="ppl-btn" data-n="4" onclick="setPpl(this)"><span class="ppl-num">4</span><span class="ppl-lbl">In 4</span></button>
-    <button class="ppl-btn" data-n="5" onclick="setPpl(this)"><span class="ppl-num">5</span><span class="ppl-lbl">In 5</span></button>
+  <!-- Partners -->
+  <div class="row-label">Partner & Quote</div>
+  <div class="partner-card" id="partner-wrap">
+    <div id="partners-list"></div>
+    <div class="pct-warn" id="pct-warn">⚠ Le percentuali non sommano a 100%</div>
+    <button class="btn-ghost neon" onclick="addPartner()" style="width:100%;margin-top:10px;justify-content:center">+ Aggiungi Partner</button>
   </div>
 
   <!-- Spese -->
-  <div class="sec-label" style="margin-top:4px">Spese / Costi</div>
+  <div class="row-label" style="margin-top:6px">Spese del Progetto</div>
   <div class="add-row">
-    <input class="fi ar-inp" id="fin-spesa-nome" placeholder="Nome spesa…" maxlength="30"/>
-    <input class="fi ar-inp-sm" id="fin-spesa-val" type="number" placeholder="€" min="0" step="0.01"/>
-    <button class="ar-btn" onclick="addSpesa()">+ Aggiungi</button>
+    <input class="fi ar-main" id="fin-sn" placeholder="Es. Semi, Luce, Substrato…" maxlength="30"/>
+    <input class="fi ar-sm" id="fin-sv" type="number" placeholder="€" min="0" step="0.01"/>
+    <button class="btn-ghost neon" onclick="addSpesa()">+ Aggiungi</button>
   </div>
   <div id="spese-list"></div>
 
-  <!-- Prodotti / ricavi -->
-  <div class="sec-label" style="margin-top:8px">Prodotti / Ricavi</div>
-  <div class="add-row" style="flex-wrap:wrap;gap:7px">
-    <input class="fi ar-inp" id="fin-prod-nome" placeholder="Prodotto / Strain…" maxlength="30"/>
-    <input class="fi ar-inp-sm" id="fin-prod-g" type="number" placeholder="g" min="0"/>
-    <input class="fi ar-inp-sm" id="fin-prod-eu" type="number" placeholder="€/g" min="0" step="0.5"/>
-    <button class="ar-btn gold-bg" onclick="addProdotto()" style="flex:1;min-width:80px">+ Prodotto</button>
-  </div>
-  <div id="prodotti-list"></div>
+  <!-- Resa -->
+  <div class="row-label" style="margin-top:6px">Resa per Pianta</div>
+  <div id="yield-list"></div>
 
   <!-- Breakdown -->
   <div id="fin-breakdown" style="display:none">
-    <div class="sec-label" style="margin-top:8px">Riepilogo</div>
+    <div class="row-label" style="margin-top:6px">Riepilogo</div>
     <div class="breakdown">
       <div class="bd-row">
-        <span class="bd-lbl"><span class="bd-dot" style="background:var(--g4)"></span>Ricavi lordi</span>
-        <span class="bd-val" id="bd-ricavi" style="color:var(--g4)">€0</span>
+        <span class="bd-lbl"><span class="bd-dot" style="background:var(--neon)"></span>Ricavi lordi</span>
+        <span class="bd-val" id="bd-r" style="color:var(--neon)">€0</span>
       </div>
       <div class="bd-row">
         <span class="bd-lbl"><span class="bd-dot" style="background:var(--red)"></span>Spese totali</span>
-        <span class="bd-val" id="bd-costi" style="color:var(--red)">€0</span>
+        <span class="bd-val" id="bd-c" style="color:var(--red)">€0</span>
       </div>
-      <div class="bd-row" style="background:rgba(255,255,255,.02)">
-        <span class="bd-lbl" style="font-weight:700;color:var(--t1)"><span class="bd-dot" style="background:var(--gold)"></span><strong>Profitto netto</strong></span>
-        <span class="bd-val" id="bd-netto" style="color:var(--gold2)">€0</span>
+      <div class="bd-row">
+        <span class="bd-lbl" style="color:var(--t1);font-weight:700"><span class="bd-dot" style="background:var(--gold)"></span>Profitto netto</span>
+        <span class="bd-val" id="bd-n" style="color:var(--gold)">€0</span>
       </div>
     </div>
-    <div class="per-person-block">
-      <div class="ppb-val" id="ppb-val">€0</div>
-      <div class="ppb-lbl" id="ppb-lbl">Profitto per persona</div>
-    </div>
+    <div class="row-label" style="margin-top:14px">Quota per Partner</div>
+    <div class="payout-grid" id="payout-grid"></div>
   </div>
 
 </section>
 
-<!-- ══ BOTTOM NAV ══ -->
+<!-- ── NAV ── -->
 <nav class="bnav">
-  <button class="ni on" id="ni-piante" onclick="switchTab('piante')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <path d="M12 22V13M12 13C12 13 5 11.5 4 4c0 0 8-2 8 9zM12 13c0 0 6-1.5 7-8 0 0-7.5-1.5-7 8z"/>
-    </svg>
-    <span>Piante</span>
+  <button class="ni on" id="ni-home" onclick="go('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+    <span class="ni-lbl">Home</span>
   </button>
-  <button class="ni" id="ni-ciclo" onclick="switchTab('ciclo')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/>
-    </svg>
-    <span>Ciclo</span>
+  <button class="ni" id="ni-piante" onclick="go('piante')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22V13M12 13C12 13 5 11.5 4 4c0 0 8-2 8 9zM12 13c0 0 6-1.5 7-8 0 0-7.5-1.5-7 8z"/></svg>
+    <span class="ni-lbl">Piante</span>
   </button>
-  <button class="ni" id="ni-diario" onclick="switchTab('diario')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-    </svg>
-    <span>Diario</span>
+  <button class="ni" id="ni-log" onclick="go('log')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    <span class="ni-lbl">Diario</span>
   </button>
-  <button class="ni" id="ni-finanze" onclick="switchTab('finanze')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-    </svg>
-    <span>Finanze</span>
+  <button class="ni" id="ni-fin" onclick="go('fin')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    <span class="ni-lbl">Finanze</span>
   </button>
 </nav>
 
-</div><!-- /shell -->
+</div>
 
 <script>
 'use strict';
 
-/* ══════════════════════════════════════════
-   STATE
-══════════════════════════════════════════ */
-let ST = {
-  plants:   JSON.parse(localStorage.getItem('gm-plants')    || '[]'),
-  diary:    JSON.parse(localStorage.getItem('gm-diary')     || '[]'),
-  spese:    JSON.parse(localStorage.getItem('gm-spese')     || '[]'),
-  prodotti: JSON.parse(localStorage.getItem('gm-prodotti')  || '[]'),
-  persone:  parseInt(localStorage.getItem('gm-persone')     || '1'),
-  selPlant: localStorage.getItem('gm-sel')                  || null,
-  dark:     localStorage.getItem('gm-theme')                !== 'light',
+/* ── STATE ── */
+const ST = {
+  plants:   JSON.parse(localStorage.getItem('tp-plants')   || '[]'),
+  logs:     JSON.parse(localStorage.getItem('tp-logs')     || '[]'),
+  spese:    JSON.parse(localStorage.getItem('tp-spese')    || '[]'),
+  partners: JSON.parse(localStorage.getItem('tp-partners') || 'null') || [
+    { id:1, name:'Partner 1', pct:50 },
+    { id:2, name:'Partner 2', pct:50 },
+  ],
 };
 
 const PHASES = [
-  { id:'seed',    label:'Seme',      emoji:'🌰', css:'pb-seed',    bloomDef:0  },
-  { id:'veg',     label:'Veg',       emoji:'🌿', css:'pb-veg',     bloomDef:0  },
-  { id:'bloom',   label:'Fioritura', emoji:'🌸', css:'pb-bloom',   bloomDef:56 },
-  { id:'flush',   label:'Flush',     emoji:'💧', css:'pb-flush',   bloomDef:0  },
-  { id:'harvest', label:'Raccolto',  emoji:'✂️', css:'pb-harvest', bloomDef:0  },
+  { id:'seed',    label:'Seme',      emoji:'🌰', css:'pt-seed'    },
+  { id:'veg',     label:'Veg',       emoji:'🌿', css:'pt-veg'     },
+  { id:'bloom',   label:'Fioritura', emoji:'🌸', css:'pt-bloom'   },
+  { id:'flush',   label:'Flush',     emoji:'💧', css:'pt-flush'   },
+  { id:'harvest', label:'Raccolto',  emoji:'✂️', css:'pt-harvest' },
 ];
-const BLOOM_DAYS = { indica:56, hybrid:63, sativa:75, auto:49 };
-const PH_IDX = (id) => PHASES.findIndex(p => p.id === id);
+const LOGL = { water:'💧 Acqua', feed:'🌿 Nutrimento', check:'🔍 Controllo', disease:'⚠️ Malattia', photo:'📸 Foto', note:'📝 Nota' };
+const EMOJIS_SPESA = ['💡','🌱','💧','🧪','🪨','📦','🔌','🛒','🪴','🌡️'];
+
+let curTab = 'home', curLogType = 'water', curFilter = 'all', curStrain = 'indica', pendingPhoto = null;
 
 function save() {
-  localStorage.setItem('gm-plants',   JSON.stringify(ST.plants));
-  localStorage.setItem('gm-diary',    JSON.stringify(ST.diary));
-  localStorage.setItem('gm-spese',    JSON.stringify(ST.spese));
-  localStorage.setItem('gm-prodotti', JSON.stringify(ST.prodotti));
-  localStorage.setItem('gm-persone',  String(ST.persone));
-  if(ST.selPlant) localStorage.setItem('gm-sel', ST.selPlant);
+  localStorage.setItem('tp-plants',   JSON.stringify(ST.plants));
+  localStorage.setItem('tp-logs',     JSON.stringify(ST.logs));
+  localStorage.setItem('tp-spese',    JSON.stringify(ST.spese));
+  localStorage.setItem('tp-partners', JSON.stringify(ST.partners));
 }
 
-function getPlant(id) { return ST.plants.find(p => p.id === id); }
-function selPlant()   { return ST.selPlant ? getPlant(ST.selPlant) : ST.plants[0]; }
+/* ── UTILS ── */
+function uid()       { return Date.now() + Math.random(); }
+function today()     { return new Date().toISOString().split('T')[0]; }
+function dSince(d)   { return d ? Math.max(0,Math.round((Date.now()-new Date(d))/86400000)) : 0; }
+function fmt(n)      { return '€'+Math.abs(n).toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}); }
+function fmtN(n)     { return Math.abs(n).toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2}); }
+function phIdx(id)   { return PHASES.findIndex(p=>p.id===id); }
 
-/* ══════════════════════════════════════════
-   THEME
-══════════════════════════════════════════ */
-function applyTheme() {
-  document.documentElement.setAttribute('data-theme', ST.dark ? 'dark' : 'light');
-  document.getElementById('theme-btn').textContent = ST.dark ? '☀️' : '🌙';
-}
-function toggleTheme() {
-  ST.dark = !ST.dark;
-  localStorage.setItem('gm-theme', ST.dark ? 'dark' : 'light');
-  applyTheme();
-}
-applyTheme();
-
-/* ══════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════ */
-function toast(icon, msg, sub) {
+function toast(ico, msg, sub) {
   const el = document.createElement('div');
   el.className = 'toast';
-  el.innerHTML = `<span class="ti">${icon}</span><div><div class="tt">${msg}</div>${sub?`<div class="ts">${sub}</div>`:''}</div>`;
+  el.innerHTML = `<span class="t-ico">${ico}</span><div><div class="t-msg">${msg}</div>${sub?`<div class="t-sub">${sub}</div>`:''}</div>`;
   document.getElementById('toast-wrap').appendChild(el);
-  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 250); }, 3000);
+  setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),220); }, 3000);
 }
 
-/* ══════════════════════════════════════════
-   NAVIGATION
-══════════════════════════════════════════ */
-let currentTab = 'piante';
-
-function switchTab(tab) {
-  currentTab = tab;
-  ['piante','ciclo','diario','finanze'].forEach(t => {
+/* ── NAV ── */
+function go(tab) {
+  curTab = tab;
+  ['home','piante','log','fin'].forEach(t=>{
     document.getElementById('sc-'+t).classList.toggle('on', t===tab);
     document.getElementById('ni-'+t).classList.toggle('on', t===tab);
   });
-  document.getElementById('plant-sel-wrap').style.display = tab==='ciclo' ? '' : 'none';
-  if(tab==='ciclo')   renderCiclo();
-  if(tab==='diario')  renderDiary();
-  if(tab==='finanze') renderFinanze();
+  document.getElementById('tb-plant-sel').style.display = tab==='log' ? '' : 'none';
+  if(tab==='home')   renderHome();
+  if(tab==='piante') renderPlants();
+  if(tab==='log')    renderLog();
+  if(tab==='fin')    renderFin();
 }
 
-/* ══════════════════════════════════════════
-   UTILITIES
-══════════════════════════════════════════ */
-function daysSince(dateStr) {
-  if(!dateStr) return 0;
-  return Math.max(0, Math.round((Date.now() - new Date(dateStr).getTime()) / 86400000));
-}
-function fmtDate(d) {
-  if(!d) return '—';
-  const dt = new Date(d);
-  return dt.toLocaleDateString('it-IT', { day:'2-digit', month:'short' });
-}
-function fmtMoney(n) {
-  const abs = Math.abs(n);
-  return '€' + abs.toLocaleString('it-IT', { minimumFractionDigits:0, maximumFractionDigits:2 });
-}
-function addDays(dateStr, n) {
-  if(!dateStr) return null;
-  const d = new Date(dateStr);
-  d.setDate(d.getDate() + n);
-  return d.toISOString().split('T')[0];
-}
-
-/* ══════════════════════════════════════════
-   PLANTS
-══════════════════════════════════════════ */
-let curStrain = 'indica';
-
-function pickStrain(btn) {
-  document.querySelectorAll('.strain-btn').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  curStrain = btn.dataset.s;
-}
-
-function addPlant() {
-  const name  = document.getElementById('inp-name').value.trim();
-  const start = document.getElementById('inp-start').value;
-  const phase = document.getElementById('inp-phase').value;
-  if(!name) { toast('⚠️', 'Inserisci un nome', 'Es. OG Kush #1'); return; }
-  const p = { id: Date.now(), name, start: start||new Date().toISOString().split('T')[0], phase, strain:curStrain };
-  ST.plants.unshift(p);
-  if(!ST.selPlant) ST.selPlant = String(p.id);
-  save();
-  renderPlants();
-  refreshPlantSelectors();
-  document.getElementById('inp-name').value = '';
-  toast('🌱', name + ' aggiunta!', PHASES.find(ph=>ph.id===phase).label + ' · ' + curStrain);
-  navigator.vibrate?.([40,20,60]);
-}
-
-function deletePlant(id) {
-  ST.plants = ST.plants.filter(p => p.id !== id);
-  ST.diary  = ST.diary.filter(d => d.plantId !== id);
-  if(ST.selPlant === String(id)) ST.selPlant = ST.plants[0]?.id ? String(ST.plants[0].id) : null;
-  save();
-  renderPlants();
-  refreshPlantSelectors();
-  toast('🗑', 'Pianta rimossa', '');
-}
-
-function advancePlant(id) {
-  const p = ST.plants.find(p => p.id === id);
-  if(!p) return;
-  const idx = PH_IDX(p.phase);
-  if(idx < PHASES.length-1) {
-    p.phase = PHASES[idx+1].id;
-    save();
-    renderPlants();
-    if(currentTab==='ciclo') renderCiclo();
-    toast(PHASES[idx+1].emoji, p.name + ' → ' + PHASES[idx+1].label, '');
-    navigator.vibrate?.(40);
-  }
-}
-
-function advanceSelectedPlant() {
-  const p = selPlant();
-  if(p) advancePlant(p.id);
-}
-
-function phasePct(phase) {
-  return Math.round((PH_IDX(phase)+1)/PHASES.length*100);
-}
-
-function renderPlants() {
-  const total   = ST.plants.length;
-  const blooming= ST.plants.filter(p=>p.phase==='bloom').length;
-  const avgD    = total ? Math.round(ST.plants.reduce((s,p)=>s+daysSince(p.start),0)/total) : 0;
-  document.getElementById('ps-total').textContent = total;
-  document.getElementById('ps-bloom').textContent = blooming;
-  document.getElementById('ps-avgd').textContent  = total ? avgD : '—';
-
-  const list = document.getElementById('plants-list');
-  if(!total) {
-    list.innerHTML = `<div class="empty"><div class="empty-emoji">🌱</div><div class="empty-title">Nessuna pianta</div><div class="empty-sub">Usa il form sotto per aggiungere la tua prima pianta</div></div>`;
-    return;
-  }
-  const strEmoji = {indica:'🌿',hybrid:'🌀',sativa:'☀️',auto:'⏱'};
-  list.innerHTML = ST.plants.map(p => {
-    const ph  = PHASES.find(x=>x.id===p.phase);
-    const d   = daysSince(p.start);
-    const pct = phasePct(p.phase);
-    return `<div class="plant-card" id="pc-${p.id}">
-      <div class="pca"><span>${ph.emoji}</span><span class="pca-day">${d}d</span></div>
-      <div class="pc-info">
-        <div class="pc-name">${p.name}</div>
-        <div class="pc-meta">
-          <span class="ch-phase-badge ${ph.css}" style="font-size:9px;padding:2px 6px">${ph.label}</span>
-          <span>${strEmoji[p.strain]||'🌿'} ${p.strain}</span>
-        </div>
-        <div class="pc-prog"><div class="pc-prog-fill" style="width:${pct}%"></div></div>
-      </div>
-      <div class="pc-acts">
-        ${p.phase!=='harvest'?`<button class="pc-btn" onclick="advancePlant(${p.id})" title="Avanza fase">→</button>`:''}
-        <button class="pc-btn del" onclick="deletePlant(${p.id})" title="Elimina">✕</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-/* ══════════════════════════════════════════
-   PLANT SELECTORS (ciclo + diary)
-══════════════════════════════════════════ */
-function refreshPlantSelectors() {
+/* ── SELECTORS ── */
+function syncSels() {
   const opts = ST.plants.length
-    ? ST.plants.map(p => `<option value="${p.id}">${p.name}</option>`).join('')
+    ? ST.plants.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')
     : '<option value="">— Nessuna pianta —</option>';
-  ['plant-sel','diary-plant-sel'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) {
-      el.innerHTML = opts;
-      if(ST.selPlant) el.value = ST.selPlant;
-    }
+  ['log-plant-sel','tb-plant-sel'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.innerHTML=opts;
   });
 }
 
-function onPlantChange() {
-  ST.selPlant = document.getElementById('plant-sel').value;
-  localStorage.setItem('gm-sel', ST.selPlant);
-  renderCiclo();
-}
+/* ── HOME ── */
+function calcRicavi() { return ST.plants.reduce((s,p)=>s+(+p.yieldSold||0)*(+p.pricePerG||0),0); }
 
-/* ══════════════════════════════════════════
-   CICLO SCREEN
-══════════════════════════════════════════ */
-let bloomEstOpen = false;
+function renderHome() {
+  document.getElementById('home-date').textContent =
+    new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
-function toggleBloomEst() {
-  bloomEstOpen = !bloomEstOpen;
-  document.getElementById('be-body').classList.toggle('open', bloomEstOpen);
-  document.getElementById('be-chev').classList.toggle('open', bloomEstOpen);
-}
+  const totR = calcRicavi();
+  const totC = ST.spese.reduce((s,x)=>s+x.val,0);
+  const netto = totR-totC;
+  const totG  = ST.plants.reduce((s,p)=>s+(+p.yieldTotal||0),0);
+  const col = netto>=0?'var(--neon)':'var(--red)';
 
-function adjBloomDays(delta) {
-  const inp = document.getElementById('be-inp-days');
-  inp.value = Math.min(100, Math.max(30, (parseInt(inp.value)||56) + delta));
-  calcBloomEst();
-}
+  document.getElementById('h-netto-num').textContent = fmtN(netto);
+  document.getElementById('h-netto').style.color = col;
+  document.getElementById('h-ricavi').textContent = fmt(totR);
+  document.getElementById('h-costi').textContent  = fmt(totC);
+  document.getElementById('h-grammi').textContent = totG+'g';
+  document.getElementById('h-count').textContent  = ST.plants.length;
+  document.getElementById('h-avgd').textContent   = ST.plants.length
+    ? Math.round(ST.plants.reduce((s,p)=>s+dSince(p.start),0)/ST.plants.length) : '—';
 
-function calcBloomEst() {
-  const p = selPlant();
-  if(!p) return;
-  const days   = parseInt(document.getElementById('be-inp-days').value)||56;
-  const strain = document.getElementById('be-strain').value;
-  const BLOOM_D = BLOOM_DAYS[strain] || 56;
-  const totalCycle = daysSince(p.start) + days;
-  const harvestDate = addDays(new Date().toISOString().split('T')[0], days);
-  document.getElementById('be-bloom-days').textContent  = days;
-  document.getElementById('be-harvest-est').textContent = fmtDate(harvestDate);
-  document.getElementById('be-total-cycle').textContent = totalCycle + 'gg';
-}
-
-function renderCiclo() {
-  const p = selPlant();
-  const noEl = document.getElementById('ch-root');
-
-  if(!p) {
-    noEl.innerHTML = `<div class="empty" style="padding:24px 0"><div class="empty-emoji">🌱</div><div class="empty-title">Nessuna pianta selezionata</div><div class="empty-sub">Vai in Piante e aggiungine una</div></div>`;
-    document.getElementById('btn-adv-phase').disabled = true;
+  const el = document.getElementById('h-plants');
+  if(!ST.plants.length) {
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🌱</div><div class="empty-title">NESSUNA PIANTA</div><div class="empty-sub">Vai in Piante per aggiungerne una</div></div>`;
     return;
   }
-
-  // Sync selector
-  document.getElementById('plant-sel').value = String(p.id);
-
-  const ph       = PHASES.find(x=>x.id===p.phase);
-  const idx      = PH_IDX(p.phase);
-  const days     = daysSince(p.start);
-  const phaseDay = idx>0 ? Math.min(days, days) : days; // approx
-  const bloomDef = BLOOM_DAYS[p.strain]||56;
-  const totalEst = 20 + 30 + bloomDef + 7 + 1; // seed+veg+bloom+flush+harvest
-  const pct      = Math.min(100, Math.round((days/totalEst)*100));
-  const remDays  = Math.max(0, totalEst - days);
-  const harvestEst = addDays(p.start, totalEst);
-
-  const strEmoji = {indica:'🌿',hybrid:'🌀',sativa:'☀️',auto:'⏱'};
-
-  // Hero card
-  document.getElementById('ch-name').textContent   = p.name;
-  document.getElementById('ch-badge').textContent  = ph.label;
-  document.getElementById('ch-badge').className    = 'ch-phase-badge ' + ph.css;
-  document.getElementById('ch-strain').textContent = (strEmoji[p.strain]||'🌿') + ' ' + p.strain;
-  document.getElementById('ch-days').textContent   = days;
-  document.getElementById('ch-days-fase').textContent = phaseDay + 'gg';
-  document.getElementById('ch-gg-rem').textContent = remDays + 'gg';
-  document.getElementById('ch-harvest-date').textContent = fmtDate(harvestEst);
-  document.getElementById('ch-prog-start').textContent = fmtDate(p.start);
-  document.getElementById('ch-prog-pct').textContent   = pct + '%';
-  document.getElementById('ch-prog-end').textContent   = fmtDate(harvestEst);
-  document.getElementById('ch-prog-fill').style.width  = pct + '%';
-
-  // Phase stepper
-  const steps = document.getElementById('phase-steps');
-  steps.innerHTML = PHASES.map((ph2, i) => {
-    const cls = i < idx ? 'done' : i===idx ? 'current' : '';
-    const line = i < PHASES.length-1 ? `<div class="ps-line${i<idx?' done':''}"></div>` : '';
-    return `<button class="ps-item ${cls}" onclick="jumpPhase('${ph2.id}')">
-      <div class="ps-dot">${ph2.emoji}</div>
-      <div class="ps-lbl">${ph2.label}</div>
-    </button>${line}`;
-  }).join('');
-
-  // Advance button
-  const advBtn = document.getElementById('btn-adv-phase');
-  if(idx >= PHASES.length-1) {
-    advBtn.disabled = true;
-    advBtn.textContent = '✅ Ciclo completato';
-  } else {
-    advBtn.disabled = false;
-    const nextPh = PHASES[idx+1];
-    advBtn.innerHTML = `${nextPh.emoji} Avanza → ${nextPh.label}`;
-  }
-
-  // Bloom estimator defaults
-  document.getElementById('be-inp-days').value = bloomDef;
-  document.getElementById('be-strain').value   = p.strain;
-  calcBloomEst();
-
-  // Last 3 notes for this plant
-  const notes = ST.diary.filter(d=>d.plantId===p.id).slice(0,3);
-  const notesEl = document.getElementById('ciclo-notes');
-  if(!notes.length) {
-    notesEl.innerHTML = `<div class="empty" style="padding:16px 0"><div class="empty-sub">Nessuna nota per questa pianta.<br>Aggiungila nel Diario.</div></div>`;
-  } else {
-    const tagLabels = {note:'📝 Nota',water:'💧 Acqua',feed:'🌿 Nutrimento',check:'🔍 Controllo',issue:'⚠️ Problema'};
-    notesEl.innerHTML = notes.map(d=>`
-      <div class="diary-entry">
-        <div class="de-date">
-          <div class="de-day">${new Date(d.date).getDate()}</div>
-          <div class="de-month">${new Date(d.date).toLocaleDateString('it-IT',{month:'short'})}</div>
+  const strE={indica:'🌿',hybrid:'🌀',sativa:'☀️',auto:'⏱'};
+  el.innerHTML = ST.plants.map(p=>{
+    const ph=PHASES.find(x=>x.id===p.phase);
+    const d=dSince(p.start);
+    const lastW=ST.logs.filter(l=>l.plantId===p.id&&l.type==='water')[0];
+    const lastF=ST.logs.filter(l=>l.plantId===p.id&&l.type==='feed')[0];
+    const wD=lastW?dSince(lastW.date.split('T')[0]):999;
+    const fD=lastF?dSince(lastF.date.split('T')[0]):999;
+    const hasDis=ST.logs.some(l=>l.plantId===p.id&&l.type==='disease'&&dSince(l.date.split('T')[0])<7);
+    return `<div class="ps-card">
+      <div class="ps-icon">${ph.emoji}<span class="ps-day">${d}</span></div>
+      <div class="ps-info">
+        <div class="ps-name">${p.name}</div>
+        <div class="ps-tags">
+          <span class="ptag ${ph.css}">${ph.label}</span>
+          <span class="ps-tag ${wD<=2?'pst-ok':wD<=4?'pst-warn':'pst-bad'}">💧 ${wD===999?'mai':wD+'gg'}</span>
+          <span class="ps-tag ${fD<=5?'pst-ok':fD<=10?'pst-warn':'pst-bad'}">🌿 ${fD===999?'mai':fD+'gg'}</span>
+          ${hasDis?'<span class="ps-tag pst-bad">⚠️ Mal.</span>':''}
         </div>
-        <div class="de-sep"></div>
-        <div class="de-body">
-          <div class="de-text">${d.text}</div>
-          <span class="de-tag tag-${d.tag}">${tagLabels[d.tag]||d.tag}</span>
-        </div>
-      </div>`).join('');
-  }
-}
-
-function jumpPhase(phaseId) {
-  const p = selPlant();
-  if(!p) return;
-  p.phase = phaseId;
-  save();
-  renderCiclo();
-  renderPlants();
-  const ph = PHASES.find(x=>x.id===phaseId);
-  toast(ph.emoji, p.name + ' → ' + ph.label, '');
-}
-
-/* ══════════════════════════════════════════
-   DIARY
-══════════════════════════════════════════ */
-let curTag = 'note';
-
-function pickTag(btn) {
-  document.querySelectorAll('.tag-pick').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  curTag = btn.dataset.tag;
-}
-
-function addDiaryEntry() {
-  const txt     = document.getElementById('diary-text').value.trim();
-  const plantId = parseInt(document.getElementById('diary-plant-sel').value);
-  if(!txt) { toast('⚠️', 'Scrivi una nota', ''); return; }
-
-  const entry = { id:Date.now(), plantId, text:txt, tag:curTag, date:new Date().toISOString() };
-  ST.diary.unshift(entry);
-  save();
-  renderDiary();
-  document.getElementById('diary-text').value = '';
-  toast('📝', 'Nota salvata', PHASES.find(ph=>ph)||'');
-}
-
-function deleteDiaryEntry(id) {
-  ST.diary = ST.diary.filter(d=>d.id!==id);
-  save();
-  renderDiary();
-}
-
-const tagLabels = {note:'📝 Nota',water:'💧 Acqua',feed:'🌿 Nutrimento',check:'🔍 Controllo',issue:'⚠️ Problema'};
-
-function renderDiary() {
-  const list = document.getElementById('diary-list');
-  if(!ST.diary.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-emoji">📓</div><div class="empty-title">Diario vuoto</div><div class="empty-sub">Aggiungi la tua prima nota sopra</div></div>`;
-    return;
-  }
-  list.innerHTML = ST.diary.map(d => {
-    const plant = getPlant(d.plantId);
-    return `<div class="diary-entry">
-      <div class="de-date">
-        <div class="de-day">${new Date(d.date).getDate()}</div>
-        <div class="de-month">${new Date(d.date).toLocaleDateString('it-IT',{month:'short'})}</div>
       </div>
-      <div class="de-sep"></div>
-      <div class="de-body">
-        ${plant?`<div class="de-plant">${plant.name}</div>`:''}
-        <div class="de-text">${d.text}</div>
-        <span class="de-tag tag-${d.tag}">${tagLabels[d.tag]||d.tag}</span>
-      </div>
-      <button class="de-del" onclick="deleteDiaryEntry(${d.id})">✕</button>
+      <div class="ps-days-num">${d}</div>
     </div>`;
   }).join('');
 }
 
-/* ══════════════════════════════════════════
-   FINANCES
-══════════════════════════════════════════ */
-function setPpl(btn) {
-  document.querySelectorAll('.ppl-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  ST.persone = parseInt(btn.dataset.n);
-  save();
-  renderFinanze();
+/* ── PLANTS ── */
+function pickStrain(btn) {
+  document.querySelectorAll('.strain-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); curStrain=btn.dataset.s;
 }
-
-function addSpesa() {
-  const nome = document.getElementById('fin-spesa-nome').value.trim();
-  const val  = parseFloat(document.getElementById('fin-spesa-val').value);
-  if(!nome||!val||val<=0) { toast('⚠️','Inserisci nome e importo',''); return; }
-  const emojis = ['💡','🌱','💧','🧪','🪨','📦','🔌','🛒','🪴','🌡️'];
-  ST.spese.push({ id:Date.now(), nome, val, emoji:emojis[ST.spese.length%emojis.length] });
-  save(); renderFinanze();
-  document.getElementById('fin-spesa-nome').value = '';
-  document.getElementById('fin-spesa-val').value  = '';
-  toast('💸', nome, '−'+fmtMoney(val));
+function addPlant() {
+  const name=document.getElementById('inp-name').value.trim();
+  const start=document.getElementById('inp-start').value||today();
+  const phase=document.getElementById('inp-phase').value;
+  if(!name){toast('⚠️','Inserisci un nome','Es. OG Kush #1');return;}
+  ST.plants.unshift({id:uid(),name,start,phase,strain:curStrain,yieldTotal:0,yieldSold:0,pricePerG:0});
+  save(); syncSels(); renderPlants();
+  document.getElementById('inp-name').value='';
+  toast('🌱',name,PHASES.find(p=>p.id===phase).label+' · '+curStrain);
+  navigator.vibrate?.([40,15,60]);
 }
-
-function removeSpesa(id) {
-  ST.spese = ST.spese.filter(s=>s.id!==id);
-  save(); renderFinanze();
+function delPlant(id) {
+  if(!confirm('Eliminare questa pianta e tutti i suoi log?'))return;
+  ST.plants=ST.plants.filter(p=>p.id!==id);
+  ST.logs=ST.logs.filter(l=>l.plantId!==id);
+  save(); syncSels(); renderPlants();
+  toast('🗑','Pianta eliminata','');
 }
-
-function addProdotto() {
-  const nome   = document.getElementById('fin-prod-nome').value.trim();
-  const grammi = parseFloat(document.getElementById('fin-prod-g').value);
-  const prezzo = parseFloat(document.getElementById('fin-prod-eu').value);
-  if(!nome||!grammi||!prezzo) { toast('⚠️','Compila tutti i campi','Nome · grammi · €/g'); return; }
-  ST.prodotti.push({ id:Date.now(), nome, grammi, prezzo });
-  save(); renderFinanze();
-  document.getElementById('fin-prod-nome').value = '';
-  document.getElementById('fin-prod-g').value    = '';
-  document.getElementById('fin-prod-eu').value   = '';
-  toast('💰', nome, grammi+'g × €'+prezzo+'/g = '+fmtMoney(grammi*prezzo));
+function advPlant(id) {
+  const p=ST.plants.find(x=>x.id===id); if(!p)return;
+  const i=phIdx(p.phase);
+  if(i<PHASES.length-1){p.phase=PHASES[i+1].id;save();renderPlants();toast(PHASES[i+1].emoji,p.name+' → '+PHASES[i+1].label,'');navigator.vibrate?.(40);}
 }
-
-function removeProdotto(id) {
-  ST.prodotti = ST.prodotti.filter(p=>p.id!==id);
-  save(); renderFinanze();
+function toggleDetail(id) { document.getElementById('pd-'+id)?.classList.toggle('on'); }
+function quickLog(plantId,type) {
+  ST.logs.unshift({id:uid(),plantId,type,text:'',photo:null,date:new Date().toISOString()});
+  save();renderHome();
+  const p=ST.plants.find(x=>x.id===plantId);
+  toast({water:'💧',feed:'🌿',check:'🔍'}[type]||'📝',p?.name,LOGL[type]);
+  navigator.vibrate?.(30);
 }
-
-function renderFinanze() {
-  // People sync
-  document.querySelectorAll('.ppl-btn').forEach(b=>b.classList.toggle('on', parseInt(b.dataset.n)===ST.persone));
-  document.getElementById('fh-ppl-show').textContent = ST.persone;
-
-  // Spese
-  const speseEl = document.getElementById('spese-list');
-  speseEl.innerHTML = ST.spese.length
-    ? ST.spese.map(s=>`<div class="fin-row-item">
-        <span class="fri-icon">${s.emoji}</span>
-        <div class="fri-info">
-          <div class="fri-name">${s.nome}</div>
-          <div class="fri-sub">−${fmtMoney(s.val)} · ${fmtMoney(s.val/ST.persone)}/persona</div>
+function renderPlants() {
+  const el=document.getElementById('plants-list');
+  if(!ST.plants.length){el.innerHTML=`<div class="empty"><div class="empty-icon">🌱</div><div class="empty-title">NESSUNA PIANTA</div><div class="empty-sub">Usa il form qui sotto per aggiungere la tua prima pianta</div></div>`;return;}
+  const strE={indica:'🌿',hybrid:'🌀',sativa:'☀️',auto:'⏱'};
+  el.innerHTML=ST.plants.map(p=>{
+    const ph=PHASES.find(x=>x.id===p.phase);
+    const d=dSince(p.start);
+    const pct=Math.round((phIdx(p.phase)+1)/PHASES.length*100);
+    const next=PHASES[phIdx(p.phase)+1];
+    const rev=(+p.yieldSold||0)*(+p.pricePerG||0);
+    const lastLog=ST.logs.find(l=>l.plantId===p.id);
+    return `<div class="plant-card">
+      <div class="pc-header" onclick="toggleDetail(${p.id})">
+        <div class="pc-emoji">${ph.emoji}<span class="pc-badge">${d}d</span></div>
+        <div class="pc-info">
+          <div class="pc-name">${p.name}</div>
+          <div class="pc-meta">
+            <span class="ptag ${ph.css}">${ph.label}</span>
+            <span class="pc-strain-lbl">${strE[p.strain]||''} ${p.strain}</span>
+          </div>
         </div>
-        <span class="fri-amt" style="color:var(--red)">−${fmtMoney(s.val)}</span>
-        <button class="fri-del" onclick="removeSpesa(${s.id})">✕</button>
+        <div class="pc-right">
+          ${next?`<button class="pc-adv" onclick="event.stopPropagation();advPlant(${p.id})">${next.emoji} Avanza</button>`:''}
+          <button class="btn-icon" onclick="event.stopPropagation();delPlant(${p.id})">✕</button>
+        </div>
+      </div>
+      <div class="pc-prog"><div class="pc-prog-fill" style="width:${pct}%"></div></div>
+      <div class="pc-detail" id="pd-${p.id}">
+        <div class="pc-stats-row">
+          <div class="pcs"><div class="pcs-val" style="color:var(--neon)">${d}</div><div class="pcs-lbl">Giorni</div></div>
+          <div class="pcs"><div class="pcs-val" style="color:var(--neon2)">${p.yieldTotal||0}g</div><div class="pcs-lbl">Resa Tot.</div></div>
+          <div class="pcs"><div class="pcs-val" style="color:var(--gold)">${rev?fmt(rev):'€0'}</div><div class="pcs-lbl">Ricavo</div></div>
+        </div>
+        <div class="quick-btns">
+          <button class="qb" onclick="quickLog(${p.id},'water')">💧 Annaffia ora</button>
+          <button class="qb" onclick="quickLog(${p.id},'feed')">🌿 Fertilizza ora</button>
+          <button class="qb" onclick="quickLog(${p.id},'check')">🔍 Controllo</button>
+          <button class="qb" onclick="go('log')">📸 Aggiungi al Log</button>
+        </div>
+        ${lastLog?`<div style="margin-top:10px;font-size:12px;color:var(--t2)">Ultima nota: <span style="color:var(--t1)">${lastLog.text||LOGL[lastLog.type]}</span></div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── LOG ── */
+function pickLogType(btn) {
+  document.querySelectorAll('.lt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); curLogType=btn.dataset.t;
+  document.getElementById('photo-label').style.display=curLogType==='photo'?'flex':'none';
+  if(curLogType!=='photo'){pendingPhoto=null;const p=document.getElementById('photo-prev');p.style.display='none';p.src='';}
+}
+function onPhoto(inp) {
+  const f=inp.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{pendingPhoto=e.target.result;const p=document.getElementById('photo-prev');p.src=pendingPhoto;p.style.display='block';};
+  r.readAsDataURL(f);
+}
+function setFilter(btn) {
+  document.querySelectorAll('.lf').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); curFilter=btn.dataset.f; renderLog();
+}
+function addLog() {
+  const plantId=parseFloat(document.getElementById('log-plant-sel').value);
+  if(!plantId){toast('⚠️','Seleziona una pianta','');return;}
+  const text=document.getElementById('log-text').value.trim();
+  if(!text&&!pendingPhoto&&!['water','feed','check'].includes(curLogType)){toast('⚠️','Scrivi una nota','');return;}
+  ST.logs.unshift({id:uid(),plantId,type:curLogType,text,photo:pendingPhoto||null,date:new Date().toISOString()});
+  pendingPhoto=null;
+  document.getElementById('log-text').value='';
+  const pp=document.getElementById('photo-prev'); pp.style.display='none'; pp.src='';
+  document.getElementById('photo-inp').value='';
+  save(); renderLog();
+  toast('📝','Log salvato',LOGL[curLogType]);
+}
+function delLog(id) { ST.logs=ST.logs.filter(l=>l.id!==id); save(); renderLog(); }
+function renderLog() {
+  const el=document.getElementById('log-list');
+  let logs=ST.logs;
+  if(curFilter!=='all') logs=logs.filter(l=>l.type===curFilter);
+  if(!logs.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📓</div><div class="empty-title">DIARIO VUOTO</div><div class="empty-sub">Aggiungi la tua prima annotazione sopra</div></div>`;return;}
+  el.innerHTML=logs.map(l=>{
+    const p=ST.plants.find(x=>x.id===l.plantId);
+    const dt=new Date(l.date);
+    return `<div class="log-entry">
+      <div class="le-d">
+        <div class="le-day">${String(dt.getDate()).padStart(2,'0')}</div>
+        <div class="le-mon">${dt.toLocaleDateString('it-IT',{month:'short'})}</div>
+      </div>
+      <div class="le-sep"></div>
+      <div class="le-body">
+        <div class="le-top">
+          <span class="le-type lt-${l.type}">${LOGL[l.type]}</span>
+          ${p?`<span class="le-plant">${p.name}</span>`:''}
+        </div>
+        ${l.text?`<div class="le-text">${l.text}</div>`:''}
+        ${l.photo?`<img src="${l.photo}" class="le-img" loading="lazy"/>`:''}
+      </div>
+      <button class="btn-icon" onclick="delLog(${l.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+/* ── FINANZE ── */
+function addPartner() {
+  ST.partners.push({id:uid(),name:'Partner '+(ST.partners.length+1),pct:0});
+  save(); renderFin();
+}
+function delPartner(id) {
+  if(ST.partners.length<=1){toast('⚠️','Almeno un partner','');return;}
+  ST.partners=ST.partners.filter(p=>p.id!==id); save(); renderFin();
+}
+function setPartnerName(id,v) { const p=ST.partners.find(x=>x.id===id); if(p){p.name=v;save();} }
+function setPartnerPct(id,v)  { const p=ST.partners.find(x=>x.id===id); if(p){p.pct=parseFloat(v)||0;save();recalc();} }
+function addSpesa() {
+  const n=document.getElementById('fin-sn').value.trim();
+  const v=parseFloat(document.getElementById('fin-sv').value);
+  if(!n||!v||v<=0){toast('⚠️','Nome e importo richiesti','');return;}
+  ST.spese.push({id:uid(),nome:n,val:v,emoji:EMOJIS_SPESA[ST.spese.length%EMOJIS_SPESA.length]});
+  save(); renderFin();
+  document.getElementById('fin-sn').value='';
+  document.getElementById('fin-sv').value='';
+  toast('💸',n,'−'+fmt(v));
+}
+function delSpesa(id) { ST.spese=ST.spese.filter(s=>s.id!==id); save(); renderFin(); }
+function setYield(id,field,v) {
+  const p=ST.plants.find(x=>x.id===id); if(p){p[field]=parseFloat(v)||0;save();recalc();}
+}
+function recalc() {
+  const totR=calcRicavi();
+  const totC=ST.spese.reduce((s,x)=>s+x.val,0);
+  const netto=totR-totC;
+  const totG=ST.plants.reduce((s,p)=>s+(+p.yieldTotal||0),0);
+  const totPct=ST.partners.reduce((s,p)=>s+p.pct,0);
+  const col=netto>=0?'var(--neon)':'var(--red)';
+
+  document.getElementById('fin-netto-n').textContent=fmtN(netto);
+  document.getElementById('fin-netto').style.color=col;
+  document.getElementById('fin-sub').textContent=totR||totC?`Ricavi ${fmt(totR)} · Spese ${fmt(totC)}`:'Aggiungi ricavi e spese';
+  document.getElementById('fin-h-r').textContent=fmt(totR);
+  document.getElementById('fin-h-c').textContent=fmt(totC);
+  document.getElementById('fin-h-g').textContent=totG+'g';
+  document.getElementById('bd-r').textContent='+'+fmt(totR);
+  document.getElementById('bd-c').textContent='−'+fmt(totC);
+  const bdN=document.getElementById('bd-n');
+  bdN.textContent=(netto<0?'−':'+')+fmt(netto); bdN.style.color=netto>=0?'var(--gold)':'var(--red)';
+  document.getElementById('pct-warn').style.display=ST.partners.length&&totPct!==100?'':'none';
+  document.getElementById('fin-breakdown').style.display=(totR||totC)?'':'none';
+  // Home widgets sync
+  document.getElementById('h-netto-num').textContent=fmtN(netto);
+  document.getElementById('h-netto').style.color=col;
+  document.getElementById('h-ricavi').textContent=fmt(totR);
+  document.getElementById('h-costi').textContent=fmt(totC);
+  document.getElementById('h-grammi').textContent=totG+'g';
+  // Payout
+  const pg=document.getElementById('payout-grid');
+  pg.innerHTML=ST.partners.map(p=>{
+    const share=totPct===100?netto*(p.pct/100):0;
+    return `<div class="payout-card">
+      <div class="payout-name">${p.name}</div>
+      <div class="payout-pct">${p.pct}% del progetto</div>
+      <div class="payout-amount" style="color:${share>=0?'var(--neon)':'var(--red)'}">${fmt(share)}</div>
+      <div class="payout-lbl">quota netta</div>
+    </div>`;
+  }).join('');
+}
+function renderFin() {
+  // Partners
+  const pl=document.getElementById('partners-list');
+  pl.innerHTML=ST.partners.map((p,i)=>`
+    <div class="partner-row">
+      <div class="partner-av">${['👤','🤝','👥','🌐','⭐'][i]||'👤'}</div>
+      <input class="partner-name-inp" value="${p.name}"
+        oninput="setPartnerName(${p.id},this.value)"
+        onchange="setPartnerName(${p.id},this.value)"/>
+      <input class="pct-inp" type="number" value="${p.pct}" min="0" max="100"
+        oninput="setPartnerPct(${p.id},this.value)"
+        onchange="setPartnerPct(${p.id},this.value)"/>
+      <span class="pct-sym">%</span>
+      ${ST.partners.length>1?`<button class="btn-icon" onclick="delPartner(${p.id})">✕</button>`:''}
+    </div>`).join('');
+  // Spese
+  const sl=document.getElementById('spese-list');
+  sl.innerHTML=ST.spese.length
+    ? ST.spese.map(s=>`<div class="fin-item">
+        <span class="fi-ico">${s.emoji}</span>
+        <div class="fi-info"><div class="fi-name">${s.nome}</div><div class="fi-sub">Spesa progetto</div></div>
+        <span class="fi-amt" style="color:var(--red)">−${fmt(s.val)}</span>
+        <button class="btn-icon" onclick="delSpesa(${s.id})">✕</button>
       </div>`).join('')
     : `<div class="empty" style="padding:14px 0"><div class="empty-sub">Nessuna spesa aggiunta</div></div>`;
-
-  // Prodotti
-  const prodEl = document.getElementById('prodotti-list');
-  prodEl.innerHTML = ST.prodotti.length
-    ? ST.prodotti.map(p=>{
-        const r=p.grammi*p.prezzo;
-        return `<div class="fin-row-item">
-          <span class="fri-icon">🌿</span>
-          <div class="fri-info">
-            <div class="fri-name">${p.nome}</div>
-            <div class="fri-sub">${p.grammi}g × €${p.prezzo}/g · ${fmtMoney(r/ST.persone)}/persona</div>
+  // Yield
+  const yl=document.getElementById('yield-list');
+  yl.innerHTML=ST.plants.length
+    ? ST.plants.map(p=>{
+        const rev=(+p.yieldSold||0)*(+p.pricePerG||0);
+        const ph=PHASES.find(x=>x.id===p.phase);
+        return `<div class="yield-card">
+          <div class="yc-head">
+            <span class="yc-name">${ph.emoji} ${p.name}</span>
+            <span class="yc-rev" style="color:${rev>0?'var(--neon)':'var(--t3)'}">${fmt(rev)}</span>
           </div>
-          <span class="fri-amt" style="color:var(--g4)">+${fmtMoney(r)}</span>
-          <button class="fri-del" onclick="removeProdotto(${p.id})">✕</button>
+          <div class="yc-grid">
+            <div class="yc-field"><span class="fl">Grammi Tot.</span>
+              <input class="fi" type="number" value="${p.yieldTotal||''}" placeholder="0"
+                oninput="setYield(${p.id},'yieldTotal',this.value)" style="font-family:var(--ff-d);font-size:20px"/></div>
+            <div class="yc-field"><span class="fl">Grammi Venduti</span>
+              <input class="fi" type="number" value="${p.yieldSold||''}" placeholder="0"
+                oninput="setYield(${p.id},'yieldSold',this.value)" style="font-family:var(--ff-d);font-size:20px"/></div>
+            <div class="yc-field"><span class="fl">€ / grammo</span>
+              <input class="fi" type="number" value="${p.pricePerG||''}" placeholder="0" step="0.5"
+                oninput="setYield(${p.id},'pricePerG',this.value)" style="font-family:var(--ff-d);font-size:20px"/></div>
+          </div>
         </div>`;
       }).join('')
-    : `<div class="empty" style="padding:14px 0"><div class="empty-sub">Nessun prodotto aggiunto</div></div>`;
-
-  // Totals
-  const totR = ST.prodotti.reduce((s,p)=>s+p.grammi*p.prezzo,0);
-  const totC = ST.spese.reduce((s,x)=>s+x.val,0);
-  const netto = totR - totC;
-  const perP  = netto / ST.persone;
-
-  document.getElementById('fh-ricavi').textContent = fmtMoney(totR);
-  document.getElementById('fh-costi').textContent  = fmtMoney(totC);
-  document.getElementById('fh-netto').textContent  = (netto<0?'−':'') + fmtMoney(netto);
-  document.getElementById('fh-sub').textContent    = totR||totC ? `Ricavi ${fmtMoney(totR)} · Spese ${fmtMoney(totC)}` : 'Aggiungi ricavi e spese per calcolare';
-
-  const hasData = totR>0 || totC>0;
-  document.getElementById('fin-breakdown').style.display = hasData ? '' : 'none';
-  if(hasData) {
-    document.getElementById('bd-ricavi').textContent = '+'+fmtMoney(totR);
-    document.getElementById('bd-costi').textContent  = '−'+fmtMoney(totC);
-    const bdN = document.getElementById('bd-netto');
-    bdN.textContent = (netto<0?'−':'+') + fmtMoney(netto);
-    bdN.style.color = netto>=0 ? 'var(--g4)' : 'var(--red)';
-    const ppEl = document.getElementById('ppb-val');
-    ppEl.textContent = (perP<0?'−':'') + fmtMoney(perP);
-    ppEl.style.color = perP>=0 ? 'var(--g4)' : 'var(--red)';
-    document.getElementById('ppb-lbl').textContent =
-      `Profitto per persona (${ST.persone} ${ST.persone===1?'persona':'persone'})`;
-  }
+    : `<div class="empty" style="padding:14px 0"><div class="empty-sub">Aggiungi piante per inserire la resa</div></div>`;
+  recalc();
 }
 
-/* ══════════════════════════════════════════
-   INIT
-══════════════════════════════════════════ */
-document.getElementById('inp-start').value = new Date().toISOString().split('T')[0];
-refreshPlantSelectors();
-renderPlants();
-renderDiary();
-renderFinanze();
+/* ── INIT ── */
+document.getElementById('inp-start').value = today();
+syncSels();
+renderHome();
 </script>
 </body>
 </html>
