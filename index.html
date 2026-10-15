@@ -1106,6 +1106,21 @@ document.addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if
 
 renderAll(); renderLock(); $('syncbar').textContent='Collegamento ai dati in corso…'; $('syncbar').className='syncbar';
 
+/* ---------- aggiornamento automatico della pagina ---------- */
+const PAGE_VERSION='202610160018';
+try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
+async function checkVersion(){
+  try{
+    const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok) return;
+    const j=await r.json();
+    if(j && j.v && j.v!==PAGE_VERSION){ location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }
+  }catch(_){}
+}
+checkVersion();
+setInterval(checkVersion,60000);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') checkVersion(); });
+
 /* ---------- dati in tempo reale (Supabase) ---------- */
 const toMov=r=>({id:r.id,ts:Date.parse(r.ts),tipo:r.tipo,chi:r.chi,importo:+r.importo,vincita:+r.vincita,quota:r.quota==null?null:+r.quota,nota:r.nota||''});
 const toDebt=r=>({id:r.id,ts:Date.parse(r.ts),tipo:r.tipo,da:r.da,a:r.a,parti:r.parti||[],importo:+r.importo,nota:r.nota||''});
