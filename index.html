@@ -303,7 +303,7 @@ input[type=text],input[type=number],select{width:100%;font:500 .92rem var(--f-bo
   <section class="explain" id="risposte">
     <div class="eyebrow">Prima di tutto</div>
     <h1 class="ex-title">La spiegazione, punto per punto</h1>
-    <p class="ex-intro">Qui sotto ci sono le risposte complete alle cinque domande del progetto, più come funziona la parte prestiti. I numeri sono collegati al resto dell'app: se cambiate le ipotesi in Budget o nel simulatore, il testo si aggiorna da solo.</p>
+    <p class="ex-intro">Qui sotto ci sono le risposte complete alle cinque domande del progetto, come funziona la parte prestiti e i prossimi passi. I numeri sono collegati al resto dell'app: se cambiate le ipotesi in Budget o nel simulatore, il testo si aggiorna da solo.</p>
     <div class="ex-index">
       <button type="button" data-go="home" data-scroll="q1">1 · Cosa comprare</button>
       <button type="button" data-go="home" data-scroll="q2">2 · Quanto mettere</button>
@@ -311,6 +311,7 @@ input[type=text],input[type=number],select{width:100%;font:500 .92rem var(--f-bo
       <button type="button" data-go="home" data-scroll="q4">4 · Schedine</button>
       <button type="button" data-go="home" data-scroll="q5">5 · Il progetto online</button>
       <button type="button" data-go="home" data-scroll="q6">6 · Prestiti</button>
+      <button type="button" data-go="home" data-scroll="q7">7 · Prossimi passi</button>
     </div>
     <div class="answers">
 
@@ -392,6 +393,17 @@ input[type=text],input[type=number],select{width:100%;font:500 .92rem var(--f-bo
         <p>L'app mostra quanto deve ognuno a ognuno e, se i debiti si incrociano, il modo più rapido per andare in pari.</p>
         <div id="ex6"></div>
         <button class="link" type="button" data-go="conti" data-scroll="prestiti">Apri i prestiti →</button>
+      </article>
+
+      <article class="ans" id="q7">
+        <div class="ans-head"><span class="ans-n" style="background:var(--teal)">7</span><h3>Prossimi passi</h3></div>
+        <ol>
+          <li><b>Parlare col proprietario</b>: le 7 domande del punto 3, deposito e utenze.</li>
+          <li><b>Decidere chi firma</b>: uno solo o tutti e tre.</li>
+          <li><b>Primo versamento in cassa</b>: <span id="ex7quota">la quota del primo mese</span> a testa.</li>
+          <li><b>Ordinare da Temu</b> la lista della spesa, con due settimane di anticipo.</li>
+          <li><b>Aggiornare le stime</b> con le prime bollette di luce e internet.</li>
+        </ol>
       </article>
     </div>
   </section>
@@ -1075,6 +1087,7 @@ function renderHome(){
       <li>Coprirlo per tutti i 12 mesi dell'anno: ${sm.pYearAll<0.001?'praticamente zero':pct(sm.pYearAll,1)}.</li>
       <li>Chiudere l'anno almeno in pari, anche senza coprire niente: ${pct(sm.pYearPos,0)}.</li>
     </ul>`;
+  $('ex7quota').textContent = eur.format(b.totInit/n);
   $('ex6').innerHTML = pairs.length
     ? `<p><b>Situazione attuale:</b></p><ul>${pairs.map(p=>`<li>${esc(p.from)} deve a ${esc(p.to)} <b>${eur2.format(p.c/100)}</b></li>`).join('')}</ul>`
     : `<p><b>Situazione attuale:</b> siete tutti in pari.</p>`;
