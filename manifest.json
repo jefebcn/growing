@@ -1,7 +1,7 @@
 {
   "name": "Chill House Dogana",
   "short_name": "Chill House",
-  "description": "La chill house di Alex, Simone e Matteo a Dogana bassa: spiegazioni, budget, cassa comune e prestiti in tempo reale.",
+  "description": "La chill house di Alex, Simone e Matteo: cassa comune, schedine, prestiti e budget in tempo reale.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
