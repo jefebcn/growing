@@ -300,8 +300,52 @@ input[type=text],input[type=number],select{width:100%;font:500 .92rem var(--f-bo
   </div>
   <div class="snapnote" id="snapNote" hidden></div>
 
+  <div class="sec-head" style="margin-top:4px"><h2>Il cruscotto</h2></div>
+
+  <div class="balance">
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+    <div>
+      <div class="k">Saldo cassa comune</div>
+      <div class="v" id="hsCassa">–</div>
+      <div class="s" id="hsCassaS">dai movimenti registrati</div>
+    </div>
+    <button class="go" type="button" data-go="conti">Movimenti <span class="c"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span></button>
+  </div>
+
+  <div class="flow">
+    <div class="f"><svg viewBox="0 0 24 24" fill="none" stroke="#4ED07A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5M5 11l7-7 7 7"/></svg><div><div class="k">Entrate</div><div class="v" id="homeIn">–</div></div></div>
+    <div class="sep"></div>
+    <div class="f"><svg viewBox="0 0 24 24" fill="none" stroke="#F07470" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15M5 13l7 7 7-7"/></svg><div><div class="k">Uscite</div><div class="v" id="homeOut">–</div></div></div>
+  </div>
+
+  <div class="mini3">
+    <button class="mini hot" type="button" data-go="budget" data-scroll="receipt"><div class="k">Primo mese a testa</div><div class="v" id="hsInit">–</div><div class="s" id="hsInitS"></div></button>
+    <button class="mini" type="button" data-go="budget" data-scroll="receipt"><div class="k">Ogni mese a testa</div><div class="v" id="hsMonth">–</div><div class="s" id="hsMonthS"></div></button>
+    <button class="mini" type="button" data-go="conti"><div class="k">Mesi già coperti</div><div class="v" id="hsMesi">–</div><div class="s">saldo ÷ costi mensili</div></button>
+  </div>
+
+  <div class="sec-head" id="homeSchedine"><h2>Le nostre schedine</h2><button class="pill" type="button" data-go="conti">Conti</button></div>
+  <div class="card">
+    <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+      <div class="kpi"><div class="k">Giocato</div><div class="v" id="hsGiocato">–</div></div>
+      <div class="kpi"><div class="k">Vinto</div><div class="v" id="hsVinto">–</div></div>
+      <div class="kpi"><div class="k">Bilancio schedine</div><div class="v" id="hsBil">–</div></div>
+      <div class="kpi"><div class="k">Saldo Chill House</div><div class="v" id="hsSaldo2">–</div></div>
+    </div>
+    <div class="list" id="homeBets"></div>
+  </div>
+  <div class="sec-head"><h2>Le 5 voci più care</h2><button class="pill" type="button" data-go="budget" id="tierPill">Comfort</button></div>
+  <div class="hscroll" id="top5"></div>
+
+  <div class="sec-head"><h2>Quota vs versato</h2><button class="pill" type="button" data-go="conti" data-scroll="mvForm">Primo mese</button></div>
+  <div class="grid-cards" id="quoteGrid"></div>
+
+  <div class="sec-head"><h2>Conti tra di noi</h2><button class="pill" type="button" data-go="conti" data-scroll="prestiti">Apri</button></div>
+  <div class="card" id="homeDebts"></div>
+
+  <div class="cruscotto"></div>
   <section class="explain" id="risposte">
-    <div class="eyebrow">Prima di tutto</div>
+    <div class="eyebrow">Le risposte</div>
     <h1 class="ex-title">La spiegazione, punto per punto</h1>
     <p class="ex-intro">Qui sotto ci sono le risposte complete alle cinque domande del progetto, come funziona la parte prestiti e i prossimi passi. I numeri sono collegati al resto dell'app: se cambiate le ipotesi in Budget o nel simulatore, il testo si aggiorna da solo.</p>
     <div class="ex-index">
@@ -375,7 +419,7 @@ input[type=text],input[type=number],select{width:100%;font:500 .92rem var(--f-bo
         <ul>
           <li><b>Dati in tempo reale.</b> Cassa comune, schedine, prestiti e ipotesi delle quote sono salvati online. Quando qualcuno aggiunge un movimento, chi ha la pagina aperta lo vede subito.</li>
           <li><b>Aggiornamenti della pagina.</b> Quando si aggiunge una sezione o cambia la grafica, la nuova versione compare allo stesso link. Non serve rimandare niente.</li>
-          <li><b>Chi può modificare.</b> Tutti possono guardare. Per aggiungere o eliminare movimenti serve il <b>codice del gruppo</b>, da inserire una volta nella sezione Conti. Chi non ha il codice può comunque giocare con i cursori: le modifiche restano solo sul suo schermo.</li>
+          <li><b>Chi può modificare.</b> Chiunque abbia il link può aggiungere spese, versamenti, schedine e prestiti, senza codice. Un movimento eliminato per sbaglio si può recuperare: chiedete ad Alex.</li>
           <li><b>Consiglio.</b> Aggiungete il sito alla schermata Home del telefono: si apre come un'app.</li>
         </ul>
         <p><b>Com'è fatta l'app.</b> Home: questa spiegazione e il cruscotto. Budget: lista acquisti, scontrino del primo mese e ipotesi. Conti: cassa comune e prestiti. Schedine: il simulatore.</p>
@@ -408,38 +452,6 @@ input[type=text],input[type=number],select{width:100%;font:500 .92rem var(--f-bo
     </div>
   </section>
 
-  <div class="sec-head cruscotto"><h2>Il cruscotto</h2></div>
-
-  <div class="balance">
-    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
-    <div>
-      <div class="k">Saldo cassa comune</div>
-      <div class="v" id="hsCassa">–</div>
-      <div class="s" id="hsCassaS">dai movimenti registrati</div>
-    </div>
-    <button class="go" type="button" data-go="conti">Movimenti <span class="c"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span></button>
-  </div>
-
-  <div class="flow">
-    <div class="f"><svg viewBox="0 0 24 24" fill="none" stroke="#4ED07A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5M5 11l7-7 7 7"/></svg><div><div class="k">Entrate</div><div class="v" id="homeIn">–</div></div></div>
-    <div class="sep"></div>
-    <div class="f"><svg viewBox="0 0 24 24" fill="none" stroke="#F07470" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15M5 13l7 7 7-7"/></svg><div><div class="k">Uscite</div><div class="v" id="homeOut">–</div></div></div>
-  </div>
-
-  <div class="mini3">
-    <button class="mini hot" type="button" data-go="budget" data-scroll="receipt"><div class="k">Primo mese a testa</div><div class="v" id="hsInit">–</div><div class="s" id="hsInitS"></div></button>
-    <button class="mini" type="button" data-go="budget" data-scroll="receipt"><div class="k">Ogni mese a testa</div><div class="v" id="hsMonth">–</div><div class="s" id="hsMonthS"></div></button>
-    <button class="mini" type="button" data-go="conti"><div class="k">Mesi già coperti</div><div class="v" id="hsMesi">–</div><div class="s">saldo ÷ costi mensili</div></button>
-  </div>
-
-  <div class="sec-head"><h2>Le 5 voci più care</h2><button class="pill" type="button" data-go="budget" id="tierPill">Comfort</button></div>
-  <div class="hscroll" id="top5"></div>
-
-  <div class="sec-head"><h2>Quota vs versato</h2><button class="pill" type="button" data-go="conti" data-scroll="mvForm">Primo mese</button></div>
-  <div class="grid-cards" id="quoteGrid"></div>
-
-  <div class="sec-head"><h2>Conti tra di noi</h2><button class="pill" type="button" data-go="conti" data-scroll="prestiti">Apri</button></div>
-  <div class="card" id="homeDebts"></div>
 
   <div class="syncbar" id="syncbar">Collegamento ai dati condivisi in corso…</div>
   <p class="foot">Sito aggiornato in tempo reale. Stime indicative in euro, ottobre 2026. Prezzi d'arredo medi tra negozio, Temu e usato; utenze da verificare con le prime bollette.</p>
@@ -494,18 +506,8 @@ input[type=text],input[type=number],select{width:100%;font:500 .92rem var(--f-bo
 
 <!-- CONTI -->
 <section class="tab" data-tab="conti" id="tab-conti" hidden>
-  <div class="tab-head"><div class="eyebrow">Cassa e prestiti</div><h2>Conti</h2><p>La cassa comune per affitto, spese e schedine, e sotto i prestiti tra di voi. Tutti vedono i conti; per modificarli serve il codice del gruppo.</p></div>
+  <div class="tab-head"><div class="eyebrow">Cassa e prestiti</div><h2>Conti</h2><p>La cassa comune per affitto, spese e schedine, e sotto i prestiti tra di voi. Chiunque abbia il link può aggiungere o eliminare movimenti.</p></div>
   <div class="stack">
-    <div class="panel lockbox">
-      <form id="lockForm" class="lockbox" autocomplete="off">
-        <div id="lockOpen">
-          <label for="pinIn" style="font-weight:700;display:block;margin-bottom:8px">Codice del gruppo per modificare</label>
-          <div class="lockrow"><input type="password" id="pinIn" inputmode="numeric" maxlength="12" placeholder="••••••" aria-describedby="lockMsg"><button class="btn" type="submit" id="lockBtn">Sblocca</button></div>
-        </div>
-      </form>
-      <div class="lock-ok" id="lockDone" hidden><span>Modifiche attive su questo telefono</span><button class="btn ghost" type="button" id="lockOut">Blocca</button></div>
-      <p class="muted" style="font-size:.82rem" id="lockMsg">Il codice lo trovi nel gruppo. Lo inserisci una volta e il telefono se lo ricorda.</p>
-    </div>
     <div class="panel">
       <div class="kpis">
         <div class="kpi"><div class="k">Saldo cassa</div><div class="v" id="kSaldo">–</div></div>
@@ -926,8 +928,7 @@ async function rpc(fn,args){
   if(!state.sb) throw {code:'offline'};
   const {data,error}=await state.sb.rpc(fn,{p_pin:state.pin,...args});
   if(error){
-    if(String(error.message||'').includes('codice_errato')||error.code==='28P01'){ lock('Il codice non è più valido: inseriscilo di nuovo.'); throw {code:'pin'}; }
-    throw {code:'db',message:error.message};
+        throw {code:'db',message:error.message};
   }
   return data;
 }
@@ -939,8 +940,7 @@ function saveCfg(){
   saveT=setTimeout(async()=>{ try{ await rpc('chill_set_meta',{p_key:'config',p_data:structuredClone(state.cfg)}); }catch(_){ } },700);
 }
 function writeMsg(el,err){
-  if(err&&err.code==='pin') el.textContent='Codice non valido: inseriscilo di nuovo qui sopra.';
-  else if(err&&err.code==='offline') el.textContent='Connessione assente: riprova tra poco.';
+  if(err&&err.code==='offline') el.textContent='Connessione assente: riprova tra poco.';
   else el.textContent='Non sono riuscito a salvare. Riprova tra qualche secondo.';
 }
 function setSync(){
@@ -954,29 +954,15 @@ function setSync(){
   } else {
     note.hidden=true;
     el.className='syncbar ok';
-    el.textContent = state.canWrite ? 'Dati in tempo reale · puoi modificare' : 'Dati in tempo reale · per modificare inserisci il codice del gruppo in Conti';
+    el.textContent = 'Dati in tempo reale · tutti possono aggiungere e modificare';
   }
   renderLock();
 }
 function renderLock(){
   const on=state.canWrite;
-  $('lockOpen').hidden=on; $('lockDone').hidden=!on;
   document.querySelectorAll('.needs-pin').forEach(f=>{ f.classList.toggle('locked',!on); f.querySelectorAll('input,select,button').forEach(x=>{ x.disabled=!on; }); });
 }
-function lock(msg){ state.canWrite=false; state.pin=''; writePin(''); setSync(); renderCassa(); renderDebts(); if(msg) $('lockMsg').textContent=msg; }
-async function unlock(pin,silent){
-  if(!state.sb){ $('lockMsg').textContent='Connessione assente: riprova tra poco.'; return; }
-  $('lockBtn').disabled=true;
-  try{
-    const {data,error}=await state.sb.rpc('chill_check',{p_pin:pin});
-    if(error) throw error;
-    if(data===true){ state.pin=pin; state.canWrite=true; writePin(pin); $('lockMsg').textContent=''; $('pinIn').value=''; setSync(); renderCassa(); renderDebts(); }
-    else { if(!silent) $('lockMsg').textContent='Codice sbagliato. Dopo 10 tentativi sbagliati si blocca per 10 minuti.'; writePin(''); }
-  }catch(_){ if(!silent) $('lockMsg').textContent='Non riesco a verificare il codice. Riprova.'; }
-  finally{ $('lockBtn').disabled=false; }
-}
-$('lockForm').addEventListener('submit',e=>{ e.preventDefault(); const v=$('pinIn').value.trim(); if(v) unlock(v,false); });
-$('lockOut').addEventListener('click',()=>lock('Modifiche disattivate su questo telefono.'));
+function lock(){ setSync(); }
 
 /* ---------- eventi ---------- */
 document.getElementById('tierSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b) return; state.cfg.tier=+b.dataset.tier; renderArredo(); renderBudget(); renderSim(); renderCassa(); saveCfg();});
@@ -992,7 +978,7 @@ $('mvTipo').addEventListener('change',e=>{ const sch=e.target.value==='schedina'
 const num=v=>parseFloat(String(v||'').replace(',','.'));
 $('mvForm').addEventListener('submit',async e=>{
   e.preventDefault();
-  if(!state.canWrite){ $('mvMsg').textContent='Per aggiungere movimenti inserisci il codice del gruppo qui sopra.'; return; }
+  if(!state.canWrite){ $('mvMsg').textContent='Connessione assente: riprova tra poco.'; return; }
   const imp=num($('mvImporto').value);
   if(!(imp>0)){ $('mvMsg').textContent='Inserisci un importo maggiore di zero.'; return; }
   const tipo=$('mvTipo').value;
@@ -1017,7 +1003,7 @@ document.getElementById('cats').addEventListener('click',e=>{const b=e.target.cl
 $('dbTipo').addEventListener('change',dbFormMode);
 $('dbForm').addEventListener('submit',async e=>{
   e.preventDefault();
-  if(!state.canWrite){ $('dbMsg').textContent='Per aggiungere prestiti inserisci il codice del gruppo in alto in questa pagina.'; return; }
+  if(!state.canWrite){ $('dbMsg').textContent='Connessione assente: riprova tra poco.'; return; }
   const t=$('dbTipo').value, imp=num($('dbImporto').value);
   if(!(imp>0)){ $('dbMsg').textContent='Inserisci un importo maggiore di zero.'; return; }
   const args={p_tipo:t,p_da:$('dbDa').value,p_a:null,p_parti:[],p_importo:Math.round(imp*100)/100,p_nota:$('dbNota').value.trim().slice(0,160)};
@@ -1029,7 +1015,7 @@ $('dbForm').addEventListener('submit',async e=>{
   finally{ $('dbBtn').disabled=!state.canWrite; }
 });
 async function addPerson(){
-  if(!state.canWrite){ $('dbMsg').textContent='Per aggiungere persone inserisci il codice del gruppo.'; return; }
+  if(!state.canWrite){ $('dbMsg').textContent='Connessione assente: riprova tra poco.'; return; }
   const n=$('dbNew').value.trim().slice(0,20); if(!n) return;
   if(state.amici.some(x=>x.toLowerCase()===n.toLowerCase())){ $('dbMsg').textContent=`${n} è già nella lista.`; return; }
   const next=[...state.amici,n];
@@ -1088,6 +1074,18 @@ function renderHome(){
       <li>Chiudere l'anno almeno in pari, anche senza coprire niente: ${pct(sm.pYearPos,0)}.</li>
     </ul>`;
   $('ex7quota').textContent = eur.format(b.totInit/n);
+  const bets=state.mov.filter(x=>x.tipo==='schedina');
+  const bG=bets.reduce((a,x)=>a+(+x.importo||0),0), bV=bets.reduce((a,x)=>a+(+x.vincita||0),0), bN=bV-bG;
+  const sgn=v=>(v>0?'+':v<0?'−':'')+eur2.format(Math.abs(v));
+  $('hsGiocato').textContent=eur2.format(bG);
+  $('hsVinto').textContent=eur2.format(bV);
+  $('hsBil').textContent=sgn(bN); $('hsBil').className='v '+(bN<0?'bad':bN>0?'good':'');
+  $('hsSaldo2').textContent=sgn(s.saldo); $('hsSaldo2').className='v '+(s.saldo<0?'bad':s.saldo>0?'good':'');
+  $('homeBets').innerHTML = bets.length ? bets.map(x=>{
+    const net=(+x.vincita||0)-(+x.importo||0), d=new Date(x.ts||0).toLocaleDateString('it-IT',{day:'numeric',month:'short'});
+    const res=(+x.vincita||0)>0?`vinti ${eur2.format(+x.vincita)}`:'persa';
+    return `<div class="lrow"><div class="lmain"><span class="tag ${net>=0?'versamento':'schedina'}">${net>=0?'vinta':'persa'}</span> <span class="lt">${esc(x.nota)||'Schedina'}</span></div><div class="amt ${net<0?'bad':'good'}">${sgn(net)}</div><div class="lmeta">${d} · giocati ${eur2.format(+x.importo||0)}${x.quota?` · quota ${x.quota.toLocaleString('it-IT',{minimumFractionDigits:2})}`:''} · ${res}</div><span></span></div>`;
+  }).join('') : `<div class="empty">Nessuna schedina registrata.</div>`;
   $('ex6').innerHTML = pairs.length
     ? `<p><b>Situazione attuale:</b></p><ul>${pairs.map(p=>`<li>${esc(p.from)} deve a ${esc(p.to)} <b>${eur2.format(p.c/100)}</b></li>`).join('')}</ul>`
     : `<p><b>Situazione attuale:</b> siete tutti in pari.</p>`;
@@ -1138,7 +1136,7 @@ const later=(fn,ms=250)=>{ let t; return ()=>{ clearTimeout(t); t=setTimeout(()=
     if(!window.supabase) throw new Error('libreria non caricata');
     state.sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
     await Promise.all([loadMeta(),loadMov(),loadDebts()]);
-    state.live=true;
+    state.live=true; state.canWrite=true;
     const rMeta=later(loadMeta), rMov=later(loadMov), rDeb=later(loadDebts);
     state.sb.channel('chill-house')
       .on('postgres_changes',{event:'*',schema:'public',table:'chill_meta'},rMeta)
@@ -1146,9 +1144,8 @@ const later=(fn,ms=250)=>{ let t; return ()=>{ clearTimeout(t); t=setTimeout(()=
       .on('postgres_changes',{event:'*',schema:'public',table:'chill_debiti'},rDeb)
       .subscribe();
     document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'){ rMeta(); rMov(); rDeb(); } });
-    const saved=readPin(); if(saved) await unlock(saved,true);
   }catch(_){ state.live=false; }
-  state.resolved=true; setSync();
+  state.resolved=true; setSync(); renderCassa(); renderDebts();
 })();
 })();
 </script>
