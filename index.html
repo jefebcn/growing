@@ -2,13 +2,17 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0B1C48">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Chill House">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="description" content="La chill house di Alex, Simone e Matteo a Dogana bassa: cassa comune, schedine, prestiti e budget in tempo reale.">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B1C48'/%3E%3Ccircle cx='46' cy='16' r='12' fill='%23F5C140'/%3E%3Ctext x='32' y='42' font-family='Arial' font-weight='700' font-size='22' text-anchor='middle' fill='white'%3ECH%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="icons/logo.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -38,7 +42,7 @@
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth;touch-action:manipulation}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);font-size:15px;line-height:1.5;-webkit-tap-highlight-color:transparent}
 img{max-width:100%}
 button{font-family:inherit;color:inherit}
@@ -56,13 +60,15 @@ p{margin:0}
 /* top bar */
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-block:14px 12px}
 .me{display:flex;align-items:center;gap:12px;min-width:0}
-.av{width:46px;height:46px;border-radius:15px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;position:relative;overflow:hidden;flex:0 0 auto}
-.av::after{content:"";position:absolute;width:22px;height:22px;border-radius:50%;background:var(--yellow);right:-7px;top:-7px}
+.av{width:46px;height:46px;border-radius:14px;flex:0 0 auto;display:block;box-shadow:0 4px 12px rgba(11,28,72,.25)}
+/* app installata in Home: niente zoom, niente selezione accidentale */
+.standalone body{-webkit-user-select:none;user-select:none;overscroll-behavior-y:none}
+.standalone input,.standalone textarea{-webkit-user-select:text;user-select:text}
 .hello{font-size:.82rem;color:var(--muted);font-weight:600}
 .ttl{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
 .top-r{display:flex;align-items:center;gap:6px}
 .who-chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 6px 6px 12px;font-weight:700;font-size:.82rem}
-.who-chip select{border:0;background:transparent;font:inherit;color:var(--fg);padding:2px 2px;max-width:110px}
+.who-chip select{border:0;background:transparent;font:700 16px var(--f);color:var(--fg);padding:2px 2px;max-width:110px}
 .icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer}
 .icon-btn svg{width:20px;height:20px}
 .live{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:var(--muted)}
@@ -166,7 +172,7 @@ p{margin:0}
 .field label,.flabel{font-size:.8rem;font-weight:700;display:flex;justify-content:space-between;gap:12px;color:var(--fg)}
 .field label output{color:var(--orange);font-weight:800;font-variant-numeric:tabular-nums}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-input[type=text],input[type=number],select{width:100%;font:600 .95rem var(--f);color:var(--fg);background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-width:0}
+input[type=text],input[type=number],select{width:100%;font:600 16px var(--f);color:var(--fg);background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-width:0}
 input[type=range]{width:100%;accent-color:var(--teal)}
 .btn{border:0;cursor:pointer;font:800 .95rem var(--f);padding:14px 16px;border-radius:14px;background:var(--navy);color:#fff;width:100%}
 .btn:disabled{opacity:.5}
@@ -299,7 +305,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 <div class="app">
 <header class="top">
   <div class="me">
-    <div class="av" aria-hidden="true">CH</div>
+    <img class="av" src="icons/logo.svg" alt="" width="46" height="46">
     <div><div class="hello" id="greet">Ciao</div><div class="ttl">Chill House</div></div>
   </div>
   <div class="top-r">
@@ -1130,11 +1136,22 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610160038';
+const PAGE_VERSION='202610160931';
 try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') checkVersion(); });
+
+/* ---------- app in Home: blocca lo zoom ---------- */
+const isStandalone = (window.matchMedia&&matchMedia('(display-mode: standalone)').matches) || navigator.standalone===true;
+if(isStandalone){
+  document.documentElement.classList.add('standalone');
+  const stop=e=>e.preventDefault();
+  ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,stop,{passive:false}));
+  document.addEventListener('touchmove',e=>{ if(e.touches&&e.touches.length>1) e.preventDefault(); if(typeof e.scale==='number'&&e.scale!==1) e.preventDefault(); },{passive:false});
+  let lastTouch=0;
+  document.addEventListener('touchend',e=>{ const now=Date.now(); if(now-lastTouch<300 && !e.target.closest('input,select,textarea')) e.preventDefault(); lastTouch=now; },{passive:false});
+}
 
 /* ---------- avvio ---------- */
 { const h=(location.hash||'').slice(1); if(TABS.includes(h)) go(h); }
