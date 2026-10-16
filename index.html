@@ -6,17 +6,16 @@
 <meta name="theme-color" content="#0B1C48">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Chill House">
+<meta name="apple-mobile-web-app-title" content="Chill Sander">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<meta name="description" content="La chill house di Alex, Simone e Matteo a Dogana bassa: cassa comune, schedine, prestiti e budget in tempo reale.">
+<meta name="description" content="Chill Sander House: la chill house di Alex, Simone e Matteo a Dogana bassa: cassa comune, schedine, prestiti e budget in tempo reale.">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/svg+xml" href="icons/logo.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<title>Chill House Dogana</title>
+<title>Chill Sander House</title>
 <style>
 /* Layout: app a colonna (max 560px), tab in basso con pulsante + centrale, fogli dal basso per aggiungere */
 :root{
@@ -60,15 +59,15 @@ p{margin:0}
 /* top bar */
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-block:14px 12px}
 .me{display:flex;align-items:center;gap:12px;min-width:0}
-.av{width:46px;height:46px;border-radius:14px;flex:0 0 auto;display:block;box-shadow:0 4px 12px rgba(11,28,72,.25)}
+.av{width:48px;height:48px;border-radius:14px;object-fit:cover;background:#1D1E1D;flex:0 0 auto;display:block;box-shadow:0 4px 12px rgba(11,28,72,.25)}
 /* app installata in Home: niente zoom, niente selezione accidentale */
 .standalone body{-webkit-user-select:none;user-select:none;overscroll-behavior-y:none}
 .standalone input,.standalone textarea{-webkit-user-select:text;user-select:text}
 .hello{font-size:.82rem;color:var(--muted);font-weight:600}
-.ttl{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
-.top-r{display:flex;align-items:center;gap:6px}
+.ttl{font-size:1.12rem;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.top-r{display:flex;align-items:center;gap:6px;flex:0 0 auto}
 .who-chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 6px 6px 12px;font-weight:700;font-size:.82rem}
-.who-chip select{border:0;background:transparent;font:700 16px var(--f);color:var(--fg);padding:2px 2px;max-width:110px}
+.who-chip select{border:0;background:transparent;font:700 16px var(--f);color:var(--fg);padding:2px 2px;min-width:84px;max-width:132px}
 .icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer}
 .icon-btn svg{width:20px;height:20px}
 .live{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:var(--muted)}
@@ -305,8 +304,8 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 <div class="app">
 <header class="top">
   <div class="me">
-    <img class="av" src="icons/logo.svg" alt="" width="46" height="46">
-    <div><div class="hello" id="greet">Ciao</div><div class="ttl">Chill House</div></div>
+    <img class="av" src="icons/logo-256.png" alt="Chill Sander House" width="48" height="48">
+    <div><div class="hello" id="greet">Ciao</div><div class="ttl">Chill Sander House</div></div>
   </div>
   <div class="top-r">
     <label class="who-chip" for="meSel" title="Chi sei? Serve a precompilare i moduli"><span aria-hidden="true">👤</span><select id="meSel" aria-label="Chi sei"></select></label>
@@ -441,7 +440,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
       <div id="ex6"></div>
     </div></details>
   </div>
-  <p class="foot" id="foot">Chill House Dogana · dati in tempo reale · stime in euro</p>
+  <p class="foot" id="foot"><img src="icons/logo-256.png" alt="" width="64" height="64" style="border-radius:16px;display:block;margin:0 auto 8px">Chill Sander House · Dogana · dati in tempo reale</p>
 </section>
 
 <!-- ================= SCHEDINE ================= -->
@@ -1136,7 +1135,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610160931';
+const PAGE_VERSION='202610160958';
 try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
