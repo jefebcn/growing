@@ -371,6 +371,12 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .navycard>.k:first-of-type{padding-right:80px}
 .desk .hero .wm{width:150px;height:150px;right:-24px;top:-28px}
 .desk .hero-head{padding-right:120px}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.sheet-head h2{margin:0}
+.sheet-x{width:40px;height:40px;flex:0 0 auto;border-radius:50%;border:0;background:var(--surface-2);color:var(--fg);display:grid;place-items:center;cursor:pointer}
+.sheet-x:hover{background:var(--line)}
+.sheet-x svg{width:20px;height:20px}
+.btn-ghost{border:0;background:transparent;color:var(--muted);font:700 .92rem var(--f);padding:6px;cursor:pointer;justify-self:center}
 </style>
 </head>
 <body>
@@ -686,7 +692,10 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
   <div class="in">
     <div class="grab"></div>
-    <h2 id="sheetTitle">Aggiungi</h2>
+    <div class="sheet-head">
+      <h2 id="sheetTitle">Aggiungi</h2>
+      <button class="sheet-x" type="button" id="sheetClose" aria-label="Chiudi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
     <div class="seg full" role="group" aria-label="Tipo" id="kindSeg" style="margin-bottom:14px">
       <button type="button" data-k="versamento" aria-pressed="true">Versamento</button>
       <button type="button" data-k="spesa" aria-pressed="false">Spesa</button>
@@ -714,6 +723,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
       <div class="field" id="fVincita"><label for="aVincita">Vincita incassata (€)</label><input type="number" id="aVincita" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div>
       <div class="field" id="fNota"><label for="aNota">Nota</label><input type="text" id="aNota" maxlength="120" placeholder="es. affitto novembre, ordine Temu"></div>
       <button class="btn" type="submit" id="aBtn">Aggiungi</button>
+      <button class="btn-ghost" type="button" id="sheetCancel">Annulla</button>
       <p class="hint" id="aMsg" style="text-align:center"></p>
     </form>
   </div>
@@ -1109,11 +1119,17 @@ function openSheet(kind,pre){
   $('addForm').reset(); $('aMsg').textContent='';
   setupSheet();
   if(pre){ if(pre.importo!=null) $('aImporto').value=pre.importo; if(pre.nota) $('aNota').value=pre.nota; if(pre.chi) $('aChi').value=pre.chi; updatePot(); }
+  if(!(history.state&&history.state.sheet)){ try{ history.pushState({sheet:1},''); }catch(_){} }
   $('scrim').hidden=false; $('sheet').hidden=false;
   requestAnimationFrame(()=>{ $('scrim').classList.add('on'); $('sheet').classList.add('on'); });
   setTimeout(()=>{ const f=state.kind==='schedina'?$('aEvento'):$('aImporto'); try{ f.focus({preventScroll:true}); }catch(_){} },300);
 }
-function closeSheet(){ $('scrim').classList.remove('on'); $('sheet').classList.remove('on'); setTimeout(()=>{ $('scrim').hidden=true; $('sheet').hidden=true; },280); }
+function closeSheet(fromPop){
+  if($('sheet').hidden) return;
+  $('scrim').classList.remove('on'); $('sheet').classList.remove('on'); setTimeout(()=>{ $('scrim').hidden=true; $('sheet').hidden=true; },280);
+  if(!fromPop && history.state && history.state.sheet){ try{ history.back(); }catch(_){} }
+}
+addEventListener('popstate',()=>{ if(!$('sheet').hidden) closeSheet(true); });
 function opts(sel,list,cur){ sel.innerHTML=list.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join(''); if(list.includes(cur)) sel.value=cur; }
 function setupSheet(){
   const k=state.kind, names=allNames(), me=names.includes(state.me)?state.me:names[0];
@@ -1222,7 +1238,9 @@ document.addEventListener('click',async e=>{
   const tb=e.target.closest('#tierSeg [data-tier]'); if(tb){ state.cfg.tier=+tb.dataset.tier; renderAll(); saveCfg(); return; }
   const tm=e.target.closest('[data-temu]'); if(tm){ const nt={...(state.cfg.noTemu||{})}; if(nt[tm.dataset.temu]) delete nt[tm.dataset.temu]; else nt[tm.dataset.temu]=true; state.cfg.noTemu=nt; renderAll(); saveCfg(); return; }
 });
-$('scrim').addEventListener('click',closeSheet);
+$('scrim').addEventListener('click',()=>closeSheet());
+$('sheetClose').addEventListener('click',()=>closeSheet());
+$('sheetCancel').addEventListener('click',()=>closeSheet());
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('sheet').hidden) closeSheet(); });
 $('addForm').addEventListener('submit',submitAdd);
 $('aPTipo').addEventListener('change',setupSheet);
@@ -1242,7 +1260,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610161006';
+const PAGE_VERSION='202610161010';
 try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
