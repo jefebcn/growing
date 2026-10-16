@@ -377,6 +377,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .sheet-x:hover{background:var(--line)}
 .sheet-x svg{width:20px;height:20px}
 .btn-ghost{border:0;background:transparent;color:var(--muted);font:700 .92rem var(--f);padding:6px;cursor:pointer;justify-self:center}
+.hero-link{border:0;background:transparent;color:#fff;font:700 .78rem var(--f);text-decoration:underline;text-underline-offset:3px;padding:0 0 0 4px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -663,7 +664,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
     <p class="hint" style="margin-top:12px" id="bdNote"></p>
   </div>
 
-  <div class="sec"><h2>Le ipotesi</h2></div>
+  <div class="sec" id="ipotesi"><h2>Le ipotesi</h2></div>
   <div class="card fields">
     <div class="field"><label for="persone">Persone <output id="personeO">3</output></label><input type="range" id="persone" min="2" max="6" step="1" value="3"></div>
     <div class="field"><span class="flabel">Nomi</span><div class="names" id="names"></div></div>
@@ -928,7 +929,10 @@ function renderHome(){
   const c=state.cfg, s=cassa(), b=budget(), n=c.persone, bt=bets();
   $('hSaldo').textContent=eur2.format(s.saldo);
   const mesi=b.m>0?Math.max(0,s.saldo)/b.m:0;
-  $('hSaldoS').textContent = s.saldo>0 ? `Copre ${mesi.toLocaleString('it-IT',{maximumFractionDigits:1})} ${Math.abs(mesi-1)<0.05?'mese':'mesi'} di costi (${eur.format(b.m)} al mese)` : 'La cassa è vuota: servono versamenti';
+  const extra=b.m-c.canone;
+  $('hSaldoS').innerHTML = (s.saldo>0
+    ? `Basta per ${esc(mesi.toLocaleString('it-IT',{maximumFractionDigits:1}))} ${Math.abs(mesi-1)<0.05?'mese':'mesi'} di spese fisse: affitto ${esc(eur.format(c.canone))} + utenze e scorte ${esc(eur.format(extra))} = ${esc(eur.format(b.m))} al mese`
+    : 'La cassa è vuota: servono versamenti') + ` <button class="hero-link" type="button" data-go="budget" data-scroll="ipotesi">modifica</button>`;
   $('hIn').textContent=eur.format(s.vers+s.vinto);
   $('hOut').textContent=eur.format(s.spese+s.giocato);
   $('hInit').textContent=eur.format(b.totInit/n); $('hInitS').textContent=`${eur.format(b.totInit)} in ${n}`;
@@ -1292,7 +1296,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610161015';
+const PAGE_VERSION='202610161432';
 try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
