@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0B1C48">
+<meta name="theme-color" content="#1D1E1D">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Chill Sander">
@@ -14,30 +14,35 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <title>Chill Sander House</title>
 <style>
 /* Layout: app a colonna (max 560px), tab in basso con pulsante + centrale, fogli dal basso per aggiungere */
+/* Layout: app a colonna su telefono; su desktop barra laterale e due colonne. Colori presi dal logo: nero inchiostro e bianco, con arancio/verde/giallo come accenti */
 :root{
-  --bg:#E9EDF3; --app:#F6F8FB; --surface:#FFFFFF; --surface-2:#F0F3F8; --line:#E2E7EF;
-  --fg:#121A2B; --muted:#667085; --navy:#0B1C48; --navy-2:#13296A; --on-navy:#FFFFFF; --on-navy-2:#B9C3DD;
-  --orange:#D9740B; --teal:#2F7F6E; --teal-bright:#46A08B; --blue:#3A78D2; --yellow:#F5C140; --red:#D9534F;
-  --accent-soft:#FBEBD8; --teal-soft:#DDF0EB; --blue-soft:#E3EDFB; --red-soft:#FBE5E4; --good:#1F8A4C; --bad:#CC4440;
+  --bg:#E7E7E3; --app:#F3F3EF; --surface:#FFFFFF; --surface-2:#EDEDE8; --line:#DFDFD9;
+  --fg:#161716; --muted:#686A65; --navy:#1D1E1D; --navy-2:#2A2B2A; --on-navy:#FFFFFF; --on-navy-2:#BEBFB9;
+  --ink:#1D1E1D; --paper:#F7F7F3;
+  --orange:#E2701A; --teal:#2C7D6B; --teal-bright:#3E9C86; --blue:#3A72C8; --yellow:#F2BE3A; --red:#D24E48;
+  --accent-soft:#FBE9D6; --teal-soft:#DCEFE9; --blue-soft:#E2EBF8; --red-soft:#FAE3E1; --good:#1F8A4C; --bad:#C8423C;
   --f:"Plus Jakarta Sans","Segoe UI",system-ui,-apple-system,sans-serif;
-  --r:20px; --shadow:0 1px 2px rgba(16,24,48,.04),0 6px 18px rgba(16,24,48,.06);
+  --fd:"Bagel Fat One","Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;
+  --r:20px; --shadow:0 1px 2px rgba(20,20,18,.05),0 6px 18px rgba(20,20,18,.06);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#05070C; --app:#0B0F1A; --surface:#141B2B; --surface-2:#1B2436; --line:#26314A;
-  --fg:#E9EDF5; --muted:#9BA7BD; --navy:#16286A; --navy-2:#1F3684; --on-navy:#FFFFFF; --on-navy-2:#BCC8EC;
-  --orange:#F0963A; --teal:#55B9A2; --teal-bright:#55B9A2; --blue:#6097EC; --yellow:#F2C54B; --red:#F07470;
-  --accent-soft:#3A2915; --teal-soft:#14302A; --blue-soft:#172742; --red-soft:#3A1A1A; --good:#5CC98A; --bad:#F07470;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25); color-scheme:dark}}
+  --bg:#070707; --app:#0F100F; --surface:#181918; --surface-2:#222322; --line:#2D2E2C;
+  --fg:#EDEDE8; --muted:#A2A49E; --navy:#232423; --navy-2:#2E2F2D; --on-navy:#FFFFFF; --on-navy-2:#C2C3BD;
+  --ink:#232423; --paper:#181918;
+  --orange:#F08A3A; --teal:#55B9A2; --teal-bright:#55B9A2; --blue:#6B9BE6; --yellow:#F2C54B; --red:#F07470;
+  --accent-soft:#3A2915; --teal-soft:#14302A; --blue-soft:#172540; --red-soft:#3A1A1A; --good:#5CC98A; --bad:#F07470;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#05070C; --app:#0B0F1A; --surface:#141B2B; --surface-2:#1B2436; --line:#26314A;
-  --fg:#E9EDF5; --muted:#9BA7BD; --navy:#16286A; --navy-2:#1F3684; --on-navy:#FFFFFF; --on-navy-2:#BCC8EC;
-  --orange:#F0963A; --teal:#55B9A2; --teal-bright:#55B9A2; --blue:#6097EC; --yellow:#F2C54B; --red:#F07470;
-  --accent-soft:#3A2915; --teal-soft:#14302A; --blue-soft:#172742; --red-soft:#3A1A1A; --good:#5CC98A; --bad:#F07470;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25); color-scheme:dark}
+  --bg:#070707; --app:#0F100F; --surface:#181918; --surface-2:#222322; --line:#2D2E2C;
+  --fg:#EDEDE8; --muted:#A2A49E; --navy:#232423; --navy-2:#2E2F2D; --on-navy:#FFFFFF; --on-navy-2:#C2C3BD;
+  --ink:#232423; --paper:#181918;
+  --orange:#F08A3A; --teal:#55B9A2; --teal-bright:#55B9A2; --blue:#6B9BE6; --yellow:#F2C54B; --red:#F07470;
+  --accent-soft:#3A2915; --teal-soft:#14302A; --blue-soft:#172540; --red-soft:#3A1A1A; --good:#5CC98A; --bad:#F07470;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3); color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -216,7 +221,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .navycard .k{color:var(--on-navy-2);font-size:.82rem;font-weight:600}
 .navycard .v{font-size:2.3rem;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
 .nc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
-.nc-grid div{background:rgba(255,255,255,.08);border-radius:12px;padding:9px 8px;min-width:0}
+.nc-grid>div{background:rgba(255,255,255,.08);border-radius:12px;padding:9px 8px;min-width:0}
 .nc-grid .k{font-size:.66rem}
 .nc-grid .vv{font-weight:800;font-size:.95rem;font-variant-numeric:tabular-nums;white-space:nowrap}
 
@@ -298,6 +303,74 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .foot{color:var(--muted);font-size:.76rem;margin-top:24px;text-align:center}
 .banner{margin-bottom:12px;padding:12px 14px;border-radius:14px;background:var(--accent-soft);font-size:.86rem}
 @media (max-width:380px){.app{padding-inline:12px}.qa .ic{width:34px;height:34px}.nc-grid{grid-template-columns:repeat(2,1fr)}.mini .v{font-size:1rem}}
+
+/* ---------- stile dal logo ---------- */
+.ttl{font-family:var(--fd);font-weight:400;letter-spacing:.01em;font-size:1.18rem}
+.tab-head h1{font-family:var(--fd);font-weight:400;letter-spacing:.01em;font-size:1.9rem}
+.hero .v,.navycard .v{font-family:var(--fd);font-weight:400;letter-spacing:.01em}
+.hero,.navycard{background:var(--ink);box-shadow:0 12px 30px rgba(0,0,0,.22);outline:2px solid rgba(255,255,255,.88);outline-offset:-8px}
+.hero .wm,.navycard .wm{position:absolute;right:-20px;top:-24px;width:118px;height:118px;border-radius:50%;background:url(icons/logo-256.png) center/cover;transform:rotate(12deg);opacity:.95;pointer-events:none}
+.navycard .wm{width:104px;height:104px;right:-18px;top:-22px}
+.hero>.wm,.navycard>.wm{position:absolute}
+.hero .k,.hero .s,.hero .v,.hero>div{position:relative}
+.nc-grid>div{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12)}
+.nav .fab{background:var(--ink);box-shadow:0 8px 20px rgba(0,0,0,.3);outline:2px solid #fff;outline-offset:-6px}
+.qa .ic{box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.sec h2{display:flex;align-items:center;gap:8px}
+.sec h2::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 2px var(--app),0 0 0 4px var(--ink);flex:0 0 auto}
+.pill{background:var(--ink);color:#fff}
+.btn{background:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff;box-shadow:none}
+.chip.ink{background:var(--ink);color:#fff}
+.fab-label,.nav-brand{display:none}
+/* affitto */
+.rent{display:grid;gap:12px}
+.rent-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.rent-top .big{font-family:var(--fd);font-size:1.7rem;line-height:1}
+.rent .track{height:10px;border-radius:5px;background:var(--surface-2);overflow:hidden}
+.rent .track i{display:block;height:100%;border-radius:5px;background:var(--teal);transition:width .3s ease}
+.rent .note{font-size:.84rem;color:var(--muted)}
+.rent .btn{padding:12px 14px}
+/* ---------- desktop ---------- */
+.desk body{background:var(--bg)}
+.desk .app{max-width:none;margin:0 0 0 264px;min-height:100vh;padding:24px clamp(24px,3vw,48px) 60px;background:var(--app)}
+.desk .top{max-width:1240px;margin:0 auto;padding-top:6px}
+.desk .tab{max-width:1240px;margin:0 auto}
+.desk .home-grid,.desk .split{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:start}
+.desk .col>.sec:first-child{margin-top:0}
+.desk .col>.mini3:first-child{margin-top:0}
+.desk .answers{grid-template-columns:1fr 1fr;align-items:start}
+.desk .hero .v{font-size:3.4rem}
+.desk .nav{position:fixed;left:0;top:0;bottom:0;right:auto;width:264px;justify-content:stretch}
+.desk .nav .bar{max-width:none;height:100%;display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:22px 16px;border-top:0;border-right:1px solid var(--line);background:var(--surface);backdrop-filter:none}
+.desk .nav-brand{display:flex;align-items:center;gap:12px;padding:4px 6px 18px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.desk .nav-brand img{width:56px;height:56px;border-radius:16px}
+.desk .nav-brand b{display:block;font-family:var(--fd);font-weight:400;font-size:1.05rem;line-height:1.1}
+.desk .nav-brand span{font-size:.76rem;color:var(--muted);font-weight:600}
+.desk .nav button{display:flex;align-items:center;gap:12px;justify-items:start;font-size:.95rem;padding:11px 12px;border-radius:12px;text-align:left}
+.desk .nav button:hover{background:var(--surface-2);color:var(--fg)}
+.desk .nav button[aria-current="page"]{background:var(--ink);color:#fff}
+.desk .nav button svg{width:22px;height:22px}
+.desk .nav .fab-wrap{order:-1;margin:6px 0 12px;background:var(--orange);color:#fff;justify-content:center;padding:12px;border-radius:14px;box-shadow:0 6px 16px rgba(226,112,26,.35)}
+.desk .nav .fab-wrap:hover{background:var(--orange);filter:brightness(1.05);color:#fff}
+.desk .nav .fab{width:auto;height:auto;margin:0;background:transparent;box-shadow:none;outline:0;border:0;border-radius:0}
+.desk .nav .fab svg{width:20px;height:20px}
+.desk .fab-label{display:inline;font-weight:800}
+.desk .nav-brand{order:-2}
+.desk .sheet{top:0;align-items:center;transform:translateY(16px) scale(.98);opacity:0;transition:transform .22s ease,opacity .22s ease}
+.desk .sheet.on{transform:none;opacity:1}
+.desk .sheet .in{border-radius:24px;max-width:520px;max-height:88vh}
+.desk .grab{display:none}
+.desk .toast{bottom:28px;left:calc(50% + 132px)}
+.desk .qa button{padding:14px 6px 12px}
+.desk .mini .v{font-size:1.3rem}
+@media (hover:hover){.card,.mini,.qa button{transition:transform .15s ease,box-shadow .15s ease}.qa button:hover,.mini:hover{transform:translateY(-2px)}}
+.hero-head{display:flex;align-items:center;gap:12px;padding-right:86px;flex-wrap:wrap}
+.hero .s{padding-right:70px}
+.navycard .nc-sub{padding-right:76px}
+.navycard>.k:first-of-type{padding-right:80px}
+.desk .hero .wm{width:150px;height:150px;right:-24px;top:-28px}
+.desk .hero-head{padding-right:120px}
 </style>
 </head>
 <body>
@@ -309,6 +382,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
   </div>
   <div class="top-r">
     <label class="who-chip" for="meSel" title="Chi sei? Serve a precompilare i moduli"><span aria-hidden="true">👤</span><select id="meSel" aria-label="Chi sei"></select></label>
+    <button class="icon-btn" type="button" id="layoutBtn" aria-label="Cambia vista" hidden></button>
     <button class="icon-btn" type="button" id="shareBtn" aria-label="Copia il link del sito"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 10a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg></button>
   </div>
 </header>
@@ -316,9 +390,10 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 
 <!-- ================= HOME ================= -->
 <section class="tab" data-tab="home">
+<div class="home-grid"><div class="col">
   <div class="hero">
-    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+    <span class="wm" aria-hidden="true"></span>
+    <div class="hero-head">
       <div class="k">Saldo cassa comune</div>
       <span class="live" id="liveDot" style="color:var(--on-navy-2)"><i></i><span id="liveTxt">collegamento…</span></span>
     </div>
@@ -338,6 +413,9 @@ input[type=range]{width:100%;accent-color:var(--teal)}
     <button type="button" data-add="prestito"><span class="ic" style="background:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></span>Prestito</button>
   </div>
 
+  <div class="sec"><h2 id="rentTitle">Affitto del mese</h2><span class="chip" id="rentChip"></span></div>
+  <div class="card rent" id="rentCard"></div>
+
   <div class="sec"><h2>Le quote</h2><button class="link-btn" type="button" data-go="budget" data-scroll="receipt">Dettaglio</button></div>
   <div class="mini3">
     <button class="mini hot" type="button" data-go="budget" data-scroll="receipt"><div class="k">Primo mese a testa</div><div class="v" id="hInit">–</div><div class="s" id="hInitS"></div></button>
@@ -351,7 +429,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
       <div class="ring" id="hRing"></div>
       <div class="kv">
         <div><div class="k">Bilancio</div><div class="v big" id="hBetNet">–</div></div>
-        <div><div class="k">Saldo Chill House</div><div class="v big" id="hBetSaldo">–</div></div>
+        <div><div class="k">Saldo cassa</div><div class="v big" id="hBetSaldo">–</div></div>
         <div><div class="k">Giocato</div><div class="v" id="hBetG">–</div></div>
         <div><div class="k">Vinto</div><div class="v" id="hBetV">–</div></div>
       </div>
@@ -359,6 +437,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
     <div class="list" id="hBets" style="margin-top:6px"></div>
   </div>
 
+</div><div class="col">
   <div class="sec"><h2>Conti tra di noi</h2><button class="link-btn" type="button" data-go="conti" data-scroll="prestiti">Prestiti</button></div>
   <div class="card stack" id="hDebts"></div>
 
@@ -374,6 +453,8 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 
   <div class="sec"><h2>Ultimi movimenti</h2><button class="link-btn" type="button" data-go="conti">Tutti</button></div>
   <div class="card"><div class="list" id="hFeed"></div></div>
+
+</div></div>
 
   <div class="sec" id="risposte"><h2>La spiegazione, punto per punto</h2></div>
   <p class="muted" style="font-size:.88rem;margin:-4px 0 12px">Le risposte alle domande del progetto. I numeri si aggiornano da soli con le ipotesi del Budget.</p>
@@ -446,11 +527,12 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 <!-- ================= SCHEDINE ================= -->
 <section class="tab" data-tab="schedine" hidden>
   <div class="tab-head"><div class="eyebrow">Il nostro storico</div><h1>Schedine</h1><p>Ogni giocata, il suo esito e il bilancio vero. Le schedine in attesa le chiudi con un tocco.</p></div>
+<div class="split"><div class="col">
   <div class="navycard">
-    <div class="blob b1" style="opacity:.9"></div>
+    <span class="wm" aria-hidden="true"></span>
     <div class="k">Bilancio schedine</div>
     <div class="v" id="sNet">–</div>
-    <div class="k" id="sNetS" style="margin-top:2px">&nbsp;</div>
+    <div class="k nc-sub" id="sNetS" style="margin-top:2px">&nbsp;</div>
     <div class="nc-grid">
       <div><div class="k">Giocate</div><div class="vv" id="sN">–</div></div>
       <div><div class="k">Vinte</div><div class="vv" id="sWin">–</div></div>
@@ -471,6 +553,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
   <div class="card" style="margin-top:10px"><div class="list" id="betList"></div></div>
   <p class="hint" style="margin-top:8px;text-align:center">Le schedine in attesa si chiudono con Vinta o Persa. Tocca una schedina chiusa per modificarla.</p>
 
+</div><div class="col">
   <div class="sec" id="sim"><h2>Il simulatore</h2></div>
   <div class="card stack">
     <p class="muted" style="font-size:.88rem">Imposta come giocate e guarda quante volte, statisticamente, le schedine coprono davvero l'obiettivo.</p>
@@ -496,11 +579,13 @@ input[type=range]{width:100%;accent-color:var(--teal)}
     <div class="facts" id="simFacts"></div>
     <div class="warnbox"><b>Perché nessuna cifra funziona:</b> con un margine del <span id="wMargin">6%</span> per evento, una multipla da <span id="wLegs">4</span> restituisce in media <b id="wRtp">78</b> centesimi per ogni euro giocato.</div>
   </div>
+</div></div>
 </section>
 
 <!-- ================= CONTI ================= -->
 <section class="tab" data-tab="conti" hidden>
   <div class="tab-head"><div class="eyebrow">Cassa e prestiti</div><h1>Conti</h1><p>Versamenti, spese e schedine della cassa comune, e i prestiti tra di noi.</p></div>
+<div class="split"><div class="col">
   <div class="mini3">
     <div class="mini"><div class="k">Saldo cassa</div><div class="v" id="cSaldo">–</div></div>
     <div class="mini"><div class="k">Versato</div><div class="v" id="cVers">–</div></div>
@@ -519,6 +604,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
   <div class="card" style="margin-top:10px"><div class="list" id="movList"></div></div>
   <p class="hint" style="margin-top:8px;text-align:center">Tocca un movimento per eliminarlo.</p>
 
+</div><div class="col">
   <div class="sec" id="prestiti"><h2>Prestiti e debiti</h2><button class="pill" type="button" data-add="prestito">+ Prestito</button></div>
   <div class="card stack">
     <div class="flabel">Chi deve dare, chi deve ricevere</div>
@@ -532,11 +618,13 @@ input[type=range]{width:100%;accent-color:var(--teal)}
   <div class="card" style="margin-top:12px">
     <form class="todo-add" id="personForm" autocomplete="off" style="margin:0"><input type="text" id="personIn" maxlength="20" placeholder="Aggiungi una persona ai prestiti" aria-label="Nuova persona"><button class="mini-btn ok" type="submit">Aggiungi</button></form>
   </div>
+</div></div>
 </section>
 
 <!-- ================= BUDGET ================= -->
 <section class="tab" data-tab="budget" hidden>
   <div class="tab-head"><div class="eyebrow">Arredo e quote</div><h1>Budget</h1><p>Scegli il livello, spunta quello che avete già o avete comprato e regola le ipotesi: tutto il sito si aggiorna per tutti.</p></div>
+<div class="split"><div class="col">
   <div class="card">
     <div class="arr-top">
       <div class="seg" role="group" aria-label="Livello di spesa" id="tierSeg">
@@ -551,6 +639,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
     <div class="tip"><b>Temu per decor e luci, usato per i pezzi grossi.</b> Divano, TV e frigo conviene prenderli su Subito o Marketplace.</div>
   </div>
 
+</div><div class="col">
   <div class="sec" id="receipt"><h2>Il primo mese</h2></div>
   <div class="card">
     <div class="rbig"><div><div class="k">Da mettere a testa per partire</div><div class="v" id="phInit">–</div></div><div class="v2" id="rTot">–</div></div>
@@ -576,15 +665,17 @@ input[type=range]{width:100%;accent-color:var(--teal)}
     <div class="field"><label for="allacci">Allacci una tantum <output id="allacciO">0 €</output></label><input type="range" id="allacci" min="0" max="500" step="10" value="0"></div>
     <label style="display:flex;gap:10px;align-items:center;font-weight:700;font-size:.88rem"><input type="checkbox" id="agenzia" style="width:20px;height:20px;accent-color:var(--teal)">C'è un'agenzia (provvigione ≈ 1 mese)</label>
   </div>
+</div></div>
 </section>
 </div>
 
 <!-- bottom nav -->
 <nav class="nav" aria-label="Sezioni">
   <div class="bar">
+    <div class="nav-brand"><img src="icons/logo-256.png" alt="" width="64" height="64"><div><b>Chill Sander House</b><span>Dogana · San Marino</span></div></div>
     <button type="button" data-go="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-5.5h-5V21H5a1 1 0 0 1-1-1z"/></svg>Home</button>
     <button type="button" data-go="schedine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m12 7 3 2.2-1.2 3.6h-3.6L9 9.2z"/></svg>Schedine</button>
-    <button type="button" class="fab-wrap" data-add="" aria-label="Aggiungi"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+    <button type="button" class="fab-wrap" data-add="" aria-label="Aggiungi"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span class="fab-label">Aggiungi</span></button>
     <button type="button" data-go="conti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg>Conti</button>
     <button type="button" data-go="budget"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6.4 6.4M12 12H3"/></svg>Budget</button>
   </div>
@@ -823,6 +914,7 @@ function renderHome(){
   $('hInit').textContent=eur.format(b.totInit/n); $('hInitS').textContent=`${eur.format(b.totInit)} in ${n}`;
   $('hMonth').textContent=eur.format(b.m/n); $('hMonthS').textContent=`${eur.format(b.m)} in ${n}`;
   $('hMesi').textContent=mesi.toLocaleString('it-IT',{maximumFractionDigits:1});
+  renderRent(s,b);
   // schedine
   $('hRing').innerHTML=ring(bt.rate,bt.settled.length);
   $('hBetNet').textContent=sgn(bt.net,eur); $('hBetNet').className='v big '+(bt.net<0?'bad':bt.net>0?'good':'');
@@ -841,6 +933,19 @@ function renderHome(){
   const feed=[...state.mov.map(x=>({ts:x.ts,html:movRow(x,false)})), ...state.debts.map(d=>({ts:d.ts,html:debtRow(d,false)}))].sort((a,b)=>b.ts-a.ts).slice(0,5);
   $('hFeed').innerHTML = feed.length ? feed.map(f=>f.html).join('') : `<div class="empty">Ancora nessun movimento.</div>`;
   renderExplain(b,bt,pairs);
+}
+function renderRent(s,b){
+  const now=new Date(), m=now.getMonth(), y=now.getFullYear(), c=state.cfg, n=c.persone;
+  const mese=now.toLocaleDateString('it-IT',{month:'long'});
+  const paid=state.mov.filter(x=>x.tipo==='spesa'&&/affitt/i.test(x.nota||'')&&new Date(x.ts).getMonth()===m&&new Date(x.ts).getFullYear()===y).reduce((t,x)=>t+(+x.importo||0),0);
+  const due=c.canone, left=Math.max(0,due-paid), w=due>0?Math.min(100,100*paid/due):0;
+  $('rentTitle').textContent='Affitto di '+mese;
+  const chip=$('rentChip'); chip.className='chip '+(left<=0.5?'vinta':'attesa'); chip.textContent=left<=0.5?'pagato':'da pagare';
+  let note;
+  if(left<=0.5) note=`Pagati ${eur.format(paid)}. Prossimo affitto a inizio ${new Date(y,m+1,1).toLocaleDateString('it-IT',{month:'long'})}.`;
+  else if(s.saldo>=left) note=`La cassa basta: dopo l'affitto restano ${eur.format(s.saldo-left)}.`;
+  else note=`In cassa mancano ${eur.format(left-Math.max(0,s.saldo))}: ${eur.format((left-Math.max(0,s.saldo))/n)} a testa.`;
+  $('rentCard').innerHTML=`<div class="rent-top"><div><div class="hint">${left<=0.5?'Pagato':'Da pagare'}</div><div class="big">${eur.format(left<=0.5?paid:left)}</div></div><div class="hint" style="text-align:right">${eur.format(due/n)} a testa<br>su ${eur.format(due)} al mese</div></div><div class="track"><i style="width:${w.toFixed(0)}%"></i></div><p class="note">${esc(note)}</p>${left>0.5?`<button class="btn" type="button" data-rent="1">Segna affitto di ${esc(mese)} pagato</button>`:''}`;
 }
 function peopleHtml(s,b){
   const ps=people(), quota=b.totInit/ps.length;
@@ -999,10 +1104,11 @@ function go(tab,scrollId){
 let toastT; function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2400); }
 
 /* ---------- foglio aggiungi ---------- */
-function openSheet(kind){
+function openSheet(kind,pre){
   state.kind=kind||state.kind||'versamento'; state.esito='attesa';
   $('addForm').reset(); $('aMsg').textContent='';
   setupSheet();
+  if(pre){ if(pre.importo!=null) $('aImporto').value=pre.importo; if(pre.nota) $('aNota').value=pre.nota; if(pre.chi) $('aChi').value=pre.chi; updatePot(); }
   $('scrim').hidden=false; $('sheet').hidden=false;
   requestAnimationFrame(()=>{ $('scrim').classList.add('on'); $('sheet').classList.add('on'); });
   setTimeout(()=>{ const f=state.kind==='schedina'?$('aEvento'):$('aImporto'); try{ f.focus({preventScroll:true}); }catch(_){} },300);
@@ -1093,6 +1199,7 @@ function setLive(){
 /* ---------- eventi ---------- */
 document.addEventListener('click',async e=>{
   const g=e.target.closest('[data-go]'); if(g){ go(g.dataset.go,g.dataset.scroll); return; }
+  if(e.target.closest('[data-rent]')){ openSheet('spesa',{importo:state.cfg.canone,nota:'Affitto di '+new Date().toLocaleDateString('it-IT',{month:'long'}),chi:'Cassa'}); return; }
   const a=e.target.closest('[data-add]'); if(a){ openSheet(a.dataset.add||(document.querySelector('.tab:not([hidden])')?.dataset.tab==='schedine'?'schedina':'versamento')); return; }
   const del=e.target.closest('[data-del]');
   if(del){ if(del.dataset.armed!=='1'){ del.dataset.armed='1'; del.textContent='Conferma'; del.classList.add('no'); setTimeout(()=>{ if(del.isConnected){ del.dataset.armed=''; del.textContent='Elimina'; del.classList.remove('no'); } },3000); return; }
@@ -1135,7 +1242,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610160958';
+const PAGE_VERSION='202610161006';
 try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
@@ -1151,6 +1258,22 @@ if(isStandalone){
   let lastTouch=0;
   document.addEventListener('touchend',e=>{ const now=Date.now(); if(now-lastTouch<300 && !e.target.closest('input,select,textarea')) e.preventDefault(); lastTouch=now; },{passive:false});
 }
+
+/* ---------- vista desktop / mobile ---------- */
+const ICON_DESK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>';
+const ICON_MOB='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>';
+function applyLayout(){
+  const wide=innerWidth>=700, mode=ls.get('chill_layout')||'auto';
+  const desk = wide && (mode==='desktop' || (mode==='auto' && innerWidth>=980));
+  document.documentElement.classList.toggle('desk',desk);
+  const btn=$('layoutBtn'); btn.hidden=!wide;
+  btn.innerHTML = desk?ICON_MOB:ICON_DESK;
+  btn.setAttribute('aria-label', desk?'Passa alla vista mobile':'Passa alla vista desktop'); btn.title=btn.getAttribute('aria-label');
+  return desk;
+}
+$('layoutBtn').addEventListener('click',()=>{ const desk=document.documentElement.classList.contains('desk'); ls.set('chill_layout',desk?'mobile':'desktop'); applyLayout(); toast(desk?'Vista mobile':'Vista desktop'); });
+let rsz; addEventListener('resize',()=>{ clearTimeout(rsz); rsz=setTimeout(applyLayout,120); });
+applyLayout();
 
 /* ---------- avvio ---------- */
 { const h=(location.hash||'').slice(1); if(TABS.includes(h)) go(h); }
