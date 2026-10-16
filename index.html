@@ -447,6 +447,9 @@ input[type=range]{width:100%;accent-color:var(--teal)}
   <div class="sec"><h2>Conti tra di noi</h2><button class="link-btn" type="button" data-go="conti" data-scroll="prestiti">Prestiti</button></div>
   <div class="card stack" id="hDebts"></div>
 
+  <div class="sec"><h2>Soldi in custodia</h2><button class="link-btn" type="button" data-custodia="1">+ Aggiungi</button></div>
+  <div class="card" id="hCust"></div>
+
   <div class="sec"><h2>Chi ha versato</h2><button class="link-btn" type="button" data-add="versamento">+ Versamento</button></div>
   <div class="card"><div class="pp" id="hPeople"></div></div>
 
@@ -522,6 +525,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
         <li><b>Ho pagato io per il gruppo</b>: per esempio l'ordine Temu pagato da uno solo, diviso tra chi scegli.</li>
         <li><b>Prestito</b> a una persona e <b>restituzione</b> di un debito.</li>
         <li><b>Debito già esistente</b>: per riportare i conti che avevamo sulle note.</li>
+        <li><b>Soldi in custodia</b>: quando uno tiene soldi di un altro (per esempio Simone ti manda 100 € su PayPal e non li avete ancora spesi). Restano in evidenza finché non li segni "restituiti" o "messi in cassa".</li>
       </ul>
       <p>Il sito mostra chi deve quanto a chi e, se i debiti si incrociano, il modo più rapido per andare in pari.</p>
       <div id="ex6"></div>
@@ -618,6 +622,8 @@ input[type=range]{width:100%;accent-color:var(--teal)}
     <div class="flabel" style="margin-top:6px">Per andare in pari</div>
     <div class="stack" id="transfers"></div>
   </div>
+  <div class="sec"><h2>Soldi in custodia</h2><button class="pill" type="button" data-custodia="1">+ Custodia</button></div>
+  <div class="card" id="cCust"></div>
   <div class="sec"><h3>Storico prestiti</h3></div>
   <div class="card"><div class="list" id="debtList"></div></div>
   <p class="hint" style="margin-top:8px;text-align:center">Tocca un prestito per eliminarlo.</p>
@@ -704,13 +710,14 @@ input[type=range]{width:100%;accent-color:var(--teal)}
     </div>
     <form class="fields" id="addForm" autocomplete="off">
       <div class="field" id="fEvento"><label for="aEvento">Partita o evento</label><input type="text" id="aEvento" maxlength="100" placeholder="es. Juve–Inter, vittoria Juve"></div>
-      <div class="field" id="fPTipo"><label for="aPTipo">Che cosa</label><select id="aPTipo"><option value="anticipo">Ho pagato io per il gruppo</option><option value="prestito">Prestito a una persona</option><option value="rimborso">Restituzione di un debito</option><option value="riporto">Debito già esistente</option></select></div>
+      <div class="field" id="fPTipo"><label for="aPTipo">Che cosa</label><select id="aPTipo"><option value="anticipo">Ho pagato io per il gruppo</option><option value="custodia">Tengo soldi di un altro (PayPal, contanti…)</option><option value="prestito">Prestito a una persona</option><option value="rimborso">Restituzione di un debito</option><option value="riporto">Debito già esistente</option></select></div>
       <div class="two">
         <div class="field" id="fChi"><label for="aChi" id="aChiL">Chi</label><select id="aChi"></select></div>
         <div class="field" id="fA"><label for="aA" id="aAL">A chi</label><select id="aA"></select></div>
         <div class="field"><label for="aImporto" id="aImportoL">Importo (€)</label><input type="number" id="aImporto" min="0" step="0.01" inputmode="decimal" placeholder="0,00" required></div>
         <div class="field" id="fQuota"><label for="aQuota">Quota</label><input type="number" id="aQuota" min="1" step="0.01" inputmode="decimal" placeholder="es. 2,20"></div>
       </div>
+      <div class="field" id="fDove"><label for="aDove">Dove sono</label><select id="aDove"><option>PayPal</option><option>Contanti</option><option>Conto in banca</option><option>Revolut</option><option>Satispay</option><option>Altro</option></select></div>
       <div class="field" id="fParti"><span class="flabel">Diviso tra</span><div class="seg" id="aParti" style="border-radius:14px"></div></div>
       <div class="field" id="fEsito"><span class="flabel">Esito</span>
         <div class="seg full" role="group" aria-label="Esito" id="esitoSeg">
@@ -829,6 +836,7 @@ function debtBalances(){
   const bal={}; const add=(n,v)=>{ if(!n) return; bal[n]=(bal[n]||0)+v; };
   state.amici.forEach(n=>{bal[n]=0;});
   for(const d of state.debts){
+    if(d.chiuso) continue;
     const c=Math.round((+d.importo||0)*100);
     if(d.tipo==='anticipo'){ const parts=(d.parti||[]).filter(Boolean); if(!parts.length) continue; add(d.da,c); parts.forEach(p=>add(p,-c/parts.length)); }
     else { add(d.da,c); add(d.a,-c); }
@@ -839,6 +847,7 @@ function pairDebts(){
   const m={};
   const owe=(debtor,creditor,c)=>{ if(!debtor||!creditor||debtor===creditor) return; const [x,y]=[debtor,creditor].sort(); const k=x+'\u0001'+y; m[k]=(m[k]||0)+(debtor===x?c:-c); };
   for(const d of state.debts){
+    if(d.chiuso) continue;
     const c=Math.round((+d.importo||0)*100);
     if(d.tipo==='anticipo'){ const parts=(d.parti||[]).filter(Boolean); parts.forEach(p=>owe(p,d.da,c/parts.length)); }
     else owe(d.a,d.da,c);
@@ -874,6 +883,7 @@ const IC={
   spesa:['var(--blue-soft)','var(--navy)','<path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/>'],
   schedina:['var(--accent-soft)','var(--orange)','<circle cx="12" cy="12" r="9"/><path d="m12 7 3 2.2-1.2 3.6h-3.6L9 9.2z"/>'],
   prestito:['var(--blue-soft)','var(--blue)','<path d="M7 7h11l-3-3M17 17H6l3 3"/>'],
+  custodia:['var(--accent-soft)','var(--ink)','<path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v4"/><rect x="3.5" y="8" width="17" height="11" rx="2.5"/><circle cx="16" cy="13.5" r="1.3"/>'],
 };
 const icon = k => { const [bg,fg,p]=IC[k]||IC.prestito; return `<span class="ri" style="background:${bg};color:${fg}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg></span>`; };
 const avatar = (n,i) => `<span class="pav" style="background:${COLORS[i%COLORS.length]}">${esc((n||'?').trim().charAt(0).toUpperCase())}</span>`;
@@ -935,6 +945,7 @@ function renderHome(){
   // debiti
   const pairs=pairDebts();
   $('hDebts').innerHTML = pairs.length ? pairs.slice(0,4).map(p=>`<div class="transfer"><div class="tt"><b>${esc(p.from)}</b> deve a <b>${esc(p.to)}</b></div><b class="amt">${eur2.format(p.c/100)}</b></div>`).join('') : `<div class="ok-line">Siete tutti in pari.</div>`;
+  $('hCust').innerHTML=custHtml();
   // persone
   $('hPeople').innerHTML = peopleHtml(s,b);
   // todo
@@ -1041,9 +1052,21 @@ function renderSim(){
 
 /* ---------- render: conti ---------- */
 function debtRow(d,withDel){
+  if(d.tipo==='custodia'){
+    const what = d.chiuso ? (d.chiusoCome==='in_cassa'?`${esc(d.a)} ha messo in cassa i soldi di ${esc(d.da)}`:`${esc(d.a)} ha restituito i soldi a ${esc(d.da)}`) : `${esc(d.a)} tiene soldi di ${esc(d.da)}`;
+    const open=withDel&&state.rowOpen===d.id;
+    return `<div class="row${withDel?' tap':''}"${withDel?` data-open="${esc(d.id)}"`:''} style="${d.chiuso?'opacity:.7':''}">${icon('custodia')}<div class="rm"><div class="rt">${what}</div><div class="rs">${day(d.ts)}${d.dove?' · '+esc(d.dove):''}${d.nota?' · '+esc(d.nota):''}</div></div><div class="ra">${eur2.format(+d.importo||0)}</div>${open?`<div class="x">${d.chiuso&&d.chiusoCome==='restituiti'?`<button class="mini-btn ghost" type="button" data-cust-reopen="${esc(d.id)}">Riapri</button>`:''}<button class="mini-btn no" type="button" data-deldebt="${esc(d.id)}">Elimina</button><button class="mini-btn ghost" type="button" data-close="1">Chiudi</button></div>`:''}</div>`;
+  }
   const what = d.tipo==='anticipo' ? `${esc(d.da)} ha pagato per ${esc((d.parti||[]).join(', '))}` : d.tipo==='prestito' ? `${esc(d.da)} ha prestato a ${esc(d.a)}` : d.tipo==='rimborso' ? `${esc(d.da)} ha restituito a ${esc(d.a)}` : `${esc(d.a)} deve a ${esc(d.da)}`;
   const open=withDel&&state.rowOpen===d.id;
   return `<div class="row${withDel?' tap':''}"${withDel?` data-open="${esc(d.id)}"`:''}>${icon('prestito')}<div class="rm"><div class="rt">${what}</div><div class="rs">${day(d.ts)}${d.nota?' · '+esc(d.nota):''}</div></div><div class="ra">${eur2.format(+d.importo||0)}</div>${open?`<div class="x"><button class="mini-btn no" type="button" data-deldebt="${esc(d.id)}">Elimina</button><button class="mini-btn ghost" type="button" data-close="1">Chiudi</button></div>`:''}</div>`;
+}
+function custHtml(){
+  const open=state.debts.filter(d=>d.tipo==='custodia'&&!d.chiuso);
+  if(!open.length) return `<div class="empty">Nessuno tiene soldi di altri.<br><span style="font-size:.82rem">Esempio: Simone ti manda 100 € su PayPal ma non li spendete subito? Segnalo qui così non ve lo scordate.</span></div>`;
+  const tot={}; open.forEach(d=>{ tot[d.a]=(tot[d.a]||0)+(+d.importo||0); });
+  return `<div class="list">${open.map(d=>`<div class="row">${icon('custodia')}<div class="rm"><div class="rt">${esc(d.a)} tiene i soldi di ${esc(d.da)}</div><div class="rs">${esc(d.dove||'—')} · dal ${day(d.ts)}${d.nota?' · '+esc(d.nota):''}</div></div><div class="ra">${eur2.format(+d.importo||0)}</div><div class="x"><button class="mini-btn ok" type="button" data-cust="in_cassa" data-id="${esc(d.id)}">Messi in cassa</button><button class="mini-btn" type="button" data-cust="restituiti" data-id="${esc(d.id)}">Restituiti</button></div></div>`).join('')}</div>`
+   + `<p class="hint" style="margin-top:8px">${Object.entries(tot).map(([n,v])=>`${esc(n)} tiene ${eur2.format(v)}`).join(' · ')}. Contano nei conti tra di voi finché non li segni.</p>`;
 }
 function renderConti(){
   const s=cassa(), b=budget();
@@ -1061,6 +1084,7 @@ function renderConti(){
   const key=x=>x.map(t=>t.from+'>'+t.to+':'+Math.round(t.c)).join('|');
   if(tr.length && key(tr)!==key(pairs)) html+=`<p class="hint">Col minor numero di passaggi:</p>`+tr.map(t=>`<div class="transfer"><div class="tt"><b>${esc(t.from)}</b> dà a <b>${esc(t.to)}</b></div><b class="amt">${eur2.format(t.c/100)}</b></div>`).join('');
   $('transfers').innerHTML=html;
+  $('cCust').innerHTML=custHtml();
   $('debtList').innerHTML = state.debts.length ? state.debts.map(d=>debtRow(d,true)).join('') : `<div class="empty">Nessun prestito registrato.</div>`;
 }
 
@@ -1117,6 +1141,7 @@ let toastT; function toast(msg){ const t=$('toast'); t.textContent=msg; t.classL
 function openSheet(kind,pre){
   state.kind=kind||state.kind||'versamento'; state.esito='attesa';
   $('addForm').reset(); $('aMsg').textContent='';
+  if(pre&&pre.ptipo) $('aPTipo').value=pre.ptipo;
   setupSheet();
   if(pre){ if(pre.importo!=null) $('aImporto').value=pre.importo; if(pre.nota) $('aNota').value=pre.nota; if(pre.chi) $('aChi').value=pre.chi; updatePot(); }
   if(!(history.state&&history.state.sheet)){ try{ history.pushState({sheet:1},''); }catch(_){} }
@@ -1140,18 +1165,19 @@ function setupSheet(){
   $('fEvento').hidden=k!=='schedina'; $('fQuota').hidden=k!=='schedina'; $('fEsito').hidden=k!=='schedina';
   $('fPTipo').hidden=k!=='prestito';
   const anti=k==='prestito'&&pt==='anticipo';
-  $('fA').hidden=!(k==='prestito'&&!anti); $('fParti').hidden=!anti;
+  $('fA').hidden=!(k==='prestito'&&!anti); $('fParti').hidden=!anti; $('fDove').hidden=!(k==='prestito'&&pt==='custodia');
   $('fNota').hidden=false;
   $('aImportoL').textContent = k==='schedina'?'Giocato (€)':'Importo (€)';
   if(k==='versamento'){ $('aChiL').textContent='Chi versa'; opts($('aChi'),people(),me); }
   else if(k==='spesa'){ $('aChiL').textContent='Pagato con'; opts($('aChi'),['Cassa',...people()],'Cassa'); $('aNota').placeholder='es. affitto novembre, bolletta luce'; }
   else if(k==='schedina'){ $('aChiL').textContent='Soldi da'; opts($('aChi'),['Cassa',...people()],'Cassa'); $('aNota').placeholder='facoltativa'; }
   else {
-    $('aChiL').textContent={anticipo:'Chi ha pagato',prestito:'Chi presta',rimborso:'Chi restituisce',riporto:'Chi deve ricevere'}[pt];
-    $('aAL').textContent={prestito:'A chi',rimborso:'A chi',riporto:'Chi deve dare'}[pt]||'A chi';
+    $('aChiL').textContent={anticipo:'Chi ha pagato',prestito:'Chi presta',rimborso:'Chi restituisce',riporto:'Chi deve ricevere',custodia:'Chi li tiene'}[pt];
+    $('aAL').textContent={prestito:'A chi',rimborso:'A chi',riporto:'Chi deve dare',custodia:'Di chi sono'}[pt]||'A chi';
     opts($('aChi'),names,me); opts($('aA'),names,names.find(n=>n!==me));
     const box=$('aParti'); box.innerHTML=names.map(n=>`<button type="button" data-p="${esc(n)}" aria-pressed="true">${esc(n)}</button>`).join('');
-    $('aNota').placeholder='es. ordine Temu luci e tende';
+    $('aNota').placeholder= pt==='custodia'?'es. per la prossima spesa Temu':'es. ordine Temu luci e tende';
+    if(pt==='custodia') $('sheetTitle').textContent='Soldi in custodia';
   }
   if(k==='versamento') $('aNota').placeholder='es. quota primo mese';
   updatePot();
@@ -1172,17 +1198,18 @@ async function submitAdd(e){
   $('aBtn').disabled=true;
   try{
     if(k==='prestito'){
-      const t=$('aPTipo').value, args={p_tipo:t,p_da:$('aChi').value,p_a:null,p_parti:[],p_importo:Math.round(imp*100)/100,p_nota:$('aNota').value.trim()};
+      const t=$('aPTipo').value, args={p_tipo:t,p_da:$('aChi').value,p_a:null,p_parti:[],p_importo:Math.round(imp*100)/100,p_nota:$('aNota').value.trim(),p_dove:null};
       if(t==='anticipo'){ args.p_parti=[...document.querySelectorAll('#aParti button[aria-pressed="true"]')].map(b=>b.dataset.p); if(!args.p_parti.length) throw {msg:'Scegli tra chi dividere la spesa.'}; }
+      else if(t==='custodia'){ args.p_a=$('aChi').value; args.p_da=$('aA').value; args.p_dove=$('aDove').value; if(args.p_a===args.p_da) throw {msg:'Scegli due persone diverse.'}; }
       else { args.p_a=$('aA').value; if(args.p_a===args.p_da) throw {msg:'Scegli due persone diverse.'}; }
-      await rpc('chill_add_debt',args); await loadDebts();
+      await rpc('chill_add_debt2',args); await loadDebts();
     } else {
       let nota=$('aNota').value.trim(), q=num($('aQuota').value), vinc=0, esito=null;
       if(k==='schedina'){ const ev=$('aEvento').value.trim(); nota=[ev,nota].filter(Boolean).join(' · ')||'Schedina'; esito=state.esito; if(esito==='vinta'){ vinc=num($('aVincita').value); if(!(vinc>0)) throw {msg:'Inserisci quanto avete vinto.'}; } }
       await rpc('chill_add_mov2',{p_tipo:k,p_chi:$('aChi').value,p_importo:Math.round(imp*100)/100,p_vincita:Math.round((vinc||0)*100)/100,p_quota:(k==='schedina'&&q>=1)?q:null,p_nota:nota.slice(0,120),p_esito:esito});
       await loadMov();
     }
-    closeSheet(); toast({versamento:'Versamento aggiunto',spesa:'Spesa aggiunta',schedina:'Schedina segnata',prestito:'Prestito aggiunto'}[k]+': lo vedono tutti');
+    closeSheet(); toast((k==='prestito'&&$('aPTipo').value==='custodia'?'Custodia segnata':{versamento:'Versamento aggiunto',spesa:'Spesa aggiunta',schedina:'Schedina segnata',prestito:'Prestito aggiunto'}[k])+': lo vedono tutti');
   }catch(err){ $('aMsg').textContent = err&&err.msg ? err.msg : 'Non sono riuscito a salvare. Riprova tra qualche secondo.'; }
   finally{ $('aBtn').disabled=false; }
 }
@@ -1191,7 +1218,7 @@ async function submitAdd(e){
 const SB_URL='https://txjwvjcfubskvjxaelih.supabase.co', SB_KEY='sb_publishable_VrO6oO8gEvp0ETr39R2y3w_flQbadKk';
 async function rpc(fn,args){ if(!state.sb) throw {code:'offline'}; const {data,error}=await state.sb.rpc(fn,{p_pin:'',...args}); if(error) throw {code:'db',message:error.message}; return data; }
 const toMov=r=>({id:r.id,ts:Date.parse(r.ts),tipo:r.tipo,chi:r.chi,importo:+r.importo,vincita:+r.vincita,quota:r.quota==null?null:+r.quota,esito:r.esito,nota:r.nota||''});
-const toDebt=r=>({id:r.id,ts:Date.parse(r.ts),tipo:r.tipo,da:r.da,a:r.a,parti:r.parti||[],importo:+r.importo,nota:r.nota||''});
+const toDebt=r=>({id:r.id,ts:Date.parse(r.ts),tipo:r.tipo,da:r.da,a:r.a,parti:r.parti||[],importo:+r.importo,nota:r.nota||'',dove:r.dove||'',chiuso:!!r.chiuso,chiusoCome:r.chiuso_come||null,chiusoTs:r.chiuso_ts?Date.parse(r.chiuso_ts):null});
 async function loadMeta(){
   const {data,error}=await state.sb.from('chill_meta').select('key,data'); if(error) throw error;
   for(const r of data||[]){
@@ -1215,6 +1242,11 @@ function setLive(){
 /* ---------- eventi ---------- */
 document.addEventListener('click',async e=>{
   const g=e.target.closest('[data-go]'); if(g){ go(g.dataset.go,g.dataset.scroll); return; }
+  if(e.target.closest('[data-custodia]')){ openSheet('prestito',{ptipo:'custodia'}); return; }
+  const cu=e.target.closest('[data-cust]');
+  if(cu){ if(cu.dataset.armed!=='1'){ const lbl=cu.textContent; cu.dataset.armed='1'; cu.dataset.lbl=lbl; cu.textContent='Conferma'; setTimeout(()=>{ if(cu.isConnected){ cu.dataset.armed=''; cu.textContent=cu.dataset.lbl; } },3000); return; }
+    try{ await rpc('chill_chiudi_custodia',{p_id:cu.dataset.id,p_come:cu.dataset.cust}); await Promise.all([loadDebts(),loadMov()]); toast(cu.dataset.cust==='in_cassa'?'Messi in cassa: versamento aggiunto':'Segnati come restituiti'); }catch(_){ toast('Non riuscito, riprova'); } return; }
+  const cr=e.target.closest('[data-cust-reopen]'); if(cr){ try{ await rpc('chill_riapri_custodia',{p_id:cr.dataset.custReopen}); state.rowOpen=null; await loadDebts(); toast('Custodia riaperta'); }catch(_){ toast('Non riuscito, riprova'); } return; }
   if(e.target.closest('[data-rent]')){ openSheet('spesa',{importo:state.cfg.canone,nota:'Affitto di '+new Date().toLocaleDateString('it-IT',{month:'long'}),chi:'Cassa'}); return; }
   const a=e.target.closest('[data-add]'); if(a){ openSheet(a.dataset.add||(document.querySelector('.tab:not([hidden])')?.dataset.tab==='schedine'?'schedina':'versamento')); return; }
   const del=e.target.closest('[data-del]');
@@ -1260,7 +1292,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610161010';
+const PAGE_VERSION='202610161015';
 try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
