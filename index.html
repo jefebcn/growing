@@ -391,7 +391,10 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .prod.have .nm small{color:var(--good);font-weight:700}
 .buy{display:inline-flex;align-items:center;gap:4px;text-decoration:none;background:var(--orange);color:#fff;font:800 .78rem var(--f);padding:8px 12px;border-radius:999px;white-space:nowrap}
 .buy:hover{filter:brightness(1.06)}
-.prod.have .buy{background:var(--surface-2);color:var(--muted)}
+.acts{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.buy{justify-content:center}
+.buy.alt{background:transparent;color:var(--orange);border:1.5px solid var(--orange);padding:6px 12px}
+.prod.have .buy{background:var(--surface-2);color:var(--muted);border-color:var(--surface-2)}
 #catList .cat{margin-top:6px}
 .desk .chiprow{flex-wrap:wrap;overflow:visible;margin:0 0 4px;padding:2px 0 10px}
 </style>
@@ -656,7 +659,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 <div class="split"><div class="col">
   <div class="sec" id="catalogo" style="margin-top:0"><h2>Catalogo Temu</h2><span class="muted" style="font-size:.8rem;font-weight:700" id="catCount"></span></div>
   <div class="card">
-    <p class="hint" style="margin-bottom:10px">Prodotti scelti per la Chill Sander House, divano compreso. <b>Temu</b> apre la pagina del prodotto; spunta quando l'avete ordinato, così lo vedono tutti. Prima di ordinare controllate prezzo, misure e recensioni: sono articoli di venditori diversi e a volte spariscono.</p>
+    <p class="hint" style="margin-bottom:10px">Prodotti scelti per la Chill Sander House, divano compreso. <b>Apri</b> porta al prodotto, <b>Simili</b> cerca lo stesso articolo su Temu (utile se un prodotto non c'è più); spunta quando l'avete ordinato, così lo vedono tutti. Prima di ordinare controllate prezzo, misure e recensioni: sono articoli di venditori diversi e a volte spariscono.</p>
     <div class="chiprow" id="catFilter" role="group" aria-label="Filtra catalogo"></div>
     <div class="cats" id="catList"></div>
     <div class="tip"><b>Divano su Temu:</b> misurate prima la parete (in 40 m² un 3 posti sta sui 200 cm) e guardate i tempi di consegna, per i pezzi grandi sono più lunghi. Per prese, bollitore e aspirapolvere cercate il <b>marchio CE</b> nella scheda. <a class="link-btn" href="catalogo-temu.csv" download style="padding:0">Scarica la lista (CSV)</a></div>
@@ -1153,6 +1156,10 @@ function renderMe(){
 }
 
 const ARROW='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+const tId=x=>(x.g.match(/g-(\d+)\.html/)||[])[1];
+const tLink=x=>'https://www.temu.com/goods.html?goods_id='+tId(x);
+const tQ=x=>x.n.replace(/\([^)]*\)/g,'').replace(/["×+]/g,' ').replace(/\s+/g,' ').trim().toLowerCase();
+const tSearch=x=>'https://www.temu.com/search_result.html?search_key='+encodeURIComponent(tQ(x));
 function renderCatalog(){
   const presi=state.cfg.presi||{}, f=state.catF||'top', cats=[...new Set(CATALOG.map(x=>x.c))];
   const done=CATALOG.filter(x=>presi[x.k]).length;
@@ -1162,7 +1169,7 @@ function renderCatalog(){
   const groups=[...new Set(list.map(x=>x.c))];
   $('catList').innerHTML=list.length?groups.map(g=>{ const its=list.filter(x=>x.c===g);
     return `<div class="cat"><h3>${esc(g)}<span class="num">${its.length}</span></h3>${its.map(x=>{ const p=!!presi[x.k];
-      return `<div class="prod ${p?'have':''}"><input type="checkbox" id="pr-${x.k}" data-preso="${x.k}" ${p?'checked':''} aria-label="Preso: ${esc(x.n)}"><label class="nm" for="pr-${x.k}"><span>${esc(x.n)}</span><small>${p?'Preso':esc(x.s)}</small></label><a class="buy" href="https://www.temu.com/${x.g}" target="_blank" rel="noopener noreferrer" aria-label="Apri su Temu: ${esc(x.n)}">Temu ${ARROW}</a></div>`; }).join('')}</div>`; }).join('')
+      return `<div class="prod ${p?'have':''}"><input type="checkbox" id="pr-${x.k}" data-preso="${x.k}" ${p?'checked':''} aria-label="Preso: ${esc(x.n)}"><label class="nm" for="pr-${x.k}"><span>${esc(x.n)}</span><small>${p?'Preso':esc(x.s)}</small></label><span class="acts"><a class="buy" href="${tLink(x)}" target="_blank" rel="noopener noreferrer" aria-label="Apri il prodotto su Temu: ${esc(x.n)}">Apri ${ARROW}</a><a class="buy alt" href="${tSearch(x)}" target="_blank" rel="noopener noreferrer" aria-label="Cerca simili su Temu: ${esc(x.n)}">Simili</a></span></div>`; }).join('')}</div>`; }).join('')
     :'<p class="hint" style="padding:8px 0">Ancora niente spuntato come preso.</p>';
 }
 function renderAll(){ renderMe(); renderHome(); renderSched(); renderConti(); renderBudget(); renderCatalog(); }
@@ -1339,7 +1346,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610171726';
+const PAGE_VERSION='202610172350';
 try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
