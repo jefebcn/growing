@@ -397,6 +397,20 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .prod.have .buy{background:var(--surface-2);color:var(--muted);border-color:var(--surface-2)}
 #catList .cat{margin-top:6px}
 .desk .chiprow{flex-wrap:wrap;overflow:visible;margin:0 0 4px;padding:2px 0 10px}
+.pick{display:flex;flex-wrap:wrap;gap:8px}
+.pick button{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:700 .88rem var(--f);padding:9px 14px;border-radius:999px;cursor:pointer}
+.pick button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.pick button.cassa[aria-pressed="true"]{background:var(--teal);border-color:var(--teal)}
+.pick.small{margin-top:8px;gap:6px}
+.pick.small button{font-size:.78rem;padding:6px 11px;color:var(--muted);border-width:1px}
+.two.one{grid-template-columns:1fr}
+.prev{padding:12px 14px;border-radius:14px;background:var(--teal-soft);color:var(--fg);font-size:.9rem;line-height:1.45}
+.prev b{color:var(--teal)}
+.prev.warn{background:var(--accent-soft)}
+.prev.warn b{color:var(--orange)}
+.prev:empty{display:none}
+#addForm.sp .two{order:-2}
+#addForm.sp #fNota{order:-1}
 </style>
 </head>
 <body>
@@ -542,7 +556,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
     <details class="ans" id="q6"><summary><span class="ans-n" style="background:var(--red)">6</span><h3>Prestiti e debiti tra di noi</h3><svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg></summary><div class="body">
       <p>Nei Conti c'è un registro dei soldi che girano tra noi:</p>
       <ul>
-        <li><b>Ho pagato io per il gruppo</b>: per esempio l'ordine Temu pagato da uno solo, diviso tra chi scegli.</li>
+        <li><b>Spese</b>: col tasto + scegli Spesa, scrivi quanto e per cosa, poi rispondi a due domande. <b>Chi ha pagato?</b> La cassa comune oppure uno di noi. <b>Va divisa?</b> Tra tutti, tra chi scegli tu, oppure no. Il sito calcola da solo chi deve quanto a chi.</li>
         <li><b>Prestito</b> a una persona e <b>restituzione</b> di un debito.</li>
         <li><b>Debito già esistente</b>: per riportare i conti che avevamo sulle note.</li>
         <li><b>Soldi in custodia</b>: quando uno tiene soldi di un altro (per esempio Simone ti manda 100 € su PayPal e non li avete ancora spesi). Restano in evidenza finché non li segni "restituiti" o "messi in cassa".</li>
@@ -740,15 +754,23 @@ input[type=range]{width:100%;accent-color:var(--teal)}
     </div>
     <form class="fields" id="addForm" autocomplete="off">
       <div class="field" id="fEvento"><label for="aEvento">Partita o evento</label><input type="text" id="aEvento" maxlength="100" placeholder="es. Juve–Inter, vittoria Juve"></div>
-      <div class="field" id="fPTipo"><label for="aPTipo">Che cosa</label><select id="aPTipo"><option value="anticipo">Ho pagato io per il gruppo</option><option value="custodia">Tengo soldi di un altro (PayPal, contanti…)</option><option value="prestito">Prestito a una persona</option><option value="rimborso">Restituzione di un debito</option><option value="riporto">Debito già esistente</option></select></div>
+      <div class="field" id="fPTipo"><label for="aPTipo">Che cosa</label><select id="aPTipo"><option value="prestito">Ho prestato soldi a qualcuno</option><option value="rimborso">Ho restituito soldi</option><option value="custodia">Tengo soldi di un altro (PayPal, contanti…)</option><option value="riporto">Debito vecchio da segnare</option></select></div>
       <div class="two">
         <div class="field" id="fChi"><label for="aChi" id="aChiL">Chi</label><select id="aChi"></select></div>
         <div class="field" id="fA"><label for="aA" id="aAL">A chi</label><select id="aA"></select></div>
         <div class="field"><label for="aImporto" id="aImportoL">Importo (€)</label><input type="number" id="aImporto" min="0" step="0.01" inputmode="decimal" placeholder="0,00" required></div>
         <div class="field" id="fQuota"><label for="aQuota">Quota</label><input type="number" id="aQuota" min="1" step="0.01" inputmode="decimal" placeholder="es. 2,20"></div>
       </div>
+      <div class="field" id="fPayer"><span class="flabel">Chi ha pagato?</span><div class="pick" id="aPayer" role="group" aria-label="Chi ha pagato"></div></div>
+      <div class="field" id="fSplit"><span class="flabel">Va divisa?</span>
+        <div class="seg full" role="group" aria-label="Va divisa" id="splitSeg">
+          <button type="button" data-s="tutti" aria-pressed="true">Sì, tra tutti</button>
+          <button type="button" data-s="alcuni" aria-pressed="false">Scelgo io</button>
+          <button type="button" data-s="no" aria-pressed="false">No</button>
+        </div>
+      </div>
       <div class="field" id="fDove"><label for="aDove">Dove sono</label><select id="aDove"><option>PayPal</option><option>Contanti</option><option>Conto in banca</option><option>Revolut</option><option>Satispay</option><option>Altro</option></select></div>
-      <div class="field" id="fParti"><span class="flabel">Diviso tra</span><div class="seg" id="aParti" style="border-radius:14px"></div></div>
+      <div class="field" id="fParti"><span class="flabel">Tra chi la dividiamo</span><div class="seg" id="aParti" style="border-radius:14px"></div></div>
       <div class="field" id="fEsito"><span class="flabel">Esito</span>
         <div class="seg full" role="group" aria-label="Esito" id="esitoSeg">
           <button type="button" data-e="attesa" aria-pressed="true">In attesa</button>
@@ -756,9 +778,10 @@ input[type=range]{width:100%;accent-color:var(--teal)}
           <button type="button" data-e="persa" aria-pressed="false">Persa</button>
         </div>
       </div>
+      <div class="prev" id="fPrev"></div>
       <div class="calc" id="fPot"><span>Vincita potenziale</span><b id="aPot">–</b></div>
       <div class="field" id="fVincita"><label for="aVincita">Vincita incassata (€)</label><input type="number" id="aVincita" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div>
-      <div class="field" id="fNota"><label for="aNota">Nota</label><input type="text" id="aNota" maxlength="120" placeholder="es. affitto novembre, ordine Temu"></div>
+      <div class="field" id="fNota"><label for="aNota" id="aNotaL">Nota</label><input type="text" id="aNota" maxlength="120" placeholder="es. affitto novembre, ordine Temu"><div class="pick small" id="aCosa" role="group" aria-label="Scelte rapide"></div></div>
       <button class="btn" type="submit" id="aBtn">Aggiungi</button>
       <button class="btn-ghost" type="button" id="sheetCancel">Annulla</button>
       <p class="hint" id="aMsg" style="text-align:center"></p>
@@ -850,7 +873,7 @@ function cassa(){
   for(const x of state.mov){
     const imp=+x.importo||0;
     if(x.tipo==='versamento'){ vers+=imp; per[x.chi]=(per[x.chi]||0)+imp; }
-    else if(x.tipo==='spesa') spese+=imp;
+    else if(x.tipo==='spesa'){ if(!x.chi||x.chi==='Cassa') spese+=imp; }
     else { giocato+=imp; vinto+=(+x.vincita||0); }
   }
   return {vers,spese,giocato,vinto,saldo:vers-spese-giocato+vinto,per};
@@ -924,13 +947,13 @@ function movRow(x,withDel){
   let amt, cls='';
   const e=x.tipo==='schedina'?esitoOf(x):null;
   if(x.tipo==='versamento'){ amt='+'+eur2.format(x.importo); cls='good'; }
-  else if(x.tipo==='spesa'){ amt='−'+eur2.format(x.importo); }
+  else if(x.tipo==='spesa'){ amt=(x.chi&&x.chi!=='Cassa')?eur2.format(x.importo):'−'+eur2.format(x.importo); }
   else if(e==='attesa'){ amt='−'+eur2.format(x.importo); }
   else { const n=(+x.vincita||0)-(+x.importo||0); amt=sgn(n); cls=n>=0?'good':'bad'; }
   const title = x.nota || ({versamento:'Versamento',spesa:'Spesa',schedina:'Schedina'}[x.tipo]);
   const sub = x.tipo==='schedina'
     ? `${day(x.ts)} · <span class="chip ${e}">${e==='attesa'?'in attesa':e}</span> · giocati ${eur2.format(x.importo)}${x.quota?' · q. '+fmtQ(x.quota):''}`
-    : `${day(x.ts)} · ${esc(x.chi)}`;
+    : x.tipo==='spesa' ? `${day(x.ts)} · ${x.chi&&x.chi!=='Cassa'?'pagata da '+esc(x.chi)+', non divisa':'dalla cassa'}` : `${day(x.ts)} · ${esc(x.chi)}`;
   const open=withDel&&state.rowOpen===x.id;
   return `<div class="row${withDel?' tap':''}"${withDel?` data-open="${esc(x.id)}"`:''}>${icon(x.tipo)}<div class="rm"><div class="rt">${esc(title)}</div><div class="rs">${sub}</div></div><div class="ra ${cls}">${amt}</div>${open?`<div class="x"><button class="mini-btn no" type="button" data-del="${esc(x.id)}">Elimina</button><button class="mini-btn ghost" type="button" data-close="1">Chiudi</button></div>`:''}</div>`;
 }
@@ -992,7 +1015,8 @@ function renderHome(){
 function renderRent(s,b){
   const now=new Date(), m=now.getMonth(), y=now.getFullYear(), c=state.cfg, n=c.persone;
   const mese=now.toLocaleDateString('it-IT',{month:'long'});
-  const paid=state.mov.filter(x=>x.tipo==='spesa'&&/affitt/i.test(x.nota||'')&&new Date(x.ts).getMonth()===m&&new Date(x.ts).getFullYear()===y).reduce((t,x)=>t+(+x.importo||0),0);
+  const inM=x=>/affitt/i.test(x.nota||'')&&new Date(x.ts).getMonth()===m&&new Date(x.ts).getFullYear()===y;
+  const paid=state.mov.filter(x=>x.tipo==='spesa'&&inM(x)).reduce((t,x)=>t+(+x.importo||0),0)+state.debts.filter(d=>d.tipo==='anticipo'&&inM(d)).reduce((t,d)=>t+(+d.importo||0),0);
   const due=c.canone, left=Math.max(0,due-paid), w=due>0?Math.min(100,100*paid/due):0;
   $('rentTitle').textContent='Affitto di '+mese;
   const chip=$('rentChip'); chip.className='chip '+(left<=0.5?'vinta':'attesa'); chip.textContent=left<=0.5?'pagato':'da pagare';
@@ -1091,7 +1115,7 @@ function debtRow(d,withDel){
     const open=withDel&&state.rowOpen===d.id;
     return `<div class="row${withDel?' tap':''}"${withDel?` data-open="${esc(d.id)}"`:''} style="${d.chiuso?'opacity:.7':''}">${icon('custodia')}<div class="rm"><div class="rt">${what}</div><div class="rs">${day(d.ts)}${d.dove?' · '+esc(d.dove):''}${d.nota?' · '+esc(d.nota):''}</div></div><div class="ra">${eur2.format(+d.importo||0)}</div>${open?`<div class="x">${d.chiuso&&d.chiusoCome==='restituiti'?`<button class="mini-btn ghost" type="button" data-cust-reopen="${esc(d.id)}">Riapri</button>`:''}<button class="mini-btn no" type="button" data-deldebt="${esc(d.id)}">Elimina</button><button class="mini-btn ghost" type="button" data-close="1">Chiudi</button></div>`:''}</div>`;
   }
-  const what = d.tipo==='anticipo' ? `${esc(d.da)} ha pagato per ${esc((d.parti||[]).join(', '))}` : d.tipo==='prestito' ? `${esc(d.da)} ha prestato a ${esc(d.a)}` : d.tipo==='rimborso' ? `${esc(d.da)} ha restituito a ${esc(d.a)}` : `${esc(d.a)} deve a ${esc(d.da)}`;
+  const what = d.tipo==='anticipo' ? `${esc(d.da)} ha pagato${(d.parti||[]).length&&people().every(p=>(d.parti||[]).includes(p))?' per tutti':' per '+esc((d.parti||[]).join(', '))}` : d.tipo==='prestito' ? `${esc(d.da)} ha prestato a ${esc(d.a)}` : d.tipo==='rimborso' ? `${esc(d.da)} ha restituito a ${esc(d.a)}` : `${esc(d.a)} deve a ${esc(d.da)}`;
   const open=withDel&&state.rowOpen===d.id;
   return `<div class="row${withDel?' tap':''}"${withDel?` data-open="${esc(d.id)}"`:''}>${icon('prestito')}<div class="rm"><div class="rt">${what}</div><div class="rs">${day(d.ts)}${d.nota?' · '+esc(d.nota):''}</div></div><div class="ra">${eur2.format(+d.importo||0)}</div>${open?`<div class="x"><button class="mini-btn no" type="button" data-deldebt="${esc(d.id)}">Elimina</button><button class="mini-btn ghost" type="button" data-close="1">Chiudi</button></div>`:''}</div>`;
 }
@@ -1191,7 +1215,7 @@ let toastT; function toast(msg){ const t=$('toast'); t.textContent=msg; t.classL
 
 /* ---------- foglio aggiungi ---------- */
 function openSheet(kind,pre){
-  state.kind=kind||state.kind||'versamento'; state.esito='attesa';
+  state.kind=kind||state.kind||'versamento'; state.esito='attesa'; state.payer=(pre&&pre.chi)||'Cassa'; state.split='tutti'; state.parti=null;
   $('addForm').reset(); $('aMsg').textContent='';
   if(pre&&pre.ptipo) $('aPTipo').value=pre.ptipo;
   setupSheet();
@@ -1216,12 +1240,24 @@ function setupSheet(){
   const pt=$('aPTipo').value;
   $('fEvento').hidden=k!=='schedina'; $('fQuota').hidden=k!=='schedina'; $('fEsito').hidden=k!=='schedina';
   $('fPTipo').hidden=k!=='prestito';
-  const anti=k==='prestito'&&pt==='anticipo';
-  $('fA').hidden=!(k==='prestito'&&!anti); $('fParti').hidden=!anti; $('fDove').hidden=!(k==='prestito'&&pt==='custodia');
+  const sp=k==='spesa', person=sp&&state.payer!=='Cassa';
+  $('fA').hidden=k!=='prestito'; $('fDove').hidden=!(k==='prestito'&&pt==='custodia');
+  $('fChi').hidden=sp; $('fPayer').hidden=!sp; $('fSplit').hidden=!person; $('fParti').hidden=!(person&&state.split==='alcuni'); $('aCosa').hidden=!sp;
+  document.querySelector('#addForm .two').classList.toggle('one',sp); $('addForm').classList.toggle('sp',sp);
+  $('aNotaL').textContent=sp?'Per cosa':'Nota';
+  document.querySelectorAll('#splitSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.s===state.split)));
   $('fNota').hidden=false;
   $('aImportoL').textContent = k==='schedina'?'Giocato (€)':'Importo (€)';
   if(k==='versamento'){ $('aChiL').textContent='Chi versa'; opts($('aChi'),people(),me); }
-  else if(k==='spesa'){ $('aChiL').textContent='Pagato con'; opts($('aChi'),['Cassa',...people()],'Cassa'); $('aNota').placeholder='es. affitto novembre, bolletta luce'; }
+  else if(k==='spesa'){
+    if(state.payer!=='Cassa'&&!names.includes(state.payer)) state.payer='Cassa';
+    $('aPayer').innerHTML=[['Cassa','Cassa comune'],...names.map(n=>[n,n])].map(([v,l])=>`<button type="button" class="${v==='Cassa'?'cassa':''}" data-payer="${esc(v)}" aria-pressed="${v===state.payer}">${esc(l)}</button>`).join('');
+    const parti=state.parti&&state.parti.length?state.parti:people();
+    $('aParti').innerHTML=names.map(n=>`<button type="button" data-p="${esc(n)}" aria-pressed="${parti.includes(n)}">${esc(n)}</button>`).join('');
+    const mese=new Date().toLocaleDateString('it-IT',{month:'long'});
+    $('aCosa').innerHTML=['Affitto di '+mese,'Ordine Temu','Bollette','Cibo e bere','Arredo','Pulizia'].map(t=>`<button type="button" data-cosa="${esc(t)}">${esc(t)}</button>`).join('');
+    $('aNota').placeholder='es. scrivania, birre, ordine Temu';
+  }
   else if(k==='schedina'){ $('aChiL').textContent='Soldi da'; opts($('aChi'),['Cassa',...people()],'Cassa'); $('aNota').placeholder='facoltativa'; }
   else {
     $('aChiL').textContent={anticipo:'Chi ha pagato',prestito:'Chi presta',rimborso:'Chi restituisce',riporto:'Chi deve ricevere',custodia:'Chi li tiene'}[pt];
@@ -1234,13 +1270,27 @@ function setupSheet(){
   if(k==='versamento') $('aNota').placeholder='es. quota primo mese';
   updatePot();
 }
+function spesaParti(){ const p=state.payer; if(state.split==='tutti') return people(); if(state.split==='alcuni') return [...document.querySelectorAll('#aParti button[aria-pressed="true"]')].map(b=>b.dataset.p); return [p]; }
+const andList=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' e '+a[a.length-1];
+function renderPrev(){
+  const box=$('fPrev'); box.className='prev';
+  if(state.kind!=='spesa'){ box.innerHTML=''; return; }
+  const imp=num($('aImporto').value), p=state.payer, v=imp>0?eur2.format(imp):'l\'importo';
+  if(p==='Cassa'){ const s=cassa().saldo; box.innerHTML=`Escono <b>${v}</b> dalla cassa comune. Nessuno deve niente a nessuno.`+(imp>0&&imp>s+0.004?` <br><b>Attenzione:</b> in cassa ci sono solo ${eur2.format(Math.max(0,s))}.`:''); if(imp>0&&imp>s+0.004) box.className='prev warn'; return; }
+  if(state.split==='no'){ box.innerHTML=`La paga <b>${esc(p)}</b> e basta: resta nello storico, la cassa non cambia e nessuno deve niente.`; return; }
+  const parts=spesaParti(); if(!parts.length){ box.className='prev warn'; box.innerHTML='Scegli almeno una persona.'; return; }
+  const others=parts.filter(n=>n!==p), q=imp>0?eur2.format(imp/parts.length):'la sua parte';
+  if(!others.length){ box.innerHTML=`È tutta di <b>${esc(p)}</b>: nessuno deve niente.`; return; }
+  box.innerHTML = others.length===1 ? `<b>${esc(others[0])}</b> deve <b>${q}</b> a ${esc(p)}.` : `${esc(andList(others))} devono <b>${q}</b> a testa a ${esc(p)}.`;
+}
 function updatePot(){
   const k=state.kind, imp=num($('aImporto').value), q=num($('aQuota').value);
   const isS=k==='schedina'; const pot=imp>0&&q>=1?imp*q:0;
   $('fPot').hidden=!(isS&&state.esito!=='persa'&&pot>0); $('aPot').textContent=eur2.format(pot);
   $('fVincita').hidden=!(isS&&state.esito==='vinta');
   if(isS&&state.esito==='vinta'&&!$('aVincita').dataset.touched) $('aVincita').value=pot?pot.toFixed(2):'';
-  $('aBtn').textContent = isS ? (state.esito==='attesa'?'Segna schedina in attesa':state.esito==='vinta'?'Segna schedina vinta':'Segna schedina persa') : 'Aggiungi';
+  renderPrev();
+  $('aBtn').textContent = k==='spesa' ? 'Aggiungi spesa' : isS ? (state.esito==='attesa'?'Segna schedina in attesa':state.esito==='vinta'?'Segna schedina vinta':'Segna schedina persa') : 'Aggiungi';
 }
 async function submitAdd(e){
   e.preventDefault();
@@ -1249,6 +1299,14 @@ async function submitAdd(e){
   if(!(imp>0)){ $('aMsg').textContent='Inserisci un importo maggiore di zero.'; $('aImporto').focus(); return; }
   $('aBtn').disabled=true;
   try{
+    if(k==='spesa'){
+      const nota=($('aNota').value.trim()||'Spesa').slice(0,120), p=state.payer, amt=Math.round(imp*100)/100;
+      const parts=p==='Cassa'?[]:spesaParti();
+      if(p!=='Cassa'&&state.split!=='no'&&!parts.length) throw {msg:'Scegli tra chi dividere la spesa.'};
+      if(p==='Cassa'||state.split==='no'||(parts.length===1&&parts[0]===p)){ await rpc('chill_add_mov2',{p_tipo:'spesa',p_chi:p,p_importo:amt,p_vincita:0,p_quota:null,p_nota:nota,p_esito:null}); await loadMov(); }
+      else { await rpc('chill_add_debt2',{p_tipo:'anticipo',p_da:p,p_a:null,p_parti:parts,p_importo:amt,p_nota:nota,p_dove:null}); await loadDebts(); }
+      const msg=$('fPrev').textContent; closeSheet(); toast('Spesa aggiunta. '+(p==='Cassa'?'Uscita dalla cassa.':state.split==='no'?'Non divisa.':msg)); return;
+    }
     if(k==='prestito'){
       const t=$('aPTipo').value, args={p_tipo:t,p_da:$('aChi').value,p_a:null,p_parti:[],p_importo:Math.round(imp*100)/100,p_nota:$('aNota').value.trim(),p_dove:null};
       if(t==='anticipo'){ args.p_parti=[...document.querySelectorAll('#aParti button[aria-pressed="true"]')].map(b=>b.dataset.p); if(!args.p_parti.length) throw {msg:'Scegli tra chi dividere la spesa.'}; }
@@ -1318,7 +1376,10 @@ document.addEventListener('click',async e=>{
   const mf=e.target.closest('#movFilter [data-f]'); if(mf){ state.movF=mf.dataset.f; renderConti(); return; }
   const kd=e.target.closest('#kindSeg [data-k]'); if(kd){ state.kind=kd.dataset.k; state.esito='attesa'; setupSheet(); return; }
   const es=e.target.closest('#esitoSeg [data-e]'); if(es){ state.esito=es.dataset.e; document.querySelectorAll('#esitoSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b===es))); updatePot(); return; }
-  const pp=e.target.closest('#aParti [data-p]'); if(pp){ pp.setAttribute('aria-pressed',String(pp.getAttribute('aria-pressed')!=='true')); return; }
+  const pp=e.target.closest('#aParti [data-p]'); if(pp){ pp.setAttribute('aria-pressed',String(pp.getAttribute('aria-pressed')!=='true')); state.parti=[...document.querySelectorAll('#aParti button[aria-pressed="true"]')].map(b=>b.dataset.p); renderPrev(); return; }
+  const py=e.target.closest('#aPayer [data-payer]'); if(py){ state.payer=py.dataset.payer; setupSheet(); return; }
+  const sx=e.target.closest('#splitSeg [data-s]'); if(sx){ state.split=sx.dataset.s; setupSheet(); return; }
+  const cs=e.target.closest('#aCosa [data-cosa]'); if(cs){ $('aNota').value=cs.dataset.cosa; if(/^Affitto/.test(cs.dataset.cosa)&&!$('aImporto').value){ $('aImporto').value=state.cfg.canone; updatePot(); } return; }
   const cf=e.target.closest('#catFilter [data-cf]'); if(cf){ state.catF=cf.dataset.cf; renderCatalog(); return; }
   const tb=e.target.closest('#tierSeg [data-tier]'); if(tb){ state.cfg.tier=+tb.dataset.tier; renderAll(); saveCfg(); return; }
   const tm=e.target.closest('[data-temu]'); if(tm){ const nt={...(state.cfg.noTemu||{})}; if(nt[tm.dataset.temu]) delete nt[tm.dataset.temu]; else nt[tm.dataset.temu]=true; state.cfg.noTemu=nt; renderAll(); saveCfg(); return; }
@@ -1346,7 +1407,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610172350';
+const PAGE_VERSION='202610252155';
 try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
