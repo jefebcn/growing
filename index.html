@@ -411,6 +411,10 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .prev:empty{display:none}
 #addForm.sp .two{order:-2}
 #addForm.sp #fNota{order:-1}
+.mform{margin-top:12px;padding-top:14px;border-top:1px solid var(--line)}
+.row .ra .chip{margin-top:4px}
+.mper{margin-top:14px}
+.mper .rrow b{font-weight:800}
 </style>
 </head>
 <body>
@@ -455,6 +459,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 
   <div class="sec"><h2 id="rentTitle">Affitto del mese</h2><span class="chip" id="rentChip"></span></div>
   <div class="card rent" id="rentCard"></div>
+  <div id="hMens"></div>
 
   <div class="sec"><h2>Le quote</h2><button class="link-btn" type="button" data-go="budget" data-scroll="receipt">Dettaglio</button></div>
   <div class="mini3">
@@ -696,6 +701,22 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 
 
 </div><div class="col">
+  <div class="sec" id="mensili"><h2>Spese mensili</h2><button class="pill" type="button" data-mnew>+ Aggiungi</button></div>
+  <div class="card">
+    <p class="hint">Abbonamenti e costi che tornano ogni mese (Netflix, DAZN, internet…). Ognuna si divide <b>solo tra chi la usa</b>. Tocca una voce per segnarla pagata, modificarla o eliminarla.</p>
+    <div class="list" id="mList"></div>
+    <form class="fields mform" id="mForm" autocomplete="off" hidden>
+      <div class="field"><label for="mNome">Che spesa è</label><input type="text" id="mNome" maxlength="40" placeholder="es. Netflix"><div class="pick small" id="mNomeQ"></div></div>
+      <div class="field"><label for="mImp">Quanto costa al mese (€)</label><input type="number" id="mImp" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div>
+      <div class="field"><span class="flabel">Chi la paga</span><div class="pick" id="mPayer"></div></div>
+      <div class="field"><span class="flabel">Chi la usa</span><div class="pick" id="mParti"></div></div>
+      <div class="prev" id="mPrev"></div>
+      <button class="btn" type="submit" id="mSave">Salva spesa mensile</button>
+      <button class="btn-ghost" type="button" id="mCancel">Annulla</button>
+    </form>
+    <div id="mPer"></div>
+  </div>
+
   <div class="sec" id="receipt"><h2>Il primo mese</h2></div>
   <div class="card">
     <div class="rbig"><div><div class="k">Da mettere a testa per partire</div><div class="v" id="phInit">–</div></div><div class="v2" id="rTot">–</div></div>
@@ -850,7 +871,7 @@ const SNAPSHOT = {
   todo:[{id:'t1',t:'Parlare col proprietario: le 7 domande, deposito e utenze',done:false},{id:'t2',t:'Decidere chi firma il contratto',done:false},{id:'t3',t:'Primo versamento in cassa per il primo mese',done:false},{id:'t4',t:'Ordinare da Temu la lista della spesa',done:false},{id:'t5',t:'Aggiornare le stime con le prime bollette',done:false}]
 };
 const state = {cfg:{...structuredClone(DEFAULT),...structuredClone(SNAPSHOT.cfg)}, mov:structuredClone(SNAPSHOT.mov), debts:structuredClone(SNAPSHOT.debts), amici:[...SNAPSHOT.amici], todo:structuredClone(SNAPSHOT.todo),
-  sb:null, live:false, resolved:false, lastLocal:0, betF:'tutte', movF:'tutti', winEdit:null, rowOpen:null, kind:'versamento', esito:'attesa', me:ls.get('chill_me')||''};
+  sb:null, live:false, resolved:false, lastLocal:0, betF:'tutte', movF:'tutti', winEdit:null, rowOpen:null, kind:'versamento', esito:'attesa', mensili:[], mOpen:null, mForm:null, me:ls.get('chill_me')||''};
 const SIM = {sStake:10,sNn:20,sLegs:4,sOdd:2,sMargin:6,sTarget:'canone'};
 
 /* ---------- calcoli ---------- */
@@ -933,6 +954,7 @@ function sim(){
 
 /* ---------- icone ---------- */
 const IC={
+  mensile:['var(--teal-soft)','var(--teal)','<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17M9 15l2 2 4-4"/>'],
   versamento:['var(--teal-soft)','var(--teal)','<path d="M12 19V5M5 12l7-7 7 7"/>'],
   spesa:['var(--blue-soft)','var(--navy)','<path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/>'],
   schedina:['var(--accent-soft)','var(--orange)','<circle cx="12" cy="12" r="9"/><path d="m12 7 3 2.2-1.2 3.6h-3.6L9 9.2z"/>'],
@@ -989,7 +1011,9 @@ function renderHome(){
   $('hIn').textContent=eur.format(s.vers+s.vinto);
   $('hOut').textContent=eur.format(s.spese+s.giocato);
   $('hInit').textContent=eur.format(b.totInit/n); $('hInitS').textContent=`${eur.format(b.totInit)} in ${n}`;
-  $('hMonth').textContent=eur.format(b.m/n); $('hMonthS').textContent=`${eur.format(b.m)} in ${n}`;
+  { const per=mensiliPer(), mine=state.me?(per[state.me]||0):0;
+    if(state.me&&people().includes(state.me)&&mine>0){ $('hMonth').textContent=eur.format(b.m/n+mine); $('hMonthS').textContent=`${state.me}: casa ${eur.format(b.m/n)} + mensili ${eur2.format(mine)}`; }
+    else { $('hMonth').textContent=eur.format(b.m/n); $('hMonthS').textContent=`${eur.format(b.m)} in ${n}`+(state.mensili.length?' + spese mensili':''); } }
   $('hMesi').textContent=mesi.toLocaleString('it-IT',{maximumFractionDigits:1});
   renderRent(s,b);
   // schedine
@@ -1196,7 +1220,59 @@ function renderCatalog(){
       return `<div class="prod ${p?'have':''}"><input type="checkbox" id="pr-${x.k}" data-preso="${x.k}" ${p?'checked':''} aria-label="Preso: ${esc(x.n)}"><label class="nm" for="pr-${x.k}"><span>${esc(x.n)}</span><small>${p?'Preso':esc(x.s)}</small></label><span class="acts"><a class="buy" href="${tLink(x)}" target="_blank" rel="noopener noreferrer" aria-label="Apri il prodotto su Temu: ${esc(x.n)}">Apri ${ARROW}</a><a class="buy alt" href="${tSearch(x)}" target="_blank" rel="noopener noreferrer" aria-label="Cerca simili su Temu: ${esc(x.n)}">Simili</a></span></div>`; }).join('')}</div>`; }).join('')
     :'<p class="hint" style="padding:8px 0">Ancora niente spuntato come preso.</p>';
 }
-function renderAll(){ renderMe(); renderHome(); renderSched(); renderConti(); renderBudget(); renderCatalog(); }
+const meseLabel=()=>new Date().toLocaleDateString('it-IT',{month:'long',year:'numeric'});
+const mTag=x=>`${x.nome} · ${meseLabel()}`;
+const mPaid=x=>{ const t=mTag(x); return state.mov.some(m=>m.nota===t)||state.debts.some(d=>d.nota===t); };
+function mensiliPer(){ const per={}; for(const x of state.mensili){ const ps=(x.parti||[]).filter(Boolean); if(!ps.length) continue; ps.forEach(p=>per[p]=(per[p]||0)+(+x.importo||0)/ps.length); } return per; }
+const isTutti=ps=>ps.length===people().length&&people().every(p=>ps.includes(p));
+function mRow(x){
+  const ps=(x.parti||[]).filter(Boolean), paid=mPaid(x), q=ps.length?x.importo/ps.length:0, open=state.mOpen===x.id;
+  const who=isTutti(ps)?'tutti':andList(ps);
+  const sub=`${x.chi==='Cassa'?'dalla cassa':'paga '+esc(x.chi)} · ${ps.length>1?eur2.format(q)+' a testa tra '+esc(who):'solo '+esc(who)}`;
+  return `<div class="row tap" data-mopen="${esc(x.id)}">${icon('mensile')}<div class="rm"><div class="rt">${esc(x.nome)}</div><div class="rs">${sub}</div></div><div class="ra">${eur2.format(x.importo)}<small><span class="chip ${paid?'vinta':'attesa'}">${paid?'pagata':'da pagare'}</span></small></div>${open?`<div class="x">${paid?'':`<button class="mini-btn ok" type="button" data-mpay="${esc(x.id)}">Segna pagata (${esc(new Date().toLocaleDateString('it-IT',{month:'long'}))})</button>`}<button class="mini-btn" type="button" data-medit="${esc(x.id)}">Modifica</button><button class="mini-btn no" type="button" data-mdel="${esc(x.id)}">Elimina</button></div>`:''}</div>`;
+}
+function renderMensili(){
+  const L=state.mensili;
+  $('mList').innerHTML=L.length?L.map(mRow).join(''):'<p class="hint" style="padding:10px 0 2px">Nessuna spesa mensile. Tocca <b>+ Aggiungi</b>.</p>';
+  const per=mensiliPer(), b=budget(), n=state.cfg.persone, base=b.m/n;
+  const names=[...new Set([...people(),...Object.keys(per)])];
+  $('mPer').innerHTML=L.length?`<div class="mper"><div class="rrow rh"><span>Ogni mese a testa</span><span>Mensili</span><span>Totale</span></div>${names.map(nm=>{ const casa=people().includes(nm)?base:0, m=per[nm]||0; return `<div class="rrow"><span>${esc(nm)}</span><span class="num">${eur2.format(m)}</span><span class="num"><b>${eur2.format(casa+m)}</b></span></div>`; }).join('')}<p class="hint" style="margin-top:8px">Totale = quota casa (${eur2.format(base)}: affitto, utenze e scorte diviso ${n}) + le spese mensili che usa. Se mettete qui una spesa che c'è già nelle ipotesi (es. internet), azzeratela là.</p></div>`:'';
+  const open=L.filter(x=>!mPaid(x));
+  $('hMens').innerHTML=L.length?`<div class="sec"><h2>Spese mensili</h2><span class="chip ${open.length?'attesa':'vinta'}">${open.length?open.length+' da pagare':'tutte pagate'}</span></div><div class="card"><div class="list">${L.map(mRow).join('')}</div></div>`:'';
+  renderMForm();
+}
+function renderMForm(){
+  const f=state.mForm, form=$('mForm'); form.hidden=!f; if(!f) return;
+  const names=allNames();
+  $('mNomeQ').innerHTML=['Netflix','DAZN','Spotify','Sky','Prime Video','PlayStation Plus','Internet','Luce'].map(t=>`<button type="button" data-mq="${esc(t)}">${esc(t)}</button>`).join('');
+  $('mPayer').innerHTML=[['Cassa','Cassa comune'],...names.map(n=>[n,n])].map(([v,l])=>`<button type="button" class="${v==='Cassa'?'cassa':''}" data-mpayer="${esc(v)}" aria-pressed="${v===f.chi}">${esc(l)}</button>`).join('');
+  $('mParti').innerHTML=names.map(n=>`<button type="button" data-mp="${esc(n)}" aria-pressed="${f.parti.includes(n)}">${esc(n)}</button>`).join('');
+  $('mSave').textContent=f.id?'Salva modifiche':'Salva spesa mensile';
+  mPrev();
+}
+function mPrev(){
+  const f=state.mForm; if(!f) return; const imp=num($('mImp').value), box=$('mPrev'); box.className='prev';
+  if(!f.parti.length){ box.className='prev warn'; box.innerHTML='Scegli almeno una persona che la usa.'; return; }
+  const v=imp>0?eur2.format(imp/f.parti.length):'la sua parte';
+  const chi=f.chi==='Cassa'?'Esce ogni mese dalla cassa comune.':`La paga ${esc(f.chi)}: quando la segnate pagata, gli altri gli devono la loro parte.`;
+  box.innerHTML=(f.parti.length===1?`La usa solo <b>${esc(f.parti[0])}</b>: <b>${imp>0?eur2.format(imp):'tutto'}</b> al mese a lui.`:`<b>${v}</b> al mese a testa per ${esc(andList(f.parti))}.`)+' '+chi;
+}
+function openMForm(x){
+  state.mForm=x?{id:x.id,chi:x.chi,parti:[...(x.parti||[])]}:{id:null,chi:'Cassa',parti:people()};
+  $('mNome').value=x?x.nome:''; $('mImp').value=x?x.importo:'';
+  if(document.querySelector('.tab:not([hidden])')?.dataset.tab!=='budget') go('budget','mensili');
+  renderMForm(); setTimeout(()=>{ $('mForm').scrollIntoView({behavior:'smooth',block:'center'}); try{ $('mNome').focus({preventScroll:true}); }catch(_){} },200);
+}
+async function payMensile(x){
+  if(!state.live){ toast('Connessione assente: riprova tra poco.'); return; }
+  const ps=(x.parti||[]).filter(Boolean), amt=Math.round(x.importo*100)/100, nota=mTag(x).slice(0,120);
+  try{
+    if(x.chi==='Cassa'||!ps.length||(ps.length===1&&ps[0]===x.chi)){ await rpc('chill_add_mov2',{p_tipo:'spesa',p_chi:x.chi,p_importo:amt,p_vincita:0,p_quota:null,p_nota:nota,p_esito:null}); await loadMov(); }
+    else { await rpc('chill_add_debt2',{p_tipo:'anticipo',p_da:x.chi,p_a:null,p_parti:ps,p_importo:amt,p_nota:nota,p_dove:null}); await loadDebts(); }
+    state.mOpen=null; toast(x.nome+' segnata pagata'+(x.chi==='Cassa'?': uscita dalla cassa':': divisa tra chi la usa'));
+  }catch(_){ toast('Non sono riuscito a salvare, riprova.'); }
+}
+function renderAll(){ renderMe(); renderHome(); renderSched(); renderConti(); renderBudget(); renderCatalog(); renderMensili(); }
 let raf=0; function renderSoon(){ if(raf) return; raf=requestAnimationFrame(()=>{ raf=0; renderAll(); }); }
 
 /* ---------- navigazione ---------- */
@@ -1271,6 +1347,7 @@ function setupSheet(){
   updatePot();
 }
 function spesaParti(){ const p=state.payer; if(state.split==='tutti') return people(); if(state.split==='alcuni') return [...document.querySelectorAll('#aParti button[aria-pressed="true"]')].map(b=>b.dataset.p); return [p]; }
+const confirmDel=b=>{ if(b.dataset.armed==='1') return true; b.dataset.armed='1'; b.textContent='Conferma'; setTimeout(()=>{ if(b.isConnected){ b.dataset.armed=''; b.textContent='Elimina'; } },3000); return false; };
 const andList=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' e '+a[a.length-1];
 function renderPrev(){
   const box=$('fPrev'); box.className='prev';
@@ -1335,12 +1412,14 @@ async function loadMeta(){
     if(r.key==='config' && Date.now()-state.lastLocal>1500){ const d=r.data||{}; state.cfg={...structuredClone(DEFAULT),...d,have:{...(d.have||{})},noTemu:{...(d.noTemu||{})},nomi:[...(d.nomi||DEFAULT.nomi)]}; }
     if(r.key==='persone' && Array.isArray(r.data?.nomi) && r.data.nomi.length) state.amici=r.data.nomi.map(x=>String(x).slice(0,20));
     if(r.key==='todo' && Array.isArray(r.data?.items)) state.todo=r.data.items;
+    if(r.key==='mensili' && Array.isArray(r.data?.items) && Date.now()-(state.mLocal||0)>1500) state.mensili=r.data.items;
   }
   renderSoon();
 }
 async function loadMov(){ const {data,error}=await state.sb.from('chill_movimenti').select('*').eq('annullato',false).order('ts',{ascending:false}).limit(1000); if(error) throw error; state.mov=(data||[]).map(toMov); renderSoon(); }
 async function loadDebts(){ const {data,error}=await state.sb.from('chill_debiti').select('*').eq('annullato',false).order('ts',{ascending:false}).limit(1000); if(error) throw error; state.debts=(data||[]).map(toDebt); renderSoon(); }
 let saveT; function saveCfg(){ state.lastLocal=Date.now(); if(!state.live) return; clearTimeout(saveT); saveT=setTimeout(()=>{ rpc('chill_set_meta',{p_key:'config',p_data:structuredClone(state.cfg)}).catch(()=>toast('Modifica non salvata, riprova')); },600); }
+async function saveMensili(){ state.mLocal=Date.now(); try{ await rpc('chill_set_meta',{p_key:'mensili',p_data:{items:state.mensili}}); }catch(_){ toast('Non salvato, riprova'); } }
 async function saveTodo(){ try{ await rpc('chill_set_meta',{p_key:'todo',p_data:{items:state.todo}}); }catch(_){ toast('Non salvato, riprova'); } }
 function setLive(){
   const on=state.live; $('liveDot').classList.toggle('on',on); $('liveTxt').textContent=on?'live':(state.resolved?'offline':'collegamento…');
@@ -1380,6 +1459,14 @@ document.addEventListener('click',async e=>{
   const py=e.target.closest('#aPayer [data-payer]'); if(py){ state.payer=py.dataset.payer; setupSheet(); return; }
   const sx=e.target.closest('#splitSeg [data-s]'); if(sx){ state.split=sx.dataset.s; setupSheet(); return; }
   const cs=e.target.closest('#aCosa [data-cosa]'); if(cs){ $('aNota').value=cs.dataset.cosa; if(/^Affitto/.test(cs.dataset.cosa)&&!$('aImporto').value){ $('aImporto').value=state.cfg.canone; updatePot(); } return; }
+  if(e.target.closest('[data-mnew]')){ openMForm(null); return; }
+  const mpy=e.target.closest('[data-mpay]'); if(mpy){ const x=state.mensili.find(m=>m.id===mpy.dataset.mpay); if(x){ mpy.disabled=true; payMensile(x); } return; }
+  const med=e.target.closest('[data-medit]'); if(med){ const x=state.mensili.find(m=>m.id===med.dataset.medit); if(x) openMForm(x); return; }
+  const mdl=e.target.closest('[data-mdel]'); if(mdl){ const x=state.mensili.find(m=>m.id===mdl.dataset.mdel); if(x&&confirmDel(mdl)){ state.mensili=state.mensili.filter(m=>m.id!==x.id); state.mOpen=null; renderMensili(); renderHome(); saveMensili(); toast(x.nome+' eliminata'); } return; }
+  const mo=e.target.closest('[data-mopen]'); if(mo && !e.target.closest('button')){ state.mOpen=state.mOpen===mo.dataset.mopen?null:mo.dataset.mopen; renderMensili(); return; }
+  const mq=e.target.closest('#mNomeQ [data-mq]'); if(mq){ $('mNome').value=mq.dataset.mq; return; }
+  const mpr=e.target.closest('#mPayer [data-mpayer]'); if(mpr&&state.mForm){ state.mForm.chi=mpr.dataset.mpayer; renderMForm(); return; }
+  const mpp=e.target.closest('#mParti [data-mp]'); if(mpp&&state.mForm){ const n=mpp.dataset.mp, P=state.mForm.parti; state.mForm.parti=P.includes(n)?P.filter(x=>x!==n):[...P,n]; renderMForm(); return; }
   const cf=e.target.closest('#catFilter [data-cf]'); if(cf){ state.catF=cf.dataset.cf; renderCatalog(); return; }
   const tb=e.target.closest('#tierSeg [data-tier]'); if(tb){ state.cfg.tier=+tb.dataset.tier; renderAll(); saveCfg(); return; }
   const tm=e.target.closest('[data-temu]'); if(tm){ const nt={...(state.cfg.noTemu||{})}; if(nt[tm.dataset.temu]) delete nt[tm.dataset.temu]; else nt[tm.dataset.temu]=true; state.cfg.noTemu=nt; renderAll(); saveCfg(); return; }
@@ -1390,6 +1477,17 @@ $('sheetCancel').addEventListener('click',()=>closeSheet());
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('sheet').hidden) closeSheet(); });
 $('addForm').addEventListener('submit',submitAdd);
 $('aPTipo').addEventListener('change',setupSheet);
+$('mImp').addEventListener('input',mPrev);
+$('mCancel').addEventListener('click',()=>{ state.mForm=null; renderMForm(); });
+$('mForm').addEventListener('submit',e=>{ e.preventDefault(); const f=state.mForm; if(!f) return;
+  const nome=$('mNome').value.trim().slice(0,40), imp=num($('mImp').value);
+  if(!nome){ toast('Scrivi che spesa è'); $('mNome').focus(); return; }
+  if(!(imp>0)){ toast('Inserisci quanto costa al mese'); $('mImp').focus(); return; }
+  if(!f.parti.length){ toast('Scegli chi la usa'); return; }
+  const item={id:f.id||'m'+Date.now().toString(36),nome,importo:Math.round(imp*100)/100,chi:f.chi,parti:[...f.parti]};
+  state.mensili=f.id?state.mensili.map(m=>m.id===f.id?item:m):[...state.mensili,item];
+  state.mForm=null; state.mOpen=null; renderMensili(); renderHome(); saveMensili(); toast(nome+(f.id?' aggiornata':' aggiunta')+': lo vedono tutti');
+});
 $('aImporto').addEventListener('input',updatePot); $('aQuota').addEventListener('input',updatePot);
 $('aVincita').addEventListener('input',()=>{ $('aVincita').dataset.touched='1'; });
 $('addForm').addEventListener('reset',()=>{ delete $('aVincita').dataset.touched; });
@@ -1407,7 +1505,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610252155';
+const PAGE_VERSION='202610260809';
 try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
