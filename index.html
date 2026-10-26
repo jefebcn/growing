@@ -415,6 +415,14 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .row .ra .chip{margin-top:4px}
 .mper{margin-top:14px}
 .mper .rrow b{font-weight:800}
+.pushcard{display:flex;gap:12px;align-items:center;margin:14px 0}
+.pushcard .pi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--orange);flex:0 0 auto}
+.pushcard .pi svg{width:20px;height:20px}
+.pushcard .pt{flex:1;min-width:0;font-size:.86rem;line-height:1.4}
+.pushcard .pt b{display:block;font-size:.92rem}
+.pushcard.on{padding:10px 14px}
+.pushcard.on .pi{background:var(--teal-soft);color:var(--teal);width:32px;height:32px}
+.pushcard .mini-btn{flex:0 0 auto}
 </style>
 </head>
 <body>
@@ -449,6 +457,8 @@ input[type=range]{width:100%;accent-color:var(--teal)}
       <div class="f"><svg viewBox="0 0 24 24" fill="none" stroke="#F07470" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15M5 13l7 7 7-7"/></svg><div><div class="fk">Uscite</div><div class="fv" id="hOut">–</div></div></div>
     </div>
   </div>
+
+  <div class="card pushcard" id="pushCard" hidden></div>
 
   <div class="qa" role="group" aria-label="Aggiungi">
     <button type="button" data-add="versamento"><span class="ic" style="background:var(--teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span>Versamento</button>
@@ -555,6 +565,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
         <li><b>Tempo reale.</b> Quando qualcuno aggiunge un movimento, chi ha il sito aperto lo vede subito (pallino verde "live").</li>
         <li><b>Tutti possono modificare.</b> Il tasto arancione + in basso aggiunge versamenti, spese, schedine e prestiti. Scegli "chi sei" in alto e i moduli si precompilano.</li>
         <li><b>Niente si perde.</b> Un movimento eliminato per sbaglio si può recuperare: chiedete ad Alex.</li>
+        <li><b>Notifiche.</b> In Home tocca "Attiva notifiche": ti arriva un avviso quando un altro aggiunge un versamento, una spesa, una schedina o un prestito. Su iPhone funziona solo se il sito è aggiunto alla schermata Home e aperto da lì.</li>
         <li><b>Mettilo in Home.</b> Da Safari o Chrome: Condividi → Aggiungi a Home. Si apre come un'app.</li>
       </ul>
     </div></details>
@@ -1269,6 +1280,7 @@ async function payMensile(x){
   try{
     if(x.chi==='Cassa'||!ps.length||(ps.length===1&&ps[0]===x.chi)){ await rpc('chill_add_mov2',{p_tipo:'spesa',p_chi:x.chi,p_importo:amt,p_vincita:0,p_quota:null,p_nota:nota,p_esito:null}); await loadMov(); }
     else { await rpc('chill_add_debt2',{p_tipo:'anticipo',p_da:x.chi,p_a:null,p_parti:ps,p_importo:amt,p_nota:nota,p_dove:null}); await loadDebts(); }
+    notify(`${x.nome} di ${new Date().toLocaleDateString('it-IT',{month:'long'})} pagata ${x.chi==='Cassa'?'dalla cassa':'da '+x.chi}: ${eur2.format(amt)}${ps.length>1&&x.chi!=='Cassa'?', '+eur2.format(amt/ps.length)+' a testa tra '+andList(ps):''}`);
     state.mOpen=null; toast(x.nome+' segnata pagata'+(x.chi==='Cassa'?': uscita dalla cassa':': divisa tra chi la usa'));
   }catch(_){ toast('Non sono riuscito a salvare, riprova.'); }
 }
@@ -1382,7 +1394,9 @@ async function submitAdd(e){
       if(p!=='Cassa'&&state.split!=='no'&&!parts.length) throw {msg:'Scegli tra chi dividere la spesa.'};
       if(p==='Cassa'||state.split==='no'||(parts.length===1&&parts[0]===p)){ await rpc('chill_add_mov2',{p_tipo:'spesa',p_chi:p,p_importo:amt,p_vincita:0,p_quota:null,p_nota:nota,p_esito:null}); await loadMov(); }
       else { await rpc('chill_add_debt2',{p_tipo:'anticipo',p_da:p,p_a:null,p_parti:parts,p_importo:amt,p_nota:nota,p_dove:null}); await loadDebts(); }
-      const msg=$('fPrev').textContent; closeSheet(); toast('Spesa aggiunta. '+(p==='Cassa'?'Uscita dalla cassa.':state.split==='no'?'Non divisa.':msg)); return;
+      const msg=$('fPrev').textContent;
+      notify(p==='Cassa'?`Spesa dalla cassa: ${nota}, ${eur2.format(amt)}`:state.split==='no'?`${p} ha pagato ${nota} (${eur2.format(amt)}), non divisa`:`${p} ha pagato ${nota} (${eur2.format(amt)}). ${msg}`);
+      closeSheet(); toast('Spesa aggiunta. '+(p==='Cassa'?'Uscita dalla cassa.':state.split==='no'?'Non divisa.':msg)); return;
     }
     if(k==='prestito'){
       const t=$('aPTipo').value, args={p_tipo:t,p_da:$('aChi').value,p_a:null,p_parti:[],p_importo:Math.round(imp*100)/100,p_nota:$('aNota').value.trim(),p_dove:null};
@@ -1390,15 +1404,71 @@ async function submitAdd(e){
       else if(t==='custodia'){ args.p_a=$('aChi').value; args.p_da=$('aA').value; args.p_dove=$('aDove').value; if(args.p_a===args.p_da) throw {msg:'Scegli due persone diverse.'}; }
       else { args.p_a=$('aA').value; if(args.p_a===args.p_da) throw {msg:'Scegli due persone diverse.'}; }
       await rpc('chill_add_debt2',args); await loadDebts();
+      { const v=eur2.format(args.p_importo), n=args.p_nota?` (${args.p_nota})`:''; notify(t==='prestito'?`${args.p_da} ha prestato ${v} a ${args.p_a}${n}`:t==='rimborso'?`${args.p_da} ha restituito ${v} a ${args.p_a}${n}`:t==='custodia'?`${args.p_a} tiene ${v} di ${args.p_da} su ${args.p_dove}${n}`:`Debito segnato: ${args.p_a} deve ${v} a ${args.p_da}${n}`); }
     } else {
       let nota=$('aNota').value.trim(), q=num($('aQuota').value), vinc=0, esito=null;
       if(k==='schedina'){ const ev=$('aEvento').value.trim(); nota=[ev,nota].filter(Boolean).join(' · ')||'Schedina'; esito=state.esito; if(esito==='vinta'){ vinc=num($('aVincita').value); if(!(vinc>0)) throw {msg:'Inserisci quanto avete vinto.'}; } }
       await rpc('chill_add_mov2',{p_tipo:k,p_chi:$('aChi').value,p_importo:Math.round(imp*100)/100,p_vincita:Math.round((vinc||0)*100)/100,p_quota:(k==='schedina'&&q>=1)?q:null,p_nota:nota.slice(0,120),p_esito:esito});
       await loadMov();
+      { const v=eur2.format(imp); notify(k==='versamento'?`${$('aChi').value} ha versato ${v} in cassa${nota?' ('+nota+')':''}`:esito==='vinta'?`Schedina vinta! ${nota}: giocati ${v}, vinti ${eur2.format(vinc)}`:esito==='persa'?`Schedina persa: ${nota} (${v})`:`Nuova schedina: ${nota}, ${v}${q>=1?' a quota '+fmtQ(q):''}`); }
     }
     closeSheet(); toast((k==='prestito'&&$('aPTipo').value==='custodia'?'Custodia segnata':{versamento:'Versamento aggiunto',spesa:'Spesa aggiunta',schedina:'Schedina segnata',prestito:'Prestito aggiunto'}[k])+': lo vedono tutti');
   }catch(err){ $('aMsg').textContent = err&&err.msg ? err.msg : 'Non sono riuscito a salvare. Riprova tra qualche secondo.'; }
   finally{ $('aBtn').disabled=false; }
+}
+
+/* ---------- notifiche push ---------- */
+const NOTIFY_URL='https://txjwvjcfubskvjxaelih.supabase.co/functions/v1/chill-notify';
+const BELL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
+const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const inApp=()=>window.navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+const b64u=s=>{ const p='='.repeat((4-s.length%4)%4), b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/')); return Uint8Array.from(b,ch=>ch.charCodeAt(0)); };
+state.push='unknown'; state.pushEndpoint=ls.get('chill_push_ep')||'';
+async function refreshPush(){
+  try{
+    if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)) state.push=isIOS()&&!inApp()?'ios':'unsupported';
+    else if(Notification.permission==='denied') state.push='denied';
+    else { const reg=await navigator.serviceWorker.getRegistration(); const sub=reg&&await reg.pushManager.getSubscription(); state.push=sub?'on':'off'; state.pushEndpoint=sub?sub.endpoint:''; ls.set('chill_push_ep',state.pushEndpoint); }
+  }catch(_){ state.push='unsupported'; }
+  renderPush();
+}
+function renderPush(){
+  const el=$('pushCard'), s=state.push; el.classList.remove('on');
+  if(s==='unknown'||s==='unsupported'){ el.hidden=true; return; }
+  el.hidden=false;
+  if(s==='on'){ el.classList.add('on'); el.innerHTML=`<span class="pi">${BELL}</span><div class="pt">Notifiche attive su questo dispositivo${state.me?' ('+esc(state.me)+')':''}</div><button class="mini-btn ghost" type="button" data-push="off">Disattiva</button>`; return; }
+  if(s==='ios'){ el.innerHTML=`<span class="pi">${BELL}</span><div class="pt"><b>Notifiche su iPhone</b>Funzionano solo dall'app: tocca Condividi → <b style="display:inline">Aggiungi alla schermata Home</b>, apri il sito da lì e tocca Attiva.</div>`; return; }
+  if(s==='denied'){ el.innerHTML=`<span class="pi">${BELL}</span><div class="pt"><b>Notifiche bloccate</b>Le hai bloccate per questo sito: riattivale dalle impostazioni del browser o del telefono.</div>`; return; }
+  el.innerHTML=`<span class="pi">${BELL}</span><div class="pt"><b>Ricevi le notifiche</b>Un avviso quando qualcuno aggiunge un versamento, una spesa, una schedina o un prestito.</div><button class="mini-btn ok" type="button" data-push="on">Attiva</button>`;
+}
+async function enablePush(btn){
+  if(!state.me){ toast('Prima scegli chi sei, in alto'); try{ $('meSel').focus(); }catch(_){} return; }
+  if(btn) btn.disabled=true;
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted'){ await refreshPush(); toast(perm==='denied'?'Notifiche bloccate: riattivale dalle impostazioni':'Notifiche non attivate'); return; }
+    const reg=await navigator.serviceWorker.register('push-sw.js'); await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub){ const r=await fetch(NOTIFY_URL); const {publicKey}=await r.json(); sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(publicKey)}); }
+    await savePushSub(sub);
+    await refreshPush(); toast('Notifiche attive: ti avviso quando gli altri aggiungono qualcosa');
+  }catch(_){ toast('Non sono riuscito ad attivarle, riprova'); await refreshPush(); }
+  finally{ if(btn) btn.disabled=false; }
+}
+async function savePushSub(sub){ const {error}=await state.sb.rpc('chill_push_save',{p_sub:sub.toJSON(),p_nome:state.me||''}); if(error) throw error; }
+async function disablePush(){
+  try{ const reg=await navigator.serviceWorker.getRegistration(); const sub=reg&&await reg.pushManager.getSubscription();
+    if(sub){ const ep=sub.endpoint; await sub.unsubscribe(); if(state.sb) await state.sb.rpc('chill_push_delete',{p_endpoint:ep}); }
+    toast('Notifiche disattivate su questo dispositivo');
+  }catch(_){ toast('Non riuscito, riprova'); }
+  refreshPush();
+}
+function notify(body){
+  try{
+    let txt=String(body||'').trim(); if(!txt) return;
+    if(state.me&&!txt.includes(state.me)) txt+=` (da ${state.me})`;
+    fetch(NOTIFY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:'Chill Sander House',body:txt.slice(0,240),from:state.me||'',skip:state.pushEndpoint||'',tag:'c'+Date.now().toString(36)}),keepalive:true}).catch(()=>{});
+  }catch(_){}
 }
 
 /* ---------- Supabase ---------- */
@@ -1448,8 +1518,8 @@ document.addEventListener('click',async e=>{
   const op=e.target.closest('[data-open]'); if(op && !e.target.closest('button,input')){ state.rowOpen = state.rowOpen===op.dataset.open?null:op.dataset.open; renderSched(); renderConti(); return; }
   const w=e.target.closest('[data-win]'); if(w){ state.winEdit=w.dataset.win; renderSched(); setTimeout(()=>$('winIn')?.focus(),0); return; }
   if(e.target.closest('[data-wincancel]')){ state.winEdit=null; renderSched(); return; }
-  const wo=e.target.closest('[data-winok]'); if(wo){ const v=num($('winIn')?.value); if(!(v>0)){ toast('Inserisci la vincita'); return; } try{ await rpc('chill_set_esito',{p_id:wo.dataset.winok,p_esito:'vinta',p_vincita:v}); state.winEdit=null; await loadMov(); toast('Schedina vinta!'); }catch(_){ toast('Non riuscito, riprova'); } return; }
-  const lo=e.target.closest('[data-lose]'); if(lo){ try{ await rpc('chill_set_esito',{p_id:lo.dataset.lose,p_esito:'persa',p_vincita:0}); await loadMov(); toast('Schedina segnata persa'); }catch(_){ toast('Non riuscito, riprova'); } return; }
+  const wo=e.target.closest('[data-winok]'); if(wo){ const v=num($('winIn')?.value); if(!(v>0)){ toast('Inserisci la vincita'); return; } try{ await rpc('chill_set_esito',{p_id:wo.dataset.winok,p_esito:'vinta',p_vincita:v}); state.winEdit=null; await loadMov(); toast('Schedina vinta!'); { const x=state.mov.find(m=>m.id===wo.dataset.winok); notify(`Schedina vinta! ${x?.nota||'Schedina'}: +${eur2.format(v-(+x?.importo||0))}`); } }catch(_){ toast('Non riuscito, riprova'); } return; }
+  const lo=e.target.closest('[data-lose]'); if(lo){ try{ await rpc('chill_set_esito',{p_id:lo.dataset.lose,p_esito:'persa',p_vincita:0}); await loadMov(); toast('Schedina segnata persa'); { const x=state.mov.find(m=>m.id===lo.dataset.lose); notify(`Schedina persa: ${x?.nota||'Schedina'} (${eur2.format(+x?.importo||0)})`); } }catch(_){ toast('Non riuscito, riprova'); } return; }
   const ro=e.target.closest('[data-reopen]'); if(ro){ try{ await rpc('chill_set_esito',{p_id:ro.dataset.reopen,p_esito:'attesa',p_vincita:0}); await loadMov(); toast('Rimessa in attesa'); }catch(_){ toast('Non riuscito, riprova'); } return; }
   const bf=e.target.closest('#betFilter [data-f]'); if(bf){ state.betF=bf.dataset.f; renderSched(); return; }
   const mf=e.target.closest('#movFilter [data-f]'); if(mf){ state.movF=mf.dataset.f; renderConti(); return; }
@@ -1459,6 +1529,7 @@ document.addEventListener('click',async e=>{
   const py=e.target.closest('#aPayer [data-payer]'); if(py){ state.payer=py.dataset.payer; setupSheet(); return; }
   const sx=e.target.closest('#splitSeg [data-s]'); if(sx){ state.split=sx.dataset.s; setupSheet(); return; }
   const cs=e.target.closest('#aCosa [data-cosa]'); if(cs){ $('aNota').value=cs.dataset.cosa; if(/^Affitto/.test(cs.dataset.cosa)&&!$('aImporto').value){ $('aImporto').value=state.cfg.canone; updatePot(); } return; }
+  const pu=e.target.closest('[data-push]'); if(pu){ if(pu.dataset.push==='on') enablePush(pu); else disablePush(); return; }
   if(e.target.closest('[data-mnew]')){ openMForm(null); return; }
   const mpy=e.target.closest('[data-mpay]'); if(mpy){ const x=state.mensili.find(m=>m.id===mpy.dataset.mpay); if(x){ mpy.disabled=true; payMensile(x); } return; }
   const med=e.target.closest('[data-medit]'); if(med){ const x=state.mensili.find(m=>m.id===med.dataset.medit); if(x) openMForm(x); return; }
@@ -1491,7 +1562,7 @@ $('mForm').addEventListener('submit',e=>{ e.preventDefault(); const f=state.mFor
 $('aImporto').addEventListener('input',updatePot); $('aQuota').addEventListener('input',updatePot);
 $('aVincita').addEventListener('input',()=>{ $('aVincita').dataset.touched='1'; });
 $('addForm').addEventListener('reset',()=>{ delete $('aVincita').dataset.touched; });
-$('meSel').addEventListener('change',e=>{ state.me=e.target.value; ls.set('chill_me',state.me); renderHome(); if(state.me) toast('Ciao '+state.me+'! I moduli useranno il tuo nome'); });
+$('meSel').addEventListener('change',e=>{ state.me=e.target.value; ls.set('chill_me',state.me); renderHome(); renderPush(); if(state.push==='on'&&state.sb) navigator.serviceWorker.getRegistration().then(r=>r&&r.pushManager.getSubscription()).then(s=>s&&savePushSub(s)).catch(()=>{}); if(state.me) toast('Ciao '+state.me+'! I moduli useranno il tuo nome'); });
 $('shareBtn').addEventListener('click',async()=>{ const url=location.origin+location.pathname; try{ await navigator.clipboard.writeText(url); toast('Link copiato: mandalo nel gruppo'); }catch(_){ toast(url); } });
 $('todoList').addEventListener('change',e=>{ const id=e.target.dataset.todo; if(!id) return; state.todo=state.todo.map(t=>t.id===id?{...t,done:e.target.checked}:t); renderTodo(); saveTodo(); });
 $('todoForm').addEventListener('submit',e=>{ e.preventDefault(); const t=$('todoIn').value.trim(); if(!t) return; state.todo=[...state.todo,{id:'t'+Date.now().toString(36),t:t.slice(0,90),done:false}]; $('todoIn').value=''; renderTodo(); saveTodo(); });
@@ -1505,8 +1576,8 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610260809';
-try{ if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}); }catch(_){}
+const PAGE_VERSION='202610261128';
+try{ if('serviceWorker' in navigator){ navigator.serviceWorker.register('push-sw.js').then(()=>refreshPush()).catch(()=>refreshPush()); } else refreshPush(); }catch(_){ refreshPush(); }
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') checkVersion(); });
