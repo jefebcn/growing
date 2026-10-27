@@ -425,6 +425,12 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .pushcard.on{padding:10px 14px}
 .pushcard.on .pi{background:var(--teal-soft);color:var(--teal);width:32px;height:32px}
 .pushcard .mini-btn{flex:0 0 auto}
+.chk{display:flex;gap:10px;align-items:center;font-weight:700;font-size:.88rem;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--teal);flex:0 0 auto}
+.chip.next{background:var(--surface-2);color:var(--muted)}
+.mpay{grid-column:2/4;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+.mpay input{width:120px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);font:700 16px var(--f)}
+.hmens-empty{font-size:.88rem;color:var(--muted);padding:2px 0 8px}
 </style>
 </head>
 <body>
@@ -717,17 +723,20 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 
 
 </div><div class="col">
-  <div class="sec" id="mensili"><h2>Spese mensili</h2><button class="pill" type="button" data-mnew>+ Aggiungi</button></div>
+  <div class="sec" id="mensili"><h2>Bollette e spese fisse</h2><button class="pill" type="button" data-mnew>+ Aggiungi</button></div>
   <div class="card">
-    <p class="hint">Abbonamenti e costi che tornano ogni mese (Netflix, DAZN, internet…). Ognuna si divide <b>solo tra chi la usa</b>. Tocca una voce per segnarla pagata, modificarla o eliminarla.</p>
+    <p class="hint">Bollette (luce, gas, acqua, internet) e abbonamenti (Netflix, DAZN…). Ognuna si divide <b>solo tra chi la usa</b>. Quando arriva, tocca la voce e poi <b>Segna pagata</b>: per le bollette scrivi l'importo vero.</p>
     <div class="list" id="mList"></div>
     <form class="fields mform" id="mForm" autocomplete="off" hidden>
       <div class="field"><label for="mNome">Che spesa è</label><input type="text" id="mNome" maxlength="40" placeholder="es. Netflix"><div class="pick small" id="mNomeQ"></div></div>
-      <div class="field"><label for="mImp">Quanto costa al mese (€)</label><input type="number" id="mImp" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div>
+      <div class="field"><label for="mImp" id="mImpL">Quanto costa (€)</label><input type="number" id="mImp" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div>
+      <label class="chk"><input type="checkbox" id="mVar"> L'importo cambia ogni volta (bolletta)</label>
+      <div class="field"><span class="flabel">Ogni quanto arriva</span><div class="seg full" role="group" aria-label="Ogni quanto" id="mOgni"><button type="button" data-mo="1">Ogni mese</button><button type="button" data-mo="2">Ogni 2 mesi</button><button type="button" data-mo="3">Ogni 3 mesi</button></div></div>
+      <div class="field" id="mDalF"><label for="mDal">La prossima da pagare</label><select id="mDal"></select></div>
       <div class="field"><span class="flabel">Chi la paga</span><div class="pick" id="mPayer"></div></div>
       <div class="field"><span class="flabel">Chi la usa</span><div class="pick" id="mParti"></div></div>
       <div class="prev" id="mPrev"></div>
-      <button class="btn" type="submit" id="mSave">Salva spesa mensile</button>
+      <button class="btn" type="submit" id="mSave">Salva</button>
       <button class="btn-ghost" type="button" id="mCancel">Annulla</button>
     </form>
     <div id="mPer"></div>
@@ -805,6 +814,9 @@ input[type=range]{width:100%;accent-color:var(--teal)}
           <button type="button" data-s="alcuni" aria-pressed="false">Scelgo io</button>
           <button type="button" data-s="no" aria-pressed="false">No</button>
         </div>
+      </div>
+      <div class="field" id="fRic"><label class="chk"><input type="checkbox" id="aRic"> Si ripete: è una bolletta o un abbonamento</label>
+        <div class="seg full" role="group" aria-label="Ogni quanto" id="ricOgni" hidden style="margin-top:8px"><button type="button" data-ro="1" aria-pressed="true">Ogni mese</button><button type="button" data-ro="2" aria-pressed="false">Ogni 2 mesi</button><button type="button" data-ro="3" aria-pressed="false">Ogni 3 mesi</button></div>
       </div>
       <div class="field" id="fDove"><label for="aDove">Dove sono</label><select id="aDove"><option>PayPal</option><option>Contanti</option><option>Conto in banca</option><option>Revolut</option><option>Satispay</option><option>Altro</option></select></div>
       <div class="field" id="fParti"><span class="flabel">Tra chi la dividiamo</span><div class="seg" id="aParti" style="border-radius:14px"></div></div>
@@ -1257,55 +1269,72 @@ function renderCatalog(){
 }
 const meseLabel=()=>new Date().toLocaleDateString('it-IT',{month:'long',year:'numeric'});
 const mTag=x=>`${x.nome} · ${meseLabel()}`;
+const ymNow=()=>{ const d=new Date(); return d.getFullYear()*12+d.getMonth(); };
+const ymOf=s=>{ const [y,m]=String(s||'').split('-').map(Number); return y&&m?y*12+m-1:ymNow(); };
+const ymStr=n=>`${Math.floor(n/12)}-${String(n%12+1).padStart(2,'0')}`;
+const ymName=n=>new Date(Math.floor(n/12),n%12,1).toLocaleDateString('it-IT',{month:'long'});
+const mOgni=x=>Math.max(1,Math.min(12,+x.ogni||1));
+const mDue=x=>{ const o=mOgni(x), d=ymNow()-ymOf(x.dal); return d>=0&&d%o===0; };
+const mNextYm=x=>{ const o=mOgni(x), s=ymOf(x.dal), n=ymNow(); if(n<s) return s; const k=(n-s)%o; return k===0?n:n+(o-k); };
+const ogniTxt=x=>({1:'ogni mese',2:'ogni 2 mesi',3:'ogni 3 mesi'})[mOgni(x)]||'ogni '+mOgni(x)+' mesi';
 const mPaid=x=>{ const t=mTag(x); return state.mov.some(m=>m.nota===t)||state.debts.some(d=>d.nota===t); };
-function mensiliPer(){ const per={}; for(const x of state.mensili){ const ps=(x.parti||[]).filter(Boolean); if(!ps.length) continue; ps.forEach(p=>per[p]=(per[p]||0)+(+x.importo||0)/ps.length); } return per; }
+function mensiliPer(){ const per={}; for(const x of state.mensili){ const ps=(x.parti||[]).filter(Boolean); if(!ps.length) continue; ps.forEach(p=>per[p]=(per[p]||0)+(+x.importo||0)/mOgni(x)/ps.length); } return per; }
 const isTutti=ps=>ps.length===people().length&&people().every(p=>ps.includes(p));
 function mRow(x){
-  const ps=(x.parti||[]).filter(Boolean), paid=mPaid(x), q=ps.length?x.importo/ps.length:0, open=state.mOpen===x.id;
-  const who=isTutti(ps)?'tutti':andList(ps);
-  const sub=`${x.chi==='Cassa'?'dalla cassa':'paga '+esc(x.chi)} · ${ps.length>1?eur2.format(q)+' a testa tra '+esc(who):'solo '+esc(who)}`;
-  return `<div class="row tap" data-mopen="${esc(x.id)}">${icon('mensile')}<div class="rm"><div class="rt">${esc(x.nome)}</div><div class="rs">${sub}</div></div><div class="ra">${eur2.format(x.importo)}<small><span class="chip ${paid?'vinta':'attesa'}">${paid?'pagata':'da pagare'}</span></small></div>${open?`<div class="x">${paid?'':`<button class="mini-btn ok" type="button" data-mpay="${esc(x.id)}">Segna pagata (${esc(new Date().toLocaleDateString('it-IT',{month:'long'}))})</button>`}<button class="mini-btn" type="button" data-medit="${esc(x.id)}">Modifica</button><button class="mini-btn no" type="button" data-mdel="${esc(x.id)}">Elimina</button></div>`:''}</div>`;
+  const ps=(x.parti||[]).filter(Boolean), paid=mPaid(x), due=mDue(x), q=ps.length?x.importo/ps.length:0, open=state.mOpen===x.id, editing=state.mPayEdit===x.id;
+  const who=isTutti(ps)?'tutti':andList(ps), mese=new Date().toLocaleDateString('it-IT',{month:'long'});
+  const sub=`${ogniTxt(x)} · ${x.chi==='Cassa'?'dalla cassa':'paga '+esc(x.chi)} · ${ps.length>1?(x.var?'circa ':'')+eur2.format(q)+' a testa tra '+esc(who):'solo '+esc(who)}`;
+  const chip=paid?'<span class="chip vinta">pagata</span>':due?'<span class="chip attesa">da pagare</span>':`<span class="chip next">${esc(ymName(mNextYm(x)))}</span>`;
+  let act='';
+  if(editing) act=`<div class="mpay"><input type="number" id="mPayIn" step="0.01" min="0" inputmode="decimal" value="${x.var?'':(+x.importo).toFixed(2)}" placeholder="${x.var?'Importo vero':'€'}" aria-label="Importo pagato"><button class="mini-btn ok" type="button" data-mpayok="${esc(x.id)}">Conferma</button><button class="mini-btn ghost" type="button" data-mpaycancel="1">Annulla</button></div>`;
+  else if(open) act=`<div class="x">${paid?'':`<button class="mini-btn ok" type="button" data-mpay="${esc(x.id)}">Segna pagata (${esc(mese)})</button>`}<button class="mini-btn" type="button" data-medit="${esc(x.id)}">Modifica</button><button class="mini-btn no" type="button" data-mdel="${esc(x.id)}">Elimina</button></div>`;
+  return `<div class="row tap" data-mopen="${esc(x.id)}">${icon('mensile')}<div class="rm"><div class="rt">${esc(x.nome)}</div><div class="rs">${sub}</div></div><div class="ra">${x.var?'≈ ':''}${eur2.format(x.importo)}<small>${chip}</small></div>${act}</div>`;
 }
 function renderMensili(){
   const L=state.mensili;
-  $('mList').innerHTML=L.length?L.map(mRow).join(''):'<p class="hint" style="padding:10px 0 2px">Nessuna spesa mensile. Tocca <b>+ Aggiungi</b>.</p>';
+  $('mList').innerHTML=L.length?L.map(mRow).join(''):'<p class="hint" style="padding:10px 0 2px">Ancora niente. Tocca <b>+ Aggiungi</b>.</p>';
   const per=mensiliPer(), b=budget(), n=state.cfg.persone, base=b.m/n;
   const names=[...new Set([...people(),...Object.keys(per)])];
-  $('mPer').innerHTML=L.length?`<div class="mper"><div class="rrow rh"><span>Ogni mese a testa</span><span>Mensili</span><span>Totale</span></div>${names.map(nm=>{ const casa=people().includes(nm)?base:0, m=per[nm]||0; return `<div class="rrow"><span>${esc(nm)}</span><span class="num">${eur2.format(m)}</span><span class="num"><b>${eur2.format(casa+m)}</b></span></div>`; }).join('')}<p class="hint" style="margin-top:8px">Totale = quota casa (${eur2.format(base)}: affitto, utenze e scorte diviso ${n}) + le spese mensili che usa. Se mettete qui una spesa che c'è già nelle ipotesi (es. internet), azzeratela là.</p></div>`:'';
-  const open=L.filter(x=>!mPaid(x));
-  $('hMens').innerHTML=L.length?`<div class="sec"><h2>Spese mensili</h2><span class="chip ${open.length?'attesa':'vinta'}">${open.length?open.length+' da pagare':'tutte pagate'}</span></div><div class="card"><div class="list">${L.map(mRow).join('')}</div></div>`:'';
+  $('mPer').innerHTML=L.length?`<div class="mper"><div class="rrow rh"><span>Ogni mese a testa</span><span>Mensili</span><span>Totale</span></div>${names.map(nm=>{ const casa=people().includes(nm)?base:0, m=per[nm]||0; return `<div class="rrow"><span>${esc(nm)}</span><span class="num">${eur2.format(m)}</span><span class="num"><b>${eur2.format(casa+m)}</b></span></div>`; }).join('')}<p class="hint" style="margin-top:8px">Totale = quota casa (${eur2.format(base)}: affitto, utenze e scorte diviso ${n}) + bollette e spese fisse che usa, in media al mese. Se mettete qui una spesa che c'è già nelle ipotesi (es. internet), azzeratela là.</p></div>`:'';
+  const open=L.filter(x=>mDue(x)&&!mPaid(x));
+  $('hMens').innerHTML=`<div class="sec"><h2>Bollette e spese fisse</h2><button class="pill" type="button" data-mnew>+ Aggiungi</button></div><div class="card">${L.length?`<p class="hint" style="margin-bottom:2px">${open.length?`<b style="color:var(--orange)">${open.length} da pagare</b> questo mese.`:'Questo mese è tutto pagato.'} Tocca una voce per segnarla pagata.</p><div class="list">${L.map(mRow).join('')}</div>`:`<p class="hmens-empty">Aggiungi luce, gas, acqua, internet e abbonamenti: il sito ricorda quando vanno pagati e li divide solo tra chi li usa.</p><button class="btn" type="button" data-mnew>Aggiungi la prima bolletta</button>`}</div>`;
   renderMForm();
 }
 function renderMForm(){
   const f=state.mForm, form=$('mForm'); form.hidden=!f; if(!f) return;
   const names=allNames();
-  $('mNomeQ').innerHTML=['Netflix','DAZN','Spotify','Sky','Prime Video','PlayStation Plus','Internet','Luce'].map(t=>`<button type="button" data-mq="${esc(t)}">${esc(t)}</button>`).join('');
+  $('mNomeQ').innerHTML=['Luce','Gas','Acqua','Internet','Rifiuti (TARI)','Netflix','DAZN','Spotify','Sky'].map(t=>`<button type="button" data-mq="${esc(t)}">${esc(t)}</button>`).join('');
   $('mPayer').innerHTML=[['Cassa','Cassa comune'],...names.map(n=>[n,n])].map(([v,l])=>`<button type="button" class="${v==='Cassa'?'cassa':''}" data-mpayer="${esc(v)}" aria-pressed="${v===f.chi}">${esc(l)}</button>`).join('');
   $('mParti').innerHTML=names.map(n=>`<button type="button" data-mp="${esc(n)}" aria-pressed="${f.parti.includes(n)}">${esc(n)}</button>`).join('');
-  $('mSave').textContent=f.id?'Salva modifiche':'Salva spesa mensile';
+  $('mSave').textContent=f.id?'Salva modifiche':'Salva';
+  $('mVar').checked=!!f.var; $('mImpL').textContent=f.var?'Quanto costa circa ogni volta (€)':'Quanto costa (€)';
+  document.querySelectorAll('#mOgni button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.mo===f.ogni)));
+  $('mDalF').hidden=f.ogni===1;
+  { const n=ymNow(), cur=ymOf(f.dal), opts=[...new Set([...Array.from({length:f.ogni},(_,i)=>n+i),cur])].filter(v=>v>=n-12).sort((a,b)=>a-b);
+    $('mDal').innerHTML=opts.map(v=>`<option value="${ymStr(v)}">${v===n?'Questo mese ('+ymName(v)+')':ymName(v)+' '+Math.floor(v/12)}</option>`).join(''); $('mDal').value=ymStr(opts.includes(cur)?cur:n); }
   mPrev();
 }
 function mPrev(){
   const f=state.mForm; if(!f) return; const imp=num($('mImp').value), box=$('mPrev'); box.className='prev';
   if(!f.parti.length){ box.className='prev warn'; box.innerHTML='Scegli almeno una persona che la usa.'; return; }
-  const v=imp>0?eur2.format(imp/f.parti.length):'la sua parte';
-  const chi=f.chi==='Cassa'?'Esce ogni mese dalla cassa comune.':`La paga ${esc(f.chi)}: quando la segnate pagata, gli altri gli devono la loro parte.`;
-  box.innerHTML=(f.parti.length===1?`La usa solo <b>${esc(f.parti[0])}</b>: <b>${imp>0?eur2.format(imp):'tutto'}</b> al mese a lui.`:`<b>${v}</b> al mese a testa per ${esc(andList(f.parti))}.`)+' '+chi;
+  const v=(f.var&&imp>0?'circa ':'')+(imp>0?eur2.format(imp/f.parti.length):'la sua parte'), ogni=ogniTxt(f);
+  const chi=f.chi==='Cassa'?`Esce ${ogni} dalla cassa comune.`:`La paga ${esc(f.chi)}: quando la segnate pagata, gli altri gli devono la loro parte.`;
+  box.innerHTML=(f.parti.length===1?`La usa solo <b>${esc(f.parti[0])}</b>: paga tutto lui, ${ogni}.`:`<b>${v}</b> a testa ${ogni} per ${esc(andList(f.parti))}${f.ogni>1&&imp>0?` (in media ${eur2.format(imp/f.ogni/f.parti.length)} al mese)`:''}.`)+' '+chi;
 }
 function openMForm(x){
-  state.mForm=x?{id:x.id,chi:x.chi,parti:[...(x.parti||[])]}:{id:null,chi:'Cassa',parti:people()};
+  state.mForm=x?{id:x.id,chi:x.chi,parti:[...(x.parti||[])],ogni:mOgni(x),var:!!x.var,dal:x.dal||ymStr(ymNow())}:{id:null,chi:'Cassa',parti:people(),ogni:1,var:false,dal:ymStr(ymNow())};
   $('mNome').value=x?x.nome:''; $('mImp').value=x?x.importo:'';
   if(document.querySelector('.tab:not([hidden])')?.dataset.tab!=='budget') go('budget','mensili');
   renderMForm(); setTimeout(()=>{ $('mForm').scrollIntoView({behavior:'smooth',block:'center'}); try{ $('mNome').focus({preventScroll:true}); }catch(_){} },200);
 }
-async function payMensile(x){
+async function payMensile(x,amount){
   if(!state.live){ toast('Connessione assente: riprova tra poco.'); return; }
-  const ps=(x.parti||[]).filter(Boolean), amt=Math.round(x.importo*100)/100, nota=mTag(x).slice(0,120);
+  const ps=(x.parti||[]).filter(Boolean), amt=Math.round((amount>0?amount:x.importo)*100)/100, nota=mTag(x).slice(0,120);
   try{
     if(x.chi==='Cassa'||!ps.length||(ps.length===1&&ps[0]===x.chi)){ await rpc('chill_add_mov2',{p_tipo:'spesa',p_chi:x.chi,p_importo:amt,p_vincita:0,p_quota:null,p_nota:nota,p_esito:null}); await loadMov(); }
     else { await rpc('chill_add_debt2',{p_tipo:'anticipo',p_da:x.chi,p_a:null,p_parti:ps,p_importo:amt,p_nota:nota,p_dove:null}); await loadDebts(); }
     notify(`${x.nome} di ${new Date().toLocaleDateString('it-IT',{month:'long'})} pagata ${x.chi==='Cassa'?'dalla cassa':'da '+x.chi}: ${eur2.format(amt)}${ps.length>1&&x.chi!=='Cassa'?', '+eur2.format(amt/ps.length)+' a testa tra '+andList(ps):''}`);
-    state.mOpen=null; toast(x.nome+' segnata pagata'+(x.chi==='Cassa'?': uscita dalla cassa':': divisa tra chi la usa'));
+    state.mOpen=null; state.mPayEdit=null; toast(x.nome+' segnata pagata'+(x.chi==='Cassa'?': uscita dalla cassa':': divisa tra chi la usa'));
   }catch(_){ toast('Non sono riuscito a salvare, riprova.'); }
 }
 function renderAll(){ renderMe(); renderHome(); renderSched(); renderConti(); renderBudget(); renderCatalog(); renderMensili(); }
@@ -1327,7 +1356,7 @@ let toastT; function toast(msg){ const t=$('toast'); t.textContent=msg; t.classL
 
 /* ---------- foglio aggiungi ---------- */
 function openSheet(kind,pre){
-  state.kind=kind||state.kind||'versamento'; state.esito='attesa'; state.payer=(pre&&pre.chi)||'Cassa'; state.split='tutti'; state.parti=null;
+  state.kind=kind||state.kind||'versamento'; state.esito='attesa'; state.payer=(pre&&pre.chi)||'Cassa'; state.split='tutti'; state.parti=null; state.ricOgni=1; $('ricOgni').hidden=true; document.querySelectorAll('#ricOgni button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ro==='1')));
   $('addForm').reset(); $('aMsg').textContent='';
   if(pre&&pre.ptipo) $('aPTipo').value=pre.ptipo;
   setupSheet();
@@ -1354,7 +1383,7 @@ function setupSheet(){
   $('fPTipo').hidden=k!=='prestito';
   const sp=k==='spesa', person=sp&&state.payer!=='Cassa';
   $('fA').hidden=k!=='prestito'; $('fDove').hidden=!(k==='prestito'&&pt==='custodia');
-  $('fChi').hidden=sp; $('fPayer').hidden=!sp; $('fSplit').hidden=!person; $('fParti').hidden=!(person&&state.split==='alcuni'); $('aCosa').hidden=!sp;
+  $('fChi').hidden=sp; $('fPayer').hidden=!sp; $('fSplit').hidden=!person; $('fParti').hidden=!(person&&state.split==='alcuni'); $('aCosa').hidden=!sp; $('fRic').hidden=!sp;
   document.querySelector('#addForm .two').classList.toggle('one',sp); $('addForm').classList.toggle('sp',sp);
   $('aNotaL').textContent=sp?'Per cosa':'Nota';
   document.querySelectorAll('#splitSeg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.s===state.split)));
@@ -1413,12 +1442,16 @@ async function submitAdd(e){
   $('aBtn').disabled=true;
   try{
     if(k==='spesa'){
-      const nota=($('aNota').value.trim()||'Spesa').slice(0,120), p=state.payer, amt=Math.round(imp*100)/100;
+      const ric=$('aRic').checked, nome=$('aNota').value.trim().slice(0,40);
+      if(ric&&!nome) throw {msg:'Scrivi per cosa è (es. Luce, Netflix): sarà il nome della spesa fissa.'};
+      const p=state.payer, amt=Math.round(imp*100)/100;
+      let nota=($('aNota').value.trim()||'Spesa').slice(0,120);
+      if(ric){ const ps0=p==='Cassa'?people():state.split==='no'?[p]:spesaParti(); if(!ps0.length) throw {msg:'Scegli tra chi dividere la spesa.'}; const it={id:'m'+Date.now().toString(36),nome,importo:amt,chi:p,parti:ps0,ogni:state.ricOgni||1,var:/luce|gas|acqua|bollett|tari|rifiut|energia/i.test(nome),dal:ymStr(ymNow())}; state.mensili=[...state.mensili,it]; saveMensili(); nota=mTag(it).slice(0,120); }
       const parts=p==='Cassa'?[]:spesaParti();
       if(p!=='Cassa'&&state.split!=='no'&&!parts.length) throw {msg:'Scegli tra chi dividere la spesa.'};
       if(p==='Cassa'||state.split==='no'||(parts.length===1&&parts[0]===p)){ await rpc('chill_add_mov2',{p_tipo:'spesa',p_chi:p,p_importo:amt,p_vincita:0,p_quota:null,p_nota:nota,p_esito:null}); await loadMov(); }
       else { await rpc('chill_add_debt2',{p_tipo:'anticipo',p_da:p,p_a:null,p_parti:parts,p_importo:amt,p_nota:nota,p_dove:null}); await loadDebts(); }
-      const msg=$('fPrev').textContent;
+      const msg=$('fPrev').textContent+(ric?' Aggiunta alle bollette e spese fisse.':'');
       notify(p==='Cassa'?`Spesa dalla cassa: ${nota}, ${eur2.format(amt)}`:state.split==='no'?`${p} ha pagato ${nota} (${eur2.format(amt)}), non divisa`:`${p} ha pagato ${nota} (${eur2.format(amt)}). ${msg}`);
       closeSheet(); toast('Spesa aggiunta. '+(p==='Cassa'?'Uscita dalla cassa.':state.split==='no'?'Non divisa.':msg)); return;
     }
@@ -1556,11 +1589,15 @@ document.addEventListener('click',async e=>{
   const spf=e.target.closest('#spFilter [data-spf]'); if(spf){ state.spF=spf.dataset.spf; renderHome(); return; }
   const pu=e.target.closest('[data-push]'); if(pu){ if(pu.dataset.push==='on') enablePush(pu); else disablePush(); return; }
   if(e.target.closest('[data-mnew]')){ openMForm(null); return; }
-  const mpy=e.target.closest('[data-mpay]'); if(mpy){ const x=state.mensili.find(m=>m.id===mpy.dataset.mpay); if(x){ mpy.disabled=true; payMensile(x); } return; }
+  const mpy=e.target.closest('[data-mpay]'); if(mpy){ state.mPayEdit=mpy.dataset.mpay; renderMensili(); setTimeout(()=>{ const i=$('mPayIn'); if(i) try{ i.focus(); }catch(_){} },50); return; }
+  if(e.target.closest('[data-mpaycancel]')){ state.mPayEdit=null; renderMensili(); return; }
+  const mpo=e.target.closest('[data-mpayok]'); if(mpo){ const x=state.mensili.find(m=>m.id===mpo.dataset.mpayok), v=num($('mPayIn')?.value); if(!(v>0)){ toast('Scrivi quanto avete pagato'); return; } if(x){ mpo.disabled=true; payMensile(x,v); } return; }
+  const mog=e.target.closest('#mOgni [data-mo]'); if(mog&&state.mForm){ state.mForm.ogni=+mog.dataset.mo; renderMForm(); return; }
+  const rog=e.target.closest('#ricOgni [data-ro]'); if(rog){ state.ricOgni=+rog.dataset.ro; document.querySelectorAll('#ricOgni button').forEach(b=>b.setAttribute('aria-pressed',String(b===rog))); return; }
   const med=e.target.closest('[data-medit]'); if(med){ const x=state.mensili.find(m=>m.id===med.dataset.medit); if(x) openMForm(x); return; }
   const mdl=e.target.closest('[data-mdel]'); if(mdl){ const x=state.mensili.find(m=>m.id===mdl.dataset.mdel); if(x&&confirmDel(mdl)){ state.mensili=state.mensili.filter(m=>m.id!==x.id); state.mOpen=null; renderMensili(); renderHome(); saveMensili(); toast(x.nome+' eliminata'); } return; }
-  const mo=e.target.closest('[data-mopen]'); if(mo && !e.target.closest('button')){ state.mOpen=state.mOpen===mo.dataset.mopen?null:mo.dataset.mopen; renderMensili(); return; }
-  const mq=e.target.closest('#mNomeQ [data-mq]'); if(mq){ $('mNome').value=mq.dataset.mq; return; }
+  const mo=e.target.closest('[data-mopen]'); if(mo && !e.target.closest('button,input')){ state.mOpen=state.mOpen===mo.dataset.mopen?null:mo.dataset.mopen; renderMensili(); return; }
+  const mq=e.target.closest('#mNomeQ [data-mq]'); if(mq){ $('mNome').value=mq.dataset.mq; if(state.mForm&&/^(Luce|Gas|Acqua|Rifiuti)/.test(mq.dataset.mq)){ state.mForm.var=true; renderMForm(); } return; }
   const mpr=e.target.closest('#mPayer [data-mpayer]'); if(mpr&&state.mForm){ state.mForm.chi=mpr.dataset.mpayer; renderMForm(); return; }
   const mpp=e.target.closest('#mParti [data-mp]'); if(mpp&&state.mForm){ const n=mpp.dataset.mp, P=state.mForm.parti; state.mForm.parti=P.includes(n)?P.filter(x=>x!==n):[...P,n]; renderMForm(); return; }
   const cf=e.target.closest('#catFilter [data-cf]'); if(cf){ state.catF=cf.dataset.cf; renderCatalog(); return; }
@@ -1574,13 +1611,16 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('sheet').hidden
 $('addForm').addEventListener('submit',submitAdd);
 $('aPTipo').addEventListener('change',setupSheet);
 $('mImp').addEventListener('input',mPrev);
+$('mVar').addEventListener('change',e=>{ if(state.mForm){ state.mForm.var=e.target.checked; renderMForm(); } });
+$('mDal').addEventListener('change',e=>{ if(state.mForm) state.mForm.dal=e.target.value; });
+$('aRic').addEventListener('change',e=>{ $('ricOgni').hidden=!e.target.checked; });
 $('mCancel').addEventListener('click',()=>{ state.mForm=null; renderMForm(); });
 $('mForm').addEventListener('submit',e=>{ e.preventDefault(); const f=state.mForm; if(!f) return;
   const nome=$('mNome').value.trim().slice(0,40), imp=num($('mImp').value);
   if(!nome){ toast('Scrivi che spesa è'); $('mNome').focus(); return; }
   if(!(imp>0)){ toast('Inserisci quanto costa al mese'); $('mImp').focus(); return; }
   if(!f.parti.length){ toast('Scegli chi la usa'); return; }
-  const item={id:f.id||'m'+Date.now().toString(36),nome,importo:Math.round(imp*100)/100,chi:f.chi,parti:[...f.parti]};
+  const item={id:f.id||'m'+Date.now().toString(36),nome,importo:Math.round(imp*100)/100,chi:f.chi,parti:[...f.parti],ogni:f.ogni||1,var:!!f.var,dal:f.ogni>1?($('mDal').value||ymStr(ymNow())):(f.dal||ymStr(ymNow()))};
   state.mensili=f.id?state.mensili.map(m=>m.id===f.id?item:m):[...state.mensili,item];
   state.mForm=null; state.mOpen=null; renderMensili(); renderHome(); saveMensili(); toast(nome+(f.id?' aggiornata':' aggiunta')+': lo vedono tutti');
 });
@@ -1601,7 +1641,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610271043';
+const PAGE_VERSION='202610271050';
 try{ if('serviceWorker' in navigator){ navigator.serviceWorker.register('push-sw.js').then(()=>refreshPush()).catch(()=>refreshPush()); } else refreshPush(); }catch(_){ refreshPush(); }
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
