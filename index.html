@@ -396,6 +396,8 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .buy.alt{background:transparent;color:var(--orange);border:1.5px solid var(--orange);padding:6px 12px}
 .prod.have .buy{background:var(--surface-2);color:var(--muted);border-color:var(--surface-2)}
 #catList .cat{margin-top:6px}
+#spSum{margin:2px 0 6px}
+#spFilter{margin-top:-2px}
 .desk .chiprow{flex-wrap:wrap;overflow:visible;margin:0 0 4px;padding:2px 0 10px}
 .pick{display:flex;flex-wrap:wrap;gap:8px}
 .pick button{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:700 .88rem var(--f);padding:9px 14px;border-radius:999px;cursor:pointer}
@@ -468,7 +470,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
   </div>
 
   <div class="sec"><h2>Ultime spese</h2><span class="muted" style="font-size:.8rem;font-weight:700" id="hSpeseM"></span></div>
-  <div class="card"><div class="list" id="hSpese"></div><button class="link-btn" type="button" data-go="conti" style="margin-top:4px">Vedi tutti i movimenti →</button></div>
+  <div class="card"><div class="chiprow" id="spFilter" role="group" aria-label="Chi ha pagato"></div><div class="calc" id="spSum" hidden></div><div class="list" id="hSpese"></div><button class="link-btn" type="button" data-go="conti" style="margin-top:4px">Vedi tutti i movimenti →</button></div>
 
   <div class="sec"><h2 id="rentTitle">Affitto del mese</h2><span class="chip" id="rentChip"></span></div>
   <div class="card rent" id="rentCard"></div>
@@ -885,7 +887,7 @@ const SNAPSHOT = {
   todo:[{id:'t1',t:'Parlare col proprietario: le 7 domande, deposito e utenze',done:false},{id:'t2',t:'Decidere chi firma il contratto',done:false},{id:'t3',t:'Primo versamento in cassa per il primo mese',done:false},{id:'t4',t:'Ordinare da Temu la lista della spesa',done:false},{id:'t5',t:'Aggiornare le stime con le prime bollette',done:false}]
 };
 const state = {cfg:{...structuredClone(DEFAULT),...structuredClone(SNAPSHOT.cfg)}, mov:structuredClone(SNAPSHOT.mov), debts:structuredClone(SNAPSHOT.debts), amici:[...SNAPSHOT.amici], todo:structuredClone(SNAPSHOT.todo),
-  sb:null, live:false, resolved:false, lastLocal:0, betF:'tutte', movF:'tutti', winEdit:null, rowOpen:null, kind:'versamento', esito:'attesa', mensili:[], mOpen:null, mForm:null, me:ls.get('chill_me')||''};
+  sb:null, live:false, resolved:false, lastLocal:0, betF:'tutte', movF:'tutti', winEdit:null, rowOpen:null, kind:'versamento', esito:'attesa', spF:'tutte', mensili:[], mOpen:null, mForm:null, me:ls.get('chill_me')||''};
 const SIM = {sStake:10,sNn:20,sLegs:4,sOdd:2,sMargin:6,sTarget:'canone'};
 
 /* ---------- calcoli ---------- */
@@ -1050,13 +1052,20 @@ function renderHome(){
               ...state.debts.filter(d=>d.tipo==='anticipo').map(d=>({ts:d.ts,imp:+d.importo||0,nota:d.nota,chi:d.da,parti:(d.parti||[]).filter(Boolean)}))].sort((a,b)=>b.ts-a.ts);
     const now=new Date(), meseTot=sp.filter(x=>{ const d=new Date(x.ts); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); }).reduce((t,x)=>t+x.imp,0);
     $('hSpeseM').textContent=meseTot>0?`${now.toLocaleDateString('it-IT',{month:'long'})}: ${eur2.format(meseTot)}`:'';
-    $('hSpese').innerHTML=sp.length?sp.slice(0,5).map(x=>{
+    const payers=[...new Set([...people(),...sp.map(x=>x.chi).filter(c=>c!=='Cassa')])];
+    if(state.spF!=='tutte'&&state.spF!=='Cassa'&&!payers.includes(state.spF)) state.spF='tutte';
+    $('spFilter').innerHTML=[['tutte','Tutte'],['Cassa','Dalla cassa'],...payers.map(n=>[n,n])].map(([v,l])=>`<button type="button" data-spf="${esc(v)}" aria-pressed="${v===state.spF}">${esc(l)}</button>`).join('');
+    const F=state.spF, list=F==='tutte'?sp:sp.filter(x=>x.chi===F), shown=F==='tutte'?list.slice(0,5):list.slice(0,15);
+    const tot=list.reduce((t,x)=>t+x.imp,0);
+    $('spSum').hidden=F==='tutte';
+    if(F!=='tutte') $('spSum').innerHTML=`<span>${F==='Cassa'?'Pagate dalla cassa':'Pagate da '+esc(F)}: ${list.length} ${list.length===1?'spesa':'spese'}</span><b>${eur2.format(tot)}</b>`;
+    $('hSpese').innerHTML=shown.length?shown.map(x=>{
       let sub;
       if(x.chi==='Cassa') sub='dalla cassa';
       else if(!x.parti) sub=`pagata da ${esc(x.chi)}, non divisa`;
       else { const others=x.parti.filter(p=>p!==x.chi); sub=`pagata da ${esc(x.chi)} · `+(isTutti(x.parti)?`divisa tra tutti, ${eur2.format(x.imp/x.parti.length)} a testa`:x.parti.includes(x.chi)?`divisa con ${esc(andList(others))}, ${eur2.format(x.imp/x.parti.length)} a testa`:`per ${esc(andList(x.parti))}`); }
       return `<div class="row">${icon('spesa')}<div class="rm"><div class="rt">${esc(x.nota||'Spesa')}</div><div class="rs">${day(x.ts)} · ${sub}</div></div><div class="ra">${x.chi==='Cassa'?'−':''}${eur2.format(x.imp)}</div></div>`;
-    }).join(''):'<div class="empty">Ancora nessuna spesa.</div>'; }
+    }).join('')+(list.length>shown.length?`<p class="hint" style="padding-top:8px">Le più recenti ${shown.length} su ${list.length}.</p>`:''):`<div class="empty">${F==='tutte'?'Ancora nessuna spesa.':'Nessuna spesa '+(F==='Cassa'?'dalla cassa':'pagata da '+esc(F))+'.'}</div>`; }
   // feed
   const feed=[...state.mov.map(x=>({ts:x.ts,html:movRow(x,false)})), ...state.debts.map(d=>({ts:d.ts,html:debtRow(d,false)}))].sort((a,b)=>b.ts-a.ts).slice(0,5);
   $('hFeed').innerHTML = feed.length ? feed.map(f=>f.html).join('') : `<div class="empty">Ancora nessun movimento.</div>`;
@@ -1544,6 +1553,7 @@ document.addEventListener('click',async e=>{
   const py=e.target.closest('#aPayer [data-payer]'); if(py){ state.payer=py.dataset.payer; setupSheet(); return; }
   const sx=e.target.closest('#splitSeg [data-s]'); if(sx){ state.split=sx.dataset.s; setupSheet(); return; }
   const cs=e.target.closest('#aCosa [data-cosa]'); if(cs){ $('aNota').value=cs.dataset.cosa; if(/^Affitto/.test(cs.dataset.cosa)&&!$('aImporto').value){ $('aImporto').value=state.cfg.canone; updatePot(); } return; }
+  const spf=e.target.closest('#spFilter [data-spf]'); if(spf){ state.spF=spf.dataset.spf; renderHome(); return; }
   const pu=e.target.closest('[data-push]'); if(pu){ if(pu.dataset.push==='on') enablePush(pu); else disablePush(); return; }
   if(e.target.closest('[data-mnew]')){ openMForm(null); return; }
   const mpy=e.target.closest('[data-mpay]'); if(mpy){ const x=state.mensili.find(m=>m.id===mpy.dataset.mpay); if(x){ mpy.disabled=true; payMensile(x); } return; }
@@ -1591,7 +1601,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610261144';
+const PAGE_VERSION='202610271043';
 try{ if('serviceWorker' in navigator){ navigator.serviceWorker.register('push-sw.js').then(()=>refreshPush()).catch(()=>refreshPush()); } else refreshPush(); }catch(_){ refreshPush(); }
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
