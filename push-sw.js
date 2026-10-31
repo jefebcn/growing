@@ -10,18 +10,25 @@ self.addEventListener('activate', event => {
 self.addEventListener('push', event => {
   let d = {};
   try { d = event.data ? event.data.json() : {}; } catch (_) { d = { body: event.data ? event.data.text() : '' }; }
-  event.waitUntil(self.registration.showNotification(d.title || 'Chill Sander House', {
+  const opts = {
     body: d.body || '',
     icon: 'icons/icon-192.png',
     tag: d.tag || undefined,
     data: { url: d.url || './' }
-  }));
+  };
+  if (d.image) opts.image = d.image;
+  event.waitUntil(self.registration.showNotification(d.title || 'Chill Sander House', opts));
 });
 self.addEventListener('notificationclick', event => {
   event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || './';
   event.waitUntil((async () => {
     const list = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    for (const c of list) { if ('focus' in c) { try { await c.focus(); return; } catch (_) {} } }
-    await self.clients.openWindow((event.notification.data && event.notification.data.url) || './');
+    for (const c of list) {
+      if ('focus' in c) {
+        try { await c.focus(); c.postMessage({ type: 'nav', url }); return; } catch (_) {}
+      }
+    }
+    await self.clients.openWindow(url);
   })());
 });

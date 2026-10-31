@@ -450,6 +450,14 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .votes button{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:800 .9rem var(--f);padding:9px 0;border-radius:10px;cursor:pointer;min-width:0}
 .votes button[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:#fff}
 .st-cl{border-top:1px dashed var(--line);padding-top:10px}
+.st-fotob{border:0;padding:0;background:none;cursor:zoom-in;border-radius:50%;flex:0 0 auto;position:relative}
+.st-fotob::after{content:"🔍";position:absolute;right:-2px;bottom:-2px;font-size:.8rem;background:var(--surface);border-radius:50%;width:22px;height:22px;display:grid;place-items:center;box-shadow:var(--shadow)}
+.lb{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px 16px;cursor:zoom-out}
+.lb[hidden]{display:none}
+.lb img{max-width:min(92vw,560px);max-height:76vh;width:100%;object-fit:contain;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.lb p{color:#fff;font-weight:700;font-size:.95rem;text-align:center}
+.lb-x{position:absolute;top:max(14px,env(safe-area-inset-top));right:14px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;cursor:pointer}
+.lb-x svg{width:22px;height:22px}
 </style>
 </head>
 <body>
@@ -488,6 +496,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
   <div class="card pushcard" id="pushCard" hidden></div>
   <div class="card stanza" id="stanzaCard"></div>
   <input type="file" id="selfieIn" accept="image/*" capture="user" hidden>
+  <div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Selfie della stanza" hidden><button class="lb-x" type="button" data-lbclose="1" aria-label="Chiudi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button><img id="lbImg" alt=""><p id="lbCap"></p></div>
 
   <div class="qa" role="group" aria-label="Aggiungi">
     <button type="button" data-add="versamento"><span class="ic" style="background:var(--teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span>Versamento</button>
@@ -1552,11 +1561,11 @@ async function disablePush(){
   }catch(_){ toast('Non riuscito, riprova'); }
   refreshPush();
 }
-function notify(body){
+function notify(body,opts){
   try{
     let txt=String(body||'').trim(); if(!txt) return;
     if(state.me&&!txt.includes(state.me)) txt+=` (da ${state.me})`;
-    fetch(NOTIFY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:'Chill Sander House',body:txt.slice(0,240),from:state.me||'',skip:state.pushEndpoint||'',tag:'c'+Date.now().toString(36)}),keepalive:true}).catch(()=>{});
+    fetch(NOTIFY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:'Chill Sander House',body:txt.slice(0,240),from:state.me||'',skip:state.pushEndpoint||'',tag:'c'+Date.now().toString(36),url:(opts&&opts.url)||undefined,image:(opts&&opts.image)||undefined}),keepalive:true}).catch(()=>{});
   }catch(_){}
 }
 
@@ -1572,6 +1581,7 @@ async function loadMeta(){
     if(r.key==='persone' && Array.isArray(r.data?.nomi) && r.data.nomi.length) state.amici=r.data.nomi.map(x=>String(x).slice(0,20));
     if(r.key==='todo' && Array.isArray(r.data?.items)) state.todo=r.data.items;
     if(r.key==='stanza' && r.data && Date.now()-(state.sLocal||0)>1500) state.stanza=r.data;
+    if(r.key==='stanza') setTimeout(maybeOpenSelfie,0);
     if(r.key==='mensili' && Array.isArray(r.data?.items) && Date.now()-(state.mLocal||0)>1500) state.mensili=r.data.items;
   }
   renderSoon();
@@ -1590,14 +1600,14 @@ function sessioni(){ const s=state.stanza||{}; const L=[...(s.storico||[])]; if(
 function renderStanza(){
   const el=$('stanzaCard'), s=state.stanza||{}, occ=stanzaOcc(), me=state.me;
   el.className='card stanza '+(occ?'occ':'free');
-  const foto=s.foto&&s.id?`<img class="st-foto" src="${esc(s.foto)}" alt="Selfie di ${esc(s.chi||'')}">`:'';
+  const foto=s.foto&&s.id?`<button class="st-fotob" type="button" data-selfieview="1" aria-label="Apri il selfie in grande"><img class="st-foto" src="${esc(s.foto)}" alt="Selfie di ${esc(s.chi||'')}"></button>`:'';
   let top, act='';
   if(occ){
     const mine=me&&s.chi===me;
     top=`<div class="st-top">${foto||'<span class="st-ic" aria-hidden="true">🍌🔥</span>'}<div><div class="st-k">La banana scottante</div><div class="st-v">Stanza occupata</div><div class="st-s">da ${esc(s.chi||'qualcuno')} · dalle ${hhmm(s.dal)}${s.fino?' · fino alle '+hhmm(s.fino):''}</div></div></div>`;
     act=mine?`<div class="st-acts"><button class="btn" type="button" data-stanza="libera">Libera la stanza</button><button class="mini-btn" type="button" data-selfie="1">📸 ${s.foto?'Cambia selfie':'Aggiungi selfie'}</button></div>`:`<button class="btn-ghost" type="button" data-stanza="libera">Libera la stanza (se è già libera)</button>`;
   } else {
-    top=`<div class="st-top"><span class="st-ic" aria-hidden="true">🍌</span><div><div class="st-k">La banana scottante</div><div class="st-v">Stanza libera</div><div class="st-s">Se la usi, occupala: gli altri ricevono l'avviso e non entrano.</div></div></div>`;
+    top=`<div class="st-top">${foto&&s.al&&Date.now()-s.al<24*3600e3?foto:'<span class="st-ic" aria-hidden="true">🍌</span>'}<div><div class="st-k">La banana scottante</div><div class="st-v">Stanza libera</div><div class="st-s">Se la usi, occupala: gli altri ricevono l'avviso e non entrano.</div></div></div>`;
     act=`<div class="pick" role="group" aria-label="Occupa la stanza"><button type="button" data-stanza="30">30 min</button><button type="button" data-stanza="60">1 ora</button><button type="button" data-stanza="120">2 ore</button><button type="button" data-stanza="0">Finché non libero</button></div>`;
   }
   // voto alla serata (in corso o ultima), entro 24 ore; votano solo gli altri
@@ -1618,6 +1628,9 @@ function renderStanza(){
   const clas=cl.length?`<p class="st-s st-cl">🏆 Media serate: ${cl.map(([n,m,c])=>`${esc(n)} <b>${fmtV(m)}</b> (${c})`).join(' · ')}</p>`:'';
   el.innerHTML=top+act+voto+clas;
 }
+function openSelfie(){ const s=state.stanza||{}; if(!s.foto){ toast('Nessun selfie per ora'); return; } $('lbImg').src=s.foto; $('lbImg').alt='Selfie di '+(s.chi||''); $('lbCap').textContent=`${s.chi||''} · stanza occupata dalle ${hhmm(s.dal)}`; $('lightbox').hidden=false; }
+function closeSelfie(){ $('lightbox').hidden=true; }
+function maybeOpenSelfie(){ if(state.openSelfie&&state.stanza&&state.stanza.foto){ state.openSelfie=false; openSelfie(); try{ history.replaceState(null,'',location.pathname+location.search); }catch(_){} } }
 async function setStanza(v){
   if(!state.me){ toast('Prima scegli chi sei, in alto'); try{ $('meSel').focus(); }catch(_){} return; }
   if(!state.live){ toast('Connessione assente: riprova tra poco.'); return; }
@@ -1634,11 +1647,11 @@ async function setStanza(v){
   notify(`🍌🔥 Stanza occupata da ${state.me}${min>0?' fino alle '+hhmm(now+min*60000):''}: non entrate`); toast('Stanza occupata: puoi aggiungere un selfie');
 }
 function fileToSelfie(file){ return new Promise((res,rej)=>{ const u=URL.createObjectURL(file), img=new Image();
-  img.onload=()=>{ try{ const S=240, c=document.createElement('canvas'); c.width=c.height=S; const m=Math.min(img.naturalWidth,img.naturalHeight); c.getContext('2d').drawImage(img,(img.naturalWidth-m)/2,(img.naturalHeight-m)/2,m,m,0,0,S,S); let q=0.72, d=c.toDataURL('image/jpeg',q); while(d.length>30000&&q>0.3){ q-=0.1; d=c.toDataURL('image/jpeg',q); } URL.revokeObjectURL(u); res(d); }catch(e){ rej(e); } };
+  img.onload=()=>{ try{ const S=720, c=document.createElement('canvas'); c.width=c.height=S; const m=Math.min(img.naturalWidth,img.naturalHeight); c.getContext('2d').drawImage(img,(img.naturalWidth-m)/2,(img.naturalHeight-m)/2,m,m,0,0,S,S); let q=0.8, d=c.toDataURL('image/jpeg',q); while(d.length>150000&&q>0.35){ q-=0.08; d=c.toDataURL('image/jpeg',q); } if(d.length>150000){ const c2=document.createElement('canvas'); c2.width=c2.height=480; c2.getContext('2d').drawImage(c,0,0,480,480); d=c2.toDataURL('image/jpeg',0.7); } URL.revokeObjectURL(u); res(d); }catch(e){ rej(e); } };
   img.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error('img')); }; img.src=u; }); }
 async function addSelfie(file){
   try{ const d=await fileToSelfie(file); if(!stanzaOcc()||state.stanza.chi!==state.me){ toast('La stanza non è più tua'); return; }
-    state.stanza={...state.stanza,foto:d}; renderStanza(); if(await saveStanza()){ notify(`📸 ${state.me} ha messo il selfie della stanza`); toast('Selfie aggiunto'); } }
+    state.stanza={...state.stanza,foto:d}; renderStanza(); if(await saveStanza()){ notify(`📸 ${state.me} ha messo il selfie della stanza: tocca per vederlo`,{image:NOTIFY_URL+'?selfie='+encodeURIComponent(state.stanza.id)+'&v='+Date.now().toString(36),url:'https://jefebcn.github.io/growing/#selfie'}); toast('Selfie aggiunto'); } }
   catch(_){ toast('Foto non caricata, riprova'); }
 }
 async function vota(n){
@@ -1691,6 +1704,8 @@ document.addEventListener('click',async e=>{
   const sx=e.target.closest('#splitSeg [data-s]'); if(sx){ state.split=sx.dataset.s; setupSheet(); return; }
   const cs=e.target.closest('#aCosa [data-cosa]'); if(cs){ $('aNota').value=cs.dataset.cosa; if(/^Affitto/.test(cs.dataset.cosa)&&!$('aImporto').value){ $('aImporto').value=state.cfg.canone; updatePot(); } return; }
   const stz=e.target.closest('[data-stanza]'); if(stz){ setStanza(stz.dataset.stanza); return; }
+  if(e.target.closest('[data-selfieview]')){ openSelfie(); return; }
+  if(e.target.closest('#lightbox')){ closeSelfie(); return; }
   if(e.target.closest('[data-selfie]')){ $('selfieIn').value=''; $('selfieIn').click(); return; }
   const vt=e.target.closest('[data-voto]'); if(vt){ vota(+vt.dataset.voto); return; }
   const spf=e.target.closest('#spFilter [data-spf]'); if(spf){ state.spF=spf.dataset.spf; renderHome(); return; }
@@ -1718,6 +1733,8 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('sheet').hidden
 $('addForm').addEventListener('submit',submitAdd);
 $('aPTipo').addEventListener('change',setupSheet);
 $('mImp').addEventListener('input',mPrev);
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('lightbox').hidden) closeSelfie(); });
+try{ navigator.serviceWorker&&navigator.serviceWorker.addEventListener('message',e=>{ if(e.data&&e.data.type==='nav'&&/#selfie/.test(e.data.url||'')){ state.openSelfie=true; (state.sb?loadMeta():Promise.resolve()).catch(()=>{}).then(maybeOpenSelfie); } }); }catch(_){}
 $('selfieIn').addEventListener('change',e=>{ const f=e.target.files&&e.target.files[0]; if(f) addSelfie(f); });
 document.addEventListener('change',e=>{ if(e.target&&e.target.id==='rentFino'){ state.cfg.affittoFino=e.target.value; state.rentEdit=false; renderHome(); saveCfg(); toast(e.target.value?'Affitto segnato pagato fino a '+ymName(ymOf(e.target.value)):'Nessun mese in anticipo'); } });
 $('mVar').addEventListener('change',e=>{ if(state.mForm){ state.mForm.var=e.target.checked; renderMForm(); } });
@@ -1750,7 +1767,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610312359';
+const PAGE_VERSION='202611010008';
 try{ if('serviceWorker' in navigator){ navigator.serviceWorker.register('push-sw.js').then(()=>refreshPush()).catch(()=>refreshPush()); } else refreshPush(); }catch(_){ refreshPush(); }
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
@@ -1784,7 +1801,7 @@ let rsz; addEventListener('resize',()=>{ clearTimeout(rsz); rsz=setTimeout(apply
 applyLayout();
 
 /* ---------- avvio ---------- */
-{ const h=(location.hash||'').slice(1); if(TABS.includes(h)) go(h); }
+{ const h=(location.hash||'').slice(1); if(TABS.includes(h)) go(h); if(h==='selfie') state.openSelfie=true; }
 renderAll(); setLive(); checkVersion();
 (async()=>{
   try{
