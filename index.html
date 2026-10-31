@@ -442,6 +442,14 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .stanza.free .st-v{color:var(--teal)}
 .stanza .st-s{font-size:.84rem;color:var(--muted)}
 .stanza .pick button{font-size:.82rem;padding:7px 12px}
+.st-foto{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:0 0 auto;border:3px solid var(--orange)}
+.st-acts{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.st-voto{border-top:1px dashed var(--line);padding-top:12px;display:grid;gap:8px}
+.st-vk{font-weight:800;font-size:.92rem}
+.votes{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.votes button{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:800 .9rem var(--f);padding:9px 0;border-radius:10px;cursor:pointer;min-width:0}
+.votes button[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:#fff}
+.st-cl{border-top:1px dashed var(--line);padding-top:10px}
 </style>
 </head>
 <body>
@@ -479,6 +487,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 
   <div class="card pushcard" id="pushCard" hidden></div>
   <div class="card stanza" id="stanzaCard"></div>
+  <input type="file" id="selfieIn" accept="image/*" capture="user" hidden>
 
   <div class="qa" role="group" aria-label="Aggiungi">
     <button type="button" data-add="versamento"><span class="ic" style="background:var(--teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span>Versamento</button>
@@ -911,7 +920,7 @@ const SNAPSHOT = {
   todo:[{id:'t1',t:'Parlare col proprietario: le 7 domande, deposito e utenze',done:false},{id:'t2',t:'Decidere chi firma il contratto',done:false},{id:'t3',t:'Primo versamento in cassa per il primo mese',done:false},{id:'t4',t:'Ordinare da Temu la lista della spesa',done:false},{id:'t5',t:'Aggiornare le stime con le prime bollette',done:false}]
 };
 const state = {cfg:{...structuredClone(DEFAULT),...structuredClone(SNAPSHOT.cfg)}, mov:structuredClone(SNAPSHOT.mov), debts:structuredClone(SNAPSHOT.debts), amici:[...SNAPSHOT.amici], todo:structuredClone(SNAPSHOT.todo),
-  sb:null, live:false, resolved:false, lastLocal:0, betF:'tutte', movF:'tutti', winEdit:null, rowOpen:null, kind:'versamento', esito:'attesa', spF:'tutte', mensili:[], stanza:{}, mOpen:null, mForm:null, me:ls.get('chill_me')||''};
+  sb:null, live:false, resolved:false, lastLocal:0, betF:'tutte', movF:'tutti', winEdit:null, rowOpen:null, kind:'versamento', esito:'attesa', spF:'tutte', mensili:[], stanza:{}, voti:[], mOpen:null, mForm:null, me:ls.get('chill_me')||''};
 const SIM = {sStake:10,sNn:20,sLegs:4,sOdd:2,sMargin:6,sTarget:'canone'};
 
 /* ---------- calcoli ---------- */
@@ -1570,25 +1579,74 @@ async function loadMeta(){
 async function loadMov(){ const {data,error}=await state.sb.from('chill_movimenti').select('*').eq('annullato',false).order('ts',{ascending:false}).limit(1000); if(error) throw error; state.mov=(data||[]).map(toMov); renderSoon(); }
 async function loadDebts(){ const {data,error}=await state.sb.from('chill_debiti').select('*').eq('annullato',false).order('ts',{ascending:false}).limit(1000); if(error) throw error; state.debts=(data||[]).map(toDebt); renderSoon(); }
 let saveT; function saveCfg(){ state.lastLocal=Date.now(); if(!state.live) return; clearTimeout(saveT); saveT=setTimeout(()=>{ rpc('chill_set_meta',{p_key:'config',p_data:structuredClone(state.cfg)}).catch(()=>toast('Modifica non salvata, riprova')); },600); }
-async function saveStanza(){ state.sLocal=Date.now(); try{ await rpc('chill_set_meta',{p_key:'stanza',p_data:state.stanza}); }catch(_){ toast('Non salvato, riprova'); } }
+async function saveStanza(){ state.sLocal=Date.now(); try{ await rpc('chill_set_meta',{p_key:'stanza',p_data:state.stanza}); return true; }catch(_){ toast('Non salvato, riprova'); return false; } }
+async function loadVoti(){ const {data,error}=await state.sb.from('chill_stanza_voti').select('sessione,nome,voto,ts').order('ts',{ascending:false}).limit(1000); if(error) throw error; state.voti=data||[]; renderSoon(); }
 const stanzaOcc=()=>{ const s=state.stanza||{}; return !!(s.occ&&(!s.fino||s.fino>Date.now())); };
 const hhmm=t=>new Date(t).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+const fmtV=v=>v.toLocaleString('it-IT',{maximumFractionDigits:1});
+const votiDi=id=>(state.voti||[]).filter(v=>v.sessione===id);
+const mediaDi=id=>{ const vs=votiDi(id); return vs.length?vs.reduce((t,v)=>t+v.voto,0)/vs.length:null; };
+function sessioni(){ const s=state.stanza||{}; const L=[...(s.storico||[])]; if(s.id&&!L.some(x=>x.id===s.id)) L.push({id:s.id,chi:s.chi,dal:s.dal,al:s.al||null}); return L; }
 function renderStanza(){
-  const el=$('stanzaCard'), s=state.stanza||{}, occ=stanzaOcc();
+  const el=$('stanzaCard'), s=state.stanza||{}, occ=stanzaOcc(), me=state.me;
   el.className='card stanza '+(occ?'occ':'free');
+  const foto=s.foto&&s.id?`<img class="st-foto" src="${esc(s.foto)}" alt="Selfie di ${esc(s.chi||'')}">`:'';
+  let top, act='';
   if(occ){
-    const mine=state.me&&s.chi===state.me;
-    el.innerHTML=`<div class="st-top"><span class="st-ic" aria-hidden="true">🍌🔥</span><div><div class="st-k">La banana scottante</div><div class="st-v">Stanza occupata</div><div class="st-s">da ${esc(s.chi||'qualcuno')} · dalle ${hhmm(s.dal)}${s.fino?' · fino alle '+hhmm(s.fino):''}</div></div></div><button class="btn${mine?'':'-ghost'}" type="button" data-stanza="libera">${mine?'Libera la stanza':'Libera la stanza (se è già libera)'}</button>`;
+    const mine=me&&s.chi===me;
+    top=`<div class="st-top">${foto||'<span class="st-ic" aria-hidden="true">🍌🔥</span>'}<div><div class="st-k">La banana scottante</div><div class="st-v">Stanza occupata</div><div class="st-s">da ${esc(s.chi||'qualcuno')} · dalle ${hhmm(s.dal)}${s.fino?' · fino alle '+hhmm(s.fino):''}</div></div></div>`;
+    act=mine?`<div class="st-acts"><button class="btn" type="button" data-stanza="libera">Libera la stanza</button><button class="mini-btn" type="button" data-selfie="1">📸 ${s.foto?'Cambia selfie':'Aggiungi selfie'}</button></div>`:`<button class="btn-ghost" type="button" data-stanza="libera">Libera la stanza (se è già libera)</button>`;
   } else {
-    el.innerHTML=`<div class="st-top"><span class="st-ic" aria-hidden="true">🍌</span><div><div class="st-k">La banana scottante</div><div class="st-v">Stanza libera</div><div class="st-s">Se la usi, occupala: gli altri ricevono l'avviso e non entrano.</div></div></div><div class="pick" role="group" aria-label="Occupa la stanza"><button type="button" data-stanza="30">30 min</button><button type="button" data-stanza="60">1 ora</button><button type="button" data-stanza="120">2 ore</button><button type="button" data-stanza="0">Finché non libero</button></div>`;
+    top=`<div class="st-top"><span class="st-ic" aria-hidden="true">🍌</span><div><div class="st-k">La banana scottante</div><div class="st-v">Stanza libera</div><div class="st-s">Se la usi, occupala: gli altri ricevono l'avviso e non entrano.</div></div></div>`;
+    act=`<div class="pick" role="group" aria-label="Occupa la stanza"><button type="button" data-stanza="30">30 min</button><button type="button" data-stanza="60">1 ora</button><button type="button" data-stanza="120">2 ore</button><button type="button" data-stanza="0">Finché non libero</button></div>`;
   }
+  // voto alla serata (in corso o ultima), entro 24 ore; votano solo gli altri
+  let voto='';
+  if(s.id&&s.chi){
+    const fine=occ?Date.now():(s.al||s.fino||s.dal), recent=Date.now()-fine<24*3600e3;
+    const vs=votiDi(s.id), avg=mediaDi(s.id), mineV=vs.find(v=>v.nome===me);
+    const avgTxt=avg!=null?`<b>${fmtV(avg)}</b>/10 · ${vs.length} ${vs.length===1?'voto':'voti'}`:'ancora nessun voto';
+    if(recent){
+      if(!me) voto=`<div class="st-voto"><div class="st-vk">Voto alla serata di ${esc(s.chi)}</div><p class="st-s">Scegli chi sei, in alto, per votare. Media: ${avgTxt}</p></div>`;
+      else if(me===s.chi) voto=`<div class="st-voto"><div class="st-vk">Voto alla tua serata</div><p class="st-s">Votano gli altri: ${avgTxt}</p></div>`;
+      else voto=`<div class="st-voto"><div class="st-vk">Vota la serata di ${esc(s.chi)}${occ?' (in corso)':''}</div><div class="votes" role="group" aria-label="Voto da 1 a 10">${Array.from({length:10},(_,i)=>i+1).map(n=>`<button type="button" data-voto="${n}" aria-pressed="${!!(mineV&&mineV.voto===n)}">${n}</button>`).join('')}</div><p class="st-s">Media: ${avgTxt}${mineV?' · il tuo: '+mineV.voto:''}</p></div>`;
+    }
+  }
+  // classifica: media delle serate per persona
+  const per={}; for(const x of sessioni()){ const m=mediaDi(x.id); if(m==null) continue; (per[x.chi]=per[x.chi]||[]).push(m); }
+  const cl=Object.entries(per).map(([n,a])=>[n,a.reduce((t,v)=>t+v,0)/a.length,a.length]).sort((x,y)=>y[1]-x[1]);
+  const clas=cl.length?`<p class="st-s st-cl">🏆 Media serate: ${cl.map(([n,m,c])=>`${esc(n)} <b>${fmtV(m)}</b> (${c})`).join(' · ')}</p>`:'';
+  el.innerHTML=top+act+voto+clas;
 }
 async function setStanza(v){
   if(!state.me){ toast('Prima scegli chi sei, in alto'); try{ $('meSel').focus(); }catch(_){} return; }
   if(!state.live){ toast('Connessione assente: riprova tra poco.'); return; }
-  if(v==='libera'){ const was=state.stanza.chi; state.stanza={occ:false,chi:state.me,dal:Date.now()}; renderStanza(); await saveStanza(); notify(`🍌 Stanza di nuovo libera${was&&was!==state.me?' (liberata da '+state.me+')':''}`); toast('Stanza libera'); return; }
-  const min=+v, now=Date.now(); state.stanza={occ:true,chi:state.me,dal:now,fino:min>0?now+min*60000:null}; renderStanza(); await saveStanza();
-  notify(`🍌🔥 Stanza occupata da ${state.me}${min>0?' fino alle '+hhmm(now+min*60000):''}: non entrate`); toast('Stanza occupata: gli altri sono avvisati');
+  const s=state.stanza||{}, now=Date.now();
+  if(v==='libera'){
+    const was=s.chi; state.stanza={...s,occ:false,al:now}; renderStanza(); if(!await saveStanza()) return;
+    notify(`🍌 Stanza di nuovo libera${was&&was!==state.me?' (liberata da '+state.me+')':''}${was?'. Votate la serata di '+was+' da 1 a 10':''}`); toast('Stanza libera'); return;
+  }
+  const storico=[...(s.storico||[])];
+  if(s.id&&!storico.some(x=>x.id===s.id)) storico.push({id:s.id,chi:s.chi,dal:s.dal,al:s.al||(s.fino&&s.fino<now?s.fino:now)});
+  const min=+v;
+  state.stanza={occ:true,id:'s'+now.toString(36),chi:state.me,dal:now,fino:min>0?now+min*60000:null,foto:null,storico:storico.slice(-40)};
+  renderStanza(); if(!await saveStanza()) return;
+  notify(`🍌🔥 Stanza occupata da ${state.me}${min>0?' fino alle '+hhmm(now+min*60000):''}: non entrate`); toast('Stanza occupata: puoi aggiungere un selfie');
+}
+function fileToSelfie(file){ return new Promise((res,rej)=>{ const u=URL.createObjectURL(file), img=new Image();
+  img.onload=()=>{ try{ const S=240, c=document.createElement('canvas'); c.width=c.height=S; const m=Math.min(img.naturalWidth,img.naturalHeight); c.getContext('2d').drawImage(img,(img.naturalWidth-m)/2,(img.naturalHeight-m)/2,m,m,0,0,S,S); let q=0.72, d=c.toDataURL('image/jpeg',q); while(d.length>30000&&q>0.3){ q-=0.1; d=c.toDataURL('image/jpeg',q); } URL.revokeObjectURL(u); res(d); }catch(e){ rej(e); } };
+  img.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error('img')); }; img.src=u; }); }
+async function addSelfie(file){
+  try{ const d=await fileToSelfie(file); if(!stanzaOcc()||state.stanza.chi!==state.me){ toast('La stanza non è più tua'); return; }
+    state.stanza={...state.stanza,foto:d}; renderStanza(); if(await saveStanza()){ notify(`📸 ${state.me} ha messo il selfie della stanza`); toast('Selfie aggiunto'); } }
+  catch(_){ toast('Foto non caricata, riprova'); }
+}
+async function vota(n){
+  const s=state.stanza||{}; if(!s.id) return; if(!state.me){ toast('Prima scegli chi sei, in alto'); return; }
+  try{ const {error}=await state.sb.rpc('chill_stanza_vota',{p_sessione:s.id,p_nome:state.me,p_voto:n}); if(error) throw error;
+    state.voti=[{sessione:s.id,nome:state.me,voto:n,ts:new Date().toISOString()},...(state.voti||[]).filter(v=>!(v.sessione===s.id&&v.nome===state.me))]; renderStanza();
+    notify(`🗳️ ${state.me} ha votato la serata di ${s.chi}: ${n}/10`); toast('Voto salvato: '+n+'/10'); }
+  catch(e){ toast(/tua serata/.test(e?.message||'')?'Non puoi votare la tua serata':'Voto non salvato, riprova'); }
 }
 setInterval(()=>{ if(state.stanza&&state.stanza.occ&&state.stanza.fino&&state.stanza.fino<=Date.now()) renderStanza(); },30000);
 async function saveMensili(){ state.mLocal=Date.now(); try{ await rpc('chill_set_meta',{p_key:'mensili',p_data:{items:state.mensili}}); }catch(_){ toast('Non salvato, riprova'); } }
@@ -1633,6 +1691,8 @@ document.addEventListener('click',async e=>{
   const sx=e.target.closest('#splitSeg [data-s]'); if(sx){ state.split=sx.dataset.s; setupSheet(); return; }
   const cs=e.target.closest('#aCosa [data-cosa]'); if(cs){ $('aNota').value=cs.dataset.cosa; if(/^Affitto/.test(cs.dataset.cosa)&&!$('aImporto').value){ $('aImporto').value=state.cfg.canone; updatePot(); } return; }
   const stz=e.target.closest('[data-stanza]'); if(stz){ setStanza(stz.dataset.stanza); return; }
+  if(e.target.closest('[data-selfie]')){ $('selfieIn').value=''; $('selfieIn').click(); return; }
+  const vt=e.target.closest('[data-voto]'); if(vt){ vota(+vt.dataset.voto); return; }
   const spf=e.target.closest('#spFilter [data-spf]'); if(spf){ state.spF=spf.dataset.spf; renderHome(); return; }
   const pu=e.target.closest('[data-push]'); if(pu){ if(pu.dataset.push==='on') enablePush(pu); else disablePush(); return; }
   if(e.target.closest('[data-mnew]')){ openMForm(null); return; }
@@ -1658,6 +1718,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('sheet').hidden
 $('addForm').addEventListener('submit',submitAdd);
 $('aPTipo').addEventListener('change',setupSheet);
 $('mImp').addEventListener('input',mPrev);
+$('selfieIn').addEventListener('change',e=>{ const f=e.target.files&&e.target.files[0]; if(f) addSelfie(f); });
 document.addEventListener('change',e=>{ if(e.target&&e.target.id==='rentFino'){ state.cfg.affittoFino=e.target.value; state.rentEdit=false; renderHome(); saveCfg(); toast(e.target.value?'Affitto segnato pagato fino a '+ymName(ymOf(e.target.value)):'Nessun mese in anticipo'); } });
 $('mVar').addEventListener('change',e=>{ if(state.mForm){ state.mForm.var=e.target.checked; renderMForm(); } });
 $('mDal').addEventListener('change',e=>{ if(state.mForm) state.mForm.dal=e.target.value; });
@@ -1689,7 +1750,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610312352';
+const PAGE_VERSION='202610312359';
 try{ if('serviceWorker' in navigator){ navigator.serviceWorker.register('push-sw.js').then(()=>refreshPush()).catch(()=>refreshPush()); } else refreshPush(); }catch(_){ refreshPush(); }
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
@@ -1729,16 +1790,17 @@ renderAll(); setLive(); checkVersion();
   try{
     if(!window.supabase) throw new Error('libreria');
     state.sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
-    await Promise.all([loadMeta(),loadMov(),loadDebts()]);
+    await Promise.all([loadMeta(),loadMov(),loadDebts(),loadVoti().catch(()=>{})]);
     state.live=true;
     const later=(fn,ms=250)=>{ let t; return ()=>{ clearTimeout(t); t=setTimeout(()=>fn().catch(()=>{}),ms); }; };
-    const rMeta=later(loadMeta), rMov=later(loadMov), rDeb=later(loadDebts);
+    const rMeta=later(loadMeta), rMov=later(loadMov), rDeb=later(loadDebts), rVoti=later(loadVoti);
     state.sb.channel('chill-house')
       .on('postgres_changes',{event:'*',schema:'public',table:'chill_meta'},rMeta)
       .on('postgres_changes',{event:'*',schema:'public',table:'chill_movimenti'},rMov)
       .on('postgres_changes',{event:'*',schema:'public',table:'chill_debiti'},rDeb)
+      .on('postgres_changes',{event:'*',schema:'public',table:'chill_stanza_voti'},rVoti)
       .subscribe(st=>{ if(st==='SUBSCRIBED'){ state.live=true; setLive(); } else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'){ setLive(); } });
-    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'){ rMeta(); rMov(); rDeb(); } });
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'){ rMeta(); rMov(); rDeb(); rVoti(); } });
   }catch(_){ state.live=false; }
   state.resolved=true; setLive();
 })();
