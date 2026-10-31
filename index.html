@@ -431,6 +431,17 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .mpay{grid-column:2/4;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
 .mpay input{width:120px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);font:700 16px var(--f)}
 .hmens-empty{font-size:.88rem;color:var(--muted);padding:2px 0 8px}
+.stanza{display:grid;gap:12px;margin-bottom:14px;border-width:2px}
+.stanza.occ{border-color:var(--orange);background:var(--accent-soft)}
+.stanza.free{border-color:var(--teal)}
+.stanza .st-top{display:flex;align-items:center;gap:12px}
+.stanza .st-ic{font-size:1.8rem;line-height:1}
+.stanza .st-k{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stanza .st-v{font-family:var(--fd);font-size:1.45rem;line-height:1.1}
+.stanza.occ .st-v{color:var(--orange)}
+.stanza.free .st-v{color:var(--teal)}
+.stanza .st-s{font-size:.84rem;color:var(--muted)}
+.stanza .pick button{font-size:.82rem;padding:7px 12px}
 </style>
 </head>
 <body>
@@ -467,6 +478,7 @@ input[type=range]{width:100%;accent-color:var(--teal)}
   </div>
 
   <div class="card pushcard" id="pushCard" hidden></div>
+  <div class="card stanza" id="stanzaCard"></div>
 
   <div class="qa" role="group" aria-label="Aggiungi">
     <button type="button" data-add="versamento"><span class="ic" style="background:var(--teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span>Versamento</button>
@@ -899,7 +911,7 @@ const SNAPSHOT = {
   todo:[{id:'t1',t:'Parlare col proprietario: le 7 domande, deposito e utenze',done:false},{id:'t2',t:'Decidere chi firma il contratto',done:false},{id:'t3',t:'Primo versamento in cassa per il primo mese',done:false},{id:'t4',t:'Ordinare da Temu la lista della spesa',done:false},{id:'t5',t:'Aggiornare le stime con le prime bollette',done:false}]
 };
 const state = {cfg:{...structuredClone(DEFAULT),...structuredClone(SNAPSHOT.cfg)}, mov:structuredClone(SNAPSHOT.mov), debts:structuredClone(SNAPSHOT.debts), amici:[...SNAPSHOT.amici], todo:structuredClone(SNAPSHOT.todo),
-  sb:null, live:false, resolved:false, lastLocal:0, betF:'tutte', movF:'tutti', winEdit:null, rowOpen:null, kind:'versamento', esito:'attesa', spF:'tutte', mensili:[], mOpen:null, mForm:null, me:ls.get('chill_me')||''};
+  sb:null, live:false, resolved:false, lastLocal:0, betF:'tutte', movF:'tutti', winEdit:null, rowOpen:null, kind:'versamento', esito:'attesa', spF:'tutte', mensili:[], stanza:{}, mOpen:null, mForm:null, me:ls.get('chill_me')||''};
 const SIM = {sStake:10,sNn:20,sLegs:4,sOdd:2,sMargin:6,sTarget:'canone'};
 
 /* ---------- calcoli ---------- */
@@ -1347,7 +1359,7 @@ async function payMensile(x,amount){
     state.mOpen=null; state.mPayEdit=null; toast(x.nome+' segnata pagata'+(x.chi==='Cassa'?': uscita dalla cassa':': divisa tra chi la usa'));
   }catch(_){ toast('Non sono riuscito a salvare, riprova.'); }
 }
-function renderAll(){ renderMe(); renderHome(); renderSched(); renderConti(); renderBudget(); renderCatalog(); renderMensili(); }
+function renderAll(){ renderMe(); renderStanza(); renderHome(); renderSched(); renderConti(); renderBudget(); renderCatalog(); renderMensili(); }
 let raf=0; function renderSoon(){ if(raf) return; raf=requestAnimationFrame(()=>{ raf=0; renderAll(); }); }
 
 /* ---------- navigazione ---------- */
@@ -1550,6 +1562,7 @@ async function loadMeta(){
     if(r.key==='config' && Date.now()-state.lastLocal>1500){ const d=r.data||{}; state.cfg={...structuredClone(DEFAULT),...d,have:{...(d.have||{})},noTemu:{...(d.noTemu||{})},nomi:[...(d.nomi||DEFAULT.nomi)]}; }
     if(r.key==='persone' && Array.isArray(r.data?.nomi) && r.data.nomi.length) state.amici=r.data.nomi.map(x=>String(x).slice(0,20));
     if(r.key==='todo' && Array.isArray(r.data?.items)) state.todo=r.data.items;
+    if(r.key==='stanza' && r.data && Date.now()-(state.sLocal||0)>1500) state.stanza=r.data;
     if(r.key==='mensili' && Array.isArray(r.data?.items) && Date.now()-(state.mLocal||0)>1500) state.mensili=r.data.items;
   }
   renderSoon();
@@ -1557,6 +1570,27 @@ async function loadMeta(){
 async function loadMov(){ const {data,error}=await state.sb.from('chill_movimenti').select('*').eq('annullato',false).order('ts',{ascending:false}).limit(1000); if(error) throw error; state.mov=(data||[]).map(toMov); renderSoon(); }
 async function loadDebts(){ const {data,error}=await state.sb.from('chill_debiti').select('*').eq('annullato',false).order('ts',{ascending:false}).limit(1000); if(error) throw error; state.debts=(data||[]).map(toDebt); renderSoon(); }
 let saveT; function saveCfg(){ state.lastLocal=Date.now(); if(!state.live) return; clearTimeout(saveT); saveT=setTimeout(()=>{ rpc('chill_set_meta',{p_key:'config',p_data:structuredClone(state.cfg)}).catch(()=>toast('Modifica non salvata, riprova')); },600); }
+async function saveStanza(){ state.sLocal=Date.now(); try{ await rpc('chill_set_meta',{p_key:'stanza',p_data:state.stanza}); }catch(_){ toast('Non salvato, riprova'); } }
+const stanzaOcc=()=>{ const s=state.stanza||{}; return !!(s.occ&&(!s.fino||s.fino>Date.now())); };
+const hhmm=t=>new Date(t).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+function renderStanza(){
+  const el=$('stanzaCard'), s=state.stanza||{}, occ=stanzaOcc();
+  el.className='card stanza '+(occ?'occ':'free');
+  if(occ){
+    const mine=state.me&&s.chi===state.me;
+    el.innerHTML=`<div class="st-top"><span class="st-ic" aria-hidden="true">🍌🔥</span><div><div class="st-k">La banana scottante</div><div class="st-v">Stanza occupata</div><div class="st-s">da ${esc(s.chi||'qualcuno')} · dalle ${hhmm(s.dal)}${s.fino?' · fino alle '+hhmm(s.fino):''}</div></div></div><button class="btn${mine?'':'-ghost'}" type="button" data-stanza="libera">${mine?'Libera la stanza':'Libera la stanza (se è già libera)'}</button>`;
+  } else {
+    el.innerHTML=`<div class="st-top"><span class="st-ic" aria-hidden="true">🍌</span><div><div class="st-k">La banana scottante</div><div class="st-v">Stanza libera</div><div class="st-s">Se la usi, occupala: gli altri ricevono l'avviso e non entrano.</div></div></div><div class="pick" role="group" aria-label="Occupa la stanza"><button type="button" data-stanza="30">30 min</button><button type="button" data-stanza="60">1 ora</button><button type="button" data-stanza="120">2 ore</button><button type="button" data-stanza="0">Finché non libero</button></div>`;
+  }
+}
+async function setStanza(v){
+  if(!state.me){ toast('Prima scegli chi sei, in alto'); try{ $('meSel').focus(); }catch(_){} return; }
+  if(!state.live){ toast('Connessione assente: riprova tra poco.'); return; }
+  if(v==='libera'){ const was=state.stanza.chi; state.stanza={occ:false,chi:state.me,dal:Date.now()}; renderStanza(); await saveStanza(); notify(`🍌 Stanza di nuovo libera${was&&was!==state.me?' (liberata da '+state.me+')':''}`); toast('Stanza libera'); return; }
+  const min=+v, now=Date.now(); state.stanza={occ:true,chi:state.me,dal:now,fino:min>0?now+min*60000:null}; renderStanza(); await saveStanza();
+  notify(`🍌🔥 Stanza occupata da ${state.me}${min>0?' fino alle '+hhmm(now+min*60000):''}: non entrate`); toast('Stanza occupata: gli altri sono avvisati');
+}
+setInterval(()=>{ if(state.stanza&&state.stanza.occ&&state.stanza.fino&&state.stanza.fino<=Date.now()) renderStanza(); },30000);
 async function saveMensili(){ state.mLocal=Date.now(); try{ await rpc('chill_set_meta',{p_key:'mensili',p_data:{items:state.mensili}}); }catch(_){ toast('Non salvato, riprova'); } }
 async function saveTodo(){ try{ await rpc('chill_set_meta',{p_key:'todo',p_data:{items:state.todo}}); }catch(_){ toast('Non salvato, riprova'); } }
 function setLive(){
@@ -1598,6 +1632,7 @@ document.addEventListener('click',async e=>{
   const py=e.target.closest('#aPayer [data-payer]'); if(py){ state.payer=py.dataset.payer; setupSheet(); return; }
   const sx=e.target.closest('#splitSeg [data-s]'); if(sx){ state.split=sx.dataset.s; setupSheet(); return; }
   const cs=e.target.closest('#aCosa [data-cosa]'); if(cs){ $('aNota').value=cs.dataset.cosa; if(/^Affitto/.test(cs.dataset.cosa)&&!$('aImporto').value){ $('aImporto').value=state.cfg.canone; updatePot(); } return; }
+  const stz=e.target.closest('[data-stanza]'); if(stz){ setStanza(stz.dataset.stanza); return; }
   const spf=e.target.closest('#spFilter [data-spf]'); if(spf){ state.spF=spf.dataset.spf; renderHome(); return; }
   const pu=e.target.closest('[data-push]'); if(pu){ if(pu.dataset.push==='on') enablePush(pu); else disablePush(); return; }
   if(e.target.closest('[data-mnew]')){ openMForm(null); return; }
@@ -1654,7 +1689,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202610271135';
+const PAGE_VERSION='202610312352';
 try{ if('serviceWorker' in navigator){ navigator.serviceWorker.register('push-sw.js').then(()=>refreshPush()).catch(()=>refreshPush()); } else refreshPush(); }catch(_){ refreshPush(); }
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
