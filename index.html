@@ -450,6 +450,9 @@ input[type=range]{width:100%;accent-color:var(--teal)}
 .votes button{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font:800 .9rem var(--f);padding:9px 0;border-radius:10px;cursor:pointer;min-width:0}
 .votes button[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:#fff}
 .st-cl{border-top:1px dashed var(--line);padding-top:10px}
+.st-ta{width:100%;resize:none;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:500 16px/1.4 var(--f);padding:10px 12px}
+.st-nota .st-nt{font-size:.95rem;font-style:italic;line-height:1.45}
+.st-nv{color:var(--orange)}
 .st-fotob{border:0;padding:0;background:none;cursor:zoom-in;border-radius:50%;flex:0 0 auto;position:relative}
 .st-fotob::after{content:"🔍";position:absolute;right:-2px;bottom:-2px;font-size:.8rem;background:var(--surface);border-radius:50%;width:22px;height:22px;display:grid;place-items:center;box-shadow:var(--shadow)}
 .lb{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px 16px;cursor:zoom-out}
@@ -1599,6 +1602,7 @@ const mediaDi=id=>{ const vs=votiDi(id); return vs.length?vs.reduce((t,v)=>t+v.v
 function sessioni(){ const s=state.stanza||{}; const L=[...(s.storico||[])]; if(s.id&&!L.some(x=>x.id===s.id)) L.push({id:s.id,chi:s.chi,dal:s.dal,al:s.al||null}); return L; }
 function renderStanza(){
   const el=$('stanzaCard'), s=state.stanza||{}, occ=stanzaOcc(), me=state.me;
+  const keepTxt=state.notaEdit&&$('notaTxt')?$('notaTxt').value:null, hadFocus=document.activeElement&&document.activeElement.id==='notaTxt';
   el.className='card stanza '+(occ?'occ':'free');
   const foto=s.foto&&s.id?`<button class="st-fotob" type="button" data-selfieview="1" aria-label="Apri il selfie in grande"><img class="st-foto" src="${esc(s.foto)}" alt="Selfie di ${esc(s.chi||'')}"></button>`:'';
   let top, act='';
@@ -1626,11 +1630,32 @@ function renderStanza(){
   const per={}; for(const x of sessioni()){ const m=mediaDi(x.id); if(m==null) continue; (per[x.chi]=per[x.chi]||[]).push(m); }
   const cl=Object.entries(per).map(([n,a])=>[n,a.reduce((t,v)=>t+v,0)/a.length,a.length]).sort((x,y)=>y[1]-x[1]);
   const clas=cl.length?`<p class="st-s st-cl">🏆 Media serate: ${cl.map(([n,m,c])=>`${esc(n)} <b>${fmtV(m)}</b> (${c})`).join(' · ')}</p>`:'';
-  el.innerHTML=top+act+voto+clas;
+  // nota della serata: la scrive solo chi ha occupato la stanza (voto + due righe)
+  let nota='';
+  if(s.id&&s.chi){
+    const fine=occ?Date.now():(s.al||s.fino||s.dal), recent=Date.now()-fine<24*3600e3, n=s.nota, mine=me&&me===s.chi;
+    if(mine&&state.notaEdit&&recent){
+      const v=state.notaVoto||(n&&n.voto)||0;
+      nota=`<div class="st-voto"><div class="st-vk">📝 La tua nota della serata</div><div class="votes" role="group" aria-label="Il tuo voto da 1 a 10">${Array.from({length:10},(_,i)=>i+1).map(k=>`<button type="button" data-notavoto="${k}" aria-pressed="${k===v}">${k}</button>`).join('')}</div><textarea id="notaTxt" class="st-ta" maxlength="160" rows="2" placeholder="Due righe sulla serata…">${esc((n&&n.testo)||'')}</textarea><div class="st-acts"><button class="btn" type="button" data-notasave="1">Salva la nota</button><button class="mini-btn ghost" type="button" data-notacancel="1">Annulla</button></div></div>`;
+    } else if(n&&(n.testo||n.voto)){
+      nota=`<div class="st-voto st-nota"><div class="st-vk">📝 La nota di ${esc(s.chi)}${n.voto?` · <span class="st-nv">${n.voto}/10</span>`:''}</div>${n.testo?`<p class="st-nt">“${esc(n.testo)}”</p>`:''}${mine&&recent?'<button class="link-btn" type="button" data-notaedit="1" style="justify-self:start;padding:0">Modifica la nota</button>':''}</div>`;
+    } else if(mine&&recent){
+      nota=`<button class="mini-btn" type="button" data-notaedit="1" style="justify-self:start">📝 Scrivi la nota della serata</button>`;
+    }
+  }
+  el.innerHTML=top+act+nota+voto+clas;
+  if(keepTxt!=null&&$('notaTxt')){ $('notaTxt').value=keepTxt; if(hadFocus) try{ $('notaTxt').focus(); }catch(_){} }
 }
 function openSelfie(){ const s=state.stanza||{}; if(!s.foto){ toast('Nessun selfie per ora'); return; } $('lbImg').src=s.foto; $('lbImg').alt='Selfie di '+(s.chi||''); $('lbCap').textContent=`${s.chi||''} · stanza occupata dalle ${hhmm(s.dal)}`; $('lightbox').hidden=false; }
 function closeSelfie(){ $('lightbox').hidden=true; }
 function maybeOpenSelfie(){ if(state.openSelfie&&state.stanza&&state.stanza.foto){ state.openSelfie=false; openSelfie(); try{ history.replaceState(null,'',location.pathname+location.search); }catch(_){} } }
+async function saveNota(){
+  const s=state.stanza||{}; if(!s.id||s.chi!==state.me){ toast('Solo chi ha occupato la stanza può scrivere la nota'); return; }
+  const testo=($('notaTxt')?.value||'').replace(/\s+/g,' ').trim().slice(0,160), voto=state.notaVoto||(s.nota&&s.nota.voto)||null;
+  if(!testo&&!voto){ toast('Scrivi due righe o scegli un voto'); return; }
+  const prima=!s.nota; state.stanza={...s,nota:{voto,testo,ts:Date.now()}}; state.notaEdit=false; state.notaVoto=null; renderStanza();
+  if(await saveStanza()){ notify(`📝 ${state.me} ${prima?'ha scritto':'ha aggiornato'} la nota della serata${voto?' ('+voto+'/10)':''}${testo?': “'+testo+'”':''}`); toast('Nota salvata'); }
+}
 async function setStanza(v){
   if(!state.me){ toast('Prima scegli chi sei, in alto'); try{ $('meSel').focus(); }catch(_){} return; }
   if(!state.live){ toast('Connessione assente: riprova tra poco.'); return; }
@@ -1640,7 +1665,7 @@ async function setStanza(v){
     notify(`🍌 Stanza di nuovo libera${was&&was!==state.me?' (liberata da '+state.me+')':''}${was?'. Votate la serata di '+was+' da 1 a 10':''}`); toast('Stanza libera'); return;
   }
   const storico=[...(s.storico||[])];
-  if(s.id&&!storico.some(x=>x.id===s.id)) storico.push({id:s.id,chi:s.chi,dal:s.dal,al:s.al||(s.fino&&s.fino<now?s.fino:now)});
+  if(s.id&&!storico.some(x=>x.id===s.id)) storico.push({id:s.id,chi:s.chi,dal:s.dal,al:s.al||(s.fino&&s.fino<now?s.fino:now),...(s.nota?{nota:s.nota}:{})});
   const min=+v;
   state.stanza={occ:true,id:'s'+now.toString(36),chi:state.me,dal:now,fino:min>0?now+min*60000:null,foto:null,storico:storico.slice(-40)};
   renderStanza(); if(!await saveStanza()) return;
@@ -1704,6 +1729,10 @@ document.addEventListener('click',async e=>{
   const sx=e.target.closest('#splitSeg [data-s]'); if(sx){ state.split=sx.dataset.s; setupSheet(); return; }
   const cs=e.target.closest('#aCosa [data-cosa]'); if(cs){ $('aNota').value=cs.dataset.cosa; if(/^Affitto/.test(cs.dataset.cosa)&&!$('aImporto').value){ $('aImporto').value=state.cfg.canone; updatePot(); } return; }
   const stz=e.target.closest('[data-stanza]'); if(stz){ setStanza(stz.dataset.stanza); return; }
+  if(e.target.closest('[data-notaedit]')){ state.notaEdit=true; state.notaVoto=null; renderStanza(); setTimeout(()=>{ try{ $('notaTxt').focus(); }catch(_){} },50); return; }
+  if(e.target.closest('[data-notacancel]')){ state.notaEdit=false; state.notaVoto=null; renderStanza(); return; }
+  const nv=e.target.closest('[data-notavoto]'); if(nv){ const t=$('notaTxt')?.value; state.notaVoto=+nv.dataset.notavoto; renderStanza(); if(t!=null&&$('notaTxt')) $('notaTxt').value=t; return; }
+  if(e.target.closest('[data-notasave]')){ saveNota(); return; }
   if(e.target.closest('[data-selfieview]')){ openSelfie(); return; }
   if(e.target.closest('#lightbox')){ closeSelfie(); return; }
   if(e.target.closest('[data-selfie]')){ $('selfieIn').value=''; $('selfieIn').click(); return; }
@@ -1767,7 +1796,7 @@ for(const k of ['sStake','sNn','sLegs','sOdd','sMargin']) $(k).addEventListener(
 $('sTarget').addEventListener('change',e=>{ SIM.sTarget=e.target.value; renderSim(); });
 
 /* ---------- aggiornamento automatico della pagina ---------- */
-const PAGE_VERSION='202611010008';
+const PAGE_VERSION='202611010015';
 try{ if('serviceWorker' in navigator){ navigator.serviceWorker.register('push-sw.js').then(()=>refreshPush()).catch(()=>refreshPush()); } else refreshPush(); }catch(_){ refreshPush(); }
 async function checkVersion(){ try{ const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); if(j&&j.v&&j.v!==PAGE_VERSION && $('sheet').hidden) location.replace(location.pathname+'?v='+encodeURIComponent(j.v)+location.hash); }catch(_){} }
 setInterval(checkVersion,60000);
